@@ -3,11 +3,13 @@
 # @description: Renders a button and calls the given `onClick` function, if
 # given, when clicked. Any children passed will be redirected inside the button.
 #
-# @example:
-#   Button = require 'base/button'
+# @example: ->
+#   React.createClass
+#     onClick: ->
+#       alert "oh no you didn't!"
 #
-#   <Button onClick=alert('Oops')>Careful now!</Button>
-#
+#     render: ->
+#       <Button onClick=@onClick>Careful now!</Button>
 React = require 'react'
 
 Button = React.createClass

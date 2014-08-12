@@ -1,6 +1,7 @@
 Parser        = require 'coffee-react-transform/lib/parser'
 coffee        = require 'coffee-script'
 gutil         = require 'gulp-util'
+jsxTransform  = require 'coffee-react-transform'
 path          = require 'path'
 serializeJsx  = require 'coffee-react-transform/lib/serialiser'
 through       = require 'through'
@@ -15,6 +16,7 @@ class Source
 
   constructor: (@comments, @source) ->
     @_commentProp = /^# @([\w.-]+):/
+    @_lines = @source.split('\n')
     exprs = coffee.nodes(@source).expressions
     @views = @_viewDeclarations(exprs)
 
@@ -33,7 +35,7 @@ class Source
     @_viewProps(v) for v in @views
 
   _viewProps: (view) ->
-    viewName = view.variable.base.value
+    viewName = @_propName(view.variable)
     methods  = view.value.args[0].base.properties
 
     methodsByName = {}
@@ -56,10 +58,19 @@ class Source
     props
 
   _propName: (node) ->
+    unless node?.base?
+      return @_rawSource(node)
     name = [node.base.value]
     for prop in node.properties
       name.push(prop.name.value)
     name.join('.')
+
+  _rawSource: (node) ->
+    loc = node.locationData
+    lines = @_lines[loc.first_line..loc.last_line]
+    lines[lines.length-1] = lines[lines.length-1][0..loc.last_column]
+    lines[0] = lines[0][loc.first_column..]
+    lines.join '\n'
 
   commentProps: ->
     props = {}
@@ -91,6 +102,12 @@ class Source
 
     props
 
+
+compileExample = (jsxSource) ->
+  coffeeSource = jsxTransform(jsxSource)
+  coffee.compile(coffeeSource, bare: on)
+
+
 module.exports = (filename, opt={}) ->
   unless filename? then throw new gutil.PluginError('docparse', 'Missing filename for docparse')
 
@@ -114,6 +131,11 @@ module.exports = (filename, opt={}) ->
       props.path   = file.relative.replace('.coffee', '')
       props.source = source.source
       props.views  = source.viewProps()
+
+      if props.example
+        compiled = compileExample(props.example)
+        if compiled?
+          props.example_compiled = compiled
 
       line = if i is 0
         JSON.stringify(props)

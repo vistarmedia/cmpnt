@@ -3,9 +3,10 @@
 # @description: Show a header with tabs that can select between some number of
 # child views.
 #
-# @example:
-#   TabGroup = require 'ui/tab-group'
+# @example: ->
+#   console.log('tab group')
 #
+# @pending:
 #   <TabGroup>
 #
 #     <TabGroup.Tab label="Fish">

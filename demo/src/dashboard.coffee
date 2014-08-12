@@ -2,7 +2,8 @@ React = require 'react'
 
 TabGroup = require '../../src/ui/tab-group'
 
-docs  = require './doc'
+RunExample = require './run-example'
+docs       = require './doc'
 
 
 docsByGroup = ->
@@ -16,6 +17,26 @@ docsByGroup = ->
   byGroup
 
 
+View = React.createClass
+  propTypes:
+    view: React.PropTypes.object.isRequired
+
+  render: ->
+    rows = for k, v of @props.view.propTypes
+      <tr key=k>
+        <td>{k}</td>
+        <td>{v}</td>
+      </tr>
+
+    <div className='col-xs-6 col-md-4'>
+      <div className='view'>
+        <h4>{@props.view.name} <small>props</small></h4>
+        <table className='table'>
+          {rows}
+        </table>
+      </div>
+    </div>
+
 Component = React.createClass
   propTypes:
     component: React.PropTypes.object.isRequired
@@ -23,21 +44,31 @@ Component = React.createClass
   render: ->
     comp = @props.component
 
-    <div className='row'>
-      <div className='col-md-12'>
-        <h2>{comp.name}</h2>
-        <pre>{comp.path}</pre>
-        <p>{comp.description}</p>
-        <TabGroup>
-          <TabGroup.Tab label='Example'>
-            <pre>{comp.example}</pre>
-          </TabGroup.Tab>
-          <TabGroup.Tab label='Source'>
-            <pre>{comp.source}</pre>
-          </TabGroup.Tab>
-        </TabGroup>
+    <span>
+      <div className='row'>
+        <div className='col-md-12'>
+          <h2>{comp.name} <small>{comp.path}</small></h2>
+          <p>{comp.description}</p>
+        </div>
       </div>
-    </div>
+
+      <div className='row'>
+        {<View key=v.name view=v /> for v in comp.views}
+      </div>
+
+      <div className='row'>
+        <div className='col-md-12'>
+          <TabGroup>
+            <TabGroup.Tab label='Example'>
+              <RunExample code=comp.example func=comp.example_compiled />
+            </TabGroup.Tab>
+            <TabGroup.Tab label='Source'>
+              <p><pre>{comp.source}</pre></p>
+            </TabGroup.Tab>
+          </TabGroup>
+        </div>
+      </div>
+    </span>
 
 ComponentGroup = React.createClass
   propTypes:
@@ -47,9 +78,9 @@ ComponentGroup = React.createClass
   render: ->
     <div className='component-group'>
       <div className='row'>
-        <div className='col-md-4'>
+        <div className='col-xs-6 col-md-4'>
           <a id=@props.name></a>
-          <h1>{@props.name} Components</h1>
+          <h1>{@props.name}</h1>
         </div>
       </div>
       {<Component key=c.path component=c /> for c in @props.components}

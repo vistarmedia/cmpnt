@@ -86,11 +86,6 @@ describe 'Tab Group', ->
     expect(tabGroup.state.labels[1]).to.equal 'Two'
     expect(tabGroup.state.labels[2]).to.equal 'Three'
 
-  it 'should have the first tab active by default', ->
-    tabGroup = @render(@tabGroupCls)
-    expect(tabGroup.state.active).to.equal 'One'
-    # expect(tabGroup.getDOMNode().children[0]).to.have.className 'active'
-
   it 'should allow the active tab to be over-ridden', ->
     tabGroup = @render(
       <TabGroup active='Two'>
