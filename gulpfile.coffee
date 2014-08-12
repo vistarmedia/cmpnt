@@ -18,6 +18,7 @@ project =
 demo =
   dest:   './demo/build/'
   src:    './demo/src/index.coffee'
+  doc:    './demo/src/doc'
   srcs:   './demo/src/**/*.coffee'
   static: './demo/static/**'
   style:  './demo/style/index.less'
@@ -25,10 +26,11 @@ demo =
 
 gulp.task 'project:doc', ->
   gulp.src(project.srcs)
-    .pipe(docparse())
-    .pipe(gulp.dest(project.dest))
+    .pipe(docparse('index.js'))
+    .pipe(gulp.dest(demo.doc))
 
-_sourceTask = (name, proj) -> gulp.task name, ->
+_sourceTask = (name, proj, deps=[]) ->
+  gulp.task name, deps, ->
     gulp.src(proj.src, read: false)
       .pipe(browserify({
         transform:  ['coffeeify']
@@ -60,7 +62,7 @@ _testTask = (name, proj) ->
         @emit('end')
 
 
-_sourceTask('demo:src', demo)
+_sourceTask('demo:src', demo, ['project:doc'])
 _sourceTask('project:src', project)
 
 _styleTask('demo:style', demo)

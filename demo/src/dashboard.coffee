@@ -1,47 +1,69 @@
 React = require 'react'
 
-BaseComponents = require './components/base'
+docs  = require './doc'
 
 
-Dashboard = React.createClass
+docsByGroup = ->
+  byGroup = {}
+
+  for doc in docs
+    path = doc.path.split('/')
+    group = path[0..path.length-2]
+    byGroup[group] or= []
+    byGroup[group].push(doc)
+  byGroup
+
+
+Component = React.createClass
+  propTypes:
+    component: React.PropTypes.object.isRequired
 
   render: ->
-    <span>
-      <div className='navbar navbar-inverse navbar-fixed-top' role='navigation'>
-        <div className='container'>
-          <div className='navbar-header'>
-            <a className='navbar-brand' href='#'>UI Components</a>
-          </div>
+    comp = @props.component
+    console.log comp
 
-          <div className='collapse navbar-collapse'>
-            <ul className='nav navbar-nav'>
-              <li><a href='#Base'>Base</a></li>
-              <li><a href='#Form'>Form</a></li>
-              <li><a href='#Table'>Table</a></li>
-            </ul>
-          </div>
-        </div>
+    <div className='row'>
+      <div className='col-md-12'>
+        <h2>{comp.name}</h2>
+        <pre>{comp.path}</pre>
+        <p>{comp.description}</p>
+        <pre>{@props.component}</pre>
       </div>
-
-      <div className='container content'>
-        {@components('Base', BaseComponents)}
-      </div>
-    </span>
-
-  components: (name, cs) ->
-    <div className='components'>
-      <div className='row'>
-        <div className='col-md-12'>
-          <a id=name> </a>
-          <h1>{name} Components</h1>
-        </div>
-      </div>
-      {c({key: "#{name}-#{i}"}) for c, i in cs}
     </div>
 
-  component: (c) ->
+ComponentGroup = React.createClass
+  propTypes:
+    name:       React.PropTypes.string.isRequired
+    components: React.PropTypes.array.isRequired
 
+  render: ->
+    <div className='component-group'>
+      <div className='row'>
+        <div className='col-md-4'>
+          <a id=@props.name></a>
+          <h1>{@props.name} Components</h1>
+        </div>
+      </div>
+      {<Component key=c.path component=c /> for c in @props.components}
+    </div>
 
+Dashboard = React.createClass
+  getInitialState: ->
+    docsByGroup: docsByGroup()
+
+  render: ->
+    keys = Object.keys(@state.docsByGroup)
+    keys.sort()
+
+    groups = for key in keys
+      name       = key
+      components = @state.docsByGroup[key]
+
+      <ComponentGroup key=name name=name components=components />
+
+    <div className='container content'>
+      {groups}
+    </div>
 
 
 module.exports = Dashboard

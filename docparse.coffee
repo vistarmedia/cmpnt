@@ -1,9 +1,9 @@
 Parser        = require 'coffee-react-transform/lib/parser'
+coffee        = require 'coffee-script'
+gutil         = require 'gulp-util'
+path          = require 'path'
 serializeJsx  = require 'coffee-react-transform/lib/serialiser'
-Stream      = require 'stream'
-coffee      = require 'coffee-script'
-gutil       = require 'gulp-util'
-jsxToCoffee = require 'coffee-react-transform'
+through       = require 'through'
 
 
 class Source
@@ -14,6 +14,7 @@ class Source
     new Source(comments, serializeJsx(ast))
 
   constructor: (@comments, @source) ->
+    @_commentProp = /^# @([\w.-]+):/
     exprs = coffee.nodes(@source).expressions
     @views = @_viewDeclarations(exprs)
 
@@ -21,7 +22,6 @@ class Source
     node for node in nodes when @_isViewDeclaration(node)
 
   _isViewDeclaration: (node) ->
-    console.log @_propName(node.variable)
     variable = node.value?.variable
     return false unless variable and variable.properties
     properties = variable.properties
@@ -29,47 +29,49 @@ class Source
     return variable.base?.value is 'React' and \
       properties[0]?.name?.value is 'createClass'
 
-  _propName: (node) ->
-    node
+  viewProps: ->
+    @_viewProps(v) for v in @views
 
-class Docparse extends Stream.Transform
+  _viewProps: (view) ->
+    viewName = view.variable.base.value
+    methods  = view.value.args[0].base.properties
 
-  constructor: () ->
-    @_commentProp = /^# @([\w.-]+):/
-    super(objectMode: true)
+    methodsByName = {}
+    for method in methods
+      name = method.variable.base.value
+      body = method.value
+      methodsByName[name] = body
 
-  _transform: (file, _, callback) ->
-    jsx    = file.contents.toString()
-    source = Source.fromJsx(jsx)
-    return
+    propTypes = @_extractProps(methodsByName.propTypes)
 
-    ast = new Parser().parse(source)
-    console.log '------------------------------'
-    console.log serialise(ast)
-    console.log '------------------------------'
-    comments = (n.value for n in ast.children when n.type is 'CS_COMMENT')
+    name:      viewName
+    propTypes: propTypes
 
+  _extractProps: (node) ->
+    return {} unless node?
     props = {}
-    for comment in comments
+    for p in node.base.properties
+      name = p.variable.base.value
+      props[name] = @_propName(p.value)
+    props
+
+  _propName: (node) ->
+    name = [node.base.value]
+    for prop in node.properties
+      name.push(prop.name.value)
+    name.join('.')
+
+  commentProps: ->
+    props = {}
+    for comment in @comments
       for k, v of @_commentProps(comment)
         props[k] = v
-
-    props.path   = file.relative
-    props.source = source
-    contents = 'module.exports=' + JSON.stringify(props)
-
-    file = new gutil.File
-      base:     file.base
-      cwd:      file.cwd
-      path:     gutil.replaceExtension(file.path, '.js')
-      contents: new Buffer(contents)
-    callback(null, file)
+    props
 
   _commentProps: (comment) ->
     props = {}
-
-    key = undefined
-    buf = []
+    key   = undefined
+    buf   = []
 
     for line in comment.split('\n')
       match = line.match @_commentProp
@@ -89,4 +91,41 @@ class Docparse extends Stream.Transform
 
     props
 
-module.exports = (opts={}) -> new Docparse(opts)
+module.exports = (filename, opt={}) ->
+  unless filename? then throw new gutil.PluginError('docparse', 'Missing filename for docparse')
+
+  files = []
+  firstFile = undefined
+
+  bufferContents = (file) ->
+    if file.isNull() then return
+    files.push(file)
+
+  endStream = ->
+    unless files
+      @emit('end')
+      return
+
+    lines = ['module.exports=[']
+    for file, i in files
+      jsx    = file.contents.toString()
+      source = Source.fromJsx(jsx)
+      props        = source.commentProps()
+      props.path   = file.relative.replace('.coffee', '')
+      props.source = source.source
+      props.views  = source.viewProps()
+
+      line = if i is 0
+        JSON.stringify(props)
+      else
+        ",#{JSON.stringify(props)}"
+      lines.push(line)
+    lines.push '];'
+
+    file = files[0].clone()
+    file.path = path.join(files[0].base, filename)
+    file.contents = new Buffer(lines.join('\n'))
+    @emit('data', file)
+    @emit('end')
+
+  through(bufferContents, endStream)
