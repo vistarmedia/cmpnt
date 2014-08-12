@@ -11,17 +11,19 @@ docparse    = require './docparse'
 
 
 project =
-  src:    './src/index.coffee'
   dest:   './build/'
+  src:    './src/index.coffee'
   srcs:   './src/**/*.coffee'
+  test:   './test/**/*_spec.coffee'
 
 demo =
   dest:   './demo/build/'
-  src:    './demo/src/index.coffee'
   doc:    './demo/src/doc'
+  src:    './demo/src/index.coffee'
   srcs:   './demo/src/**/*.coffee'
   static: './demo/static/**'
   style:  './demo/style/index.less'
+  test:   './test-demo/**/*_spec.coffee'
 
 
 gulp.task 'project:doc', ->
@@ -80,5 +82,7 @@ gulp.task 'src', ['demo:src']
 gulp.task 'style', ['demo:style']
 
 gulp.task 'static', ['demo:static']
+
+gulp.task 'test', ['project:test']
 
 gulp.task 'default', ['src', 'style', 'static']

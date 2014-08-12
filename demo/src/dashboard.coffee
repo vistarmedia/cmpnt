@@ -1,5 +1,7 @@
 React = require 'react'
 
+TabGroup = require '../../src/ui/tab-group'
+
 docs  = require './doc'
 
 
@@ -20,14 +22,20 @@ Component = React.createClass
 
   render: ->
     comp = @props.component
-    console.log comp
 
     <div className='row'>
       <div className='col-md-12'>
         <h2>{comp.name}</h2>
         <pre>{comp.path}</pre>
         <p>{comp.description}</p>
-        <pre>{@props.component}</pre>
+        <TabGroup>
+          <TabGroup.Tab label='Example'>
+            <pre>{comp.example}</pre>
+          </TabGroup.Tab>
+          <TabGroup.Tab label='Source'>
+            <pre>{comp.source}</pre>
+          </TabGroup.Tab>
+        </TabGroup>
       </div>
     </div>
 
