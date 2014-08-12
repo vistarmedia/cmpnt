@@ -1,18 +1,52 @@
-Parser = require 'coffee-react-transform/lib/parser'
-Stream = require 'stream'
-gutil  = require 'gulp-util'
+Parser        = require 'coffee-react-transform/lib/parser'
+serializeJsx  = require 'coffee-react-transform/lib/serialiser'
+Stream      = require 'stream'
+coffee      = require 'coffee-script'
+gutil       = require 'gulp-util'
+jsxToCoffee = require 'coffee-react-transform'
 
+
+class Source
+
+  @fromJsx: (jsx) ->
+    ast = new Parser().parse(jsx)
+    comments = (n.value for n in ast.children when n.type is 'CS_COMMENT')
+    new Source(comments, serializeJsx(ast))
+
+  constructor: (@comments, @source) ->
+    exprs = coffee.nodes(@source).expressions
+    @views = @_viewDeclarations(exprs)
+
+  _viewDeclarations: (nodes) ->
+    node for node in nodes when @_isViewDeclaration(node)
+
+  _isViewDeclaration: (node) ->
+    console.log @_propName(node.variable)
+    variable = node.value?.variable
+    return false unless variable and variable.properties
+    properties = variable.properties
+
+    return variable.base?.value is 'React' and \
+      properties[0]?.name?.value is 'createClass'
+
+  _propName: (node) ->
+    node
 
 class Docparse extends Stream.Transform
 
-  constructor: (@opts) ->
+  constructor: () ->
     @_commentProp = /^# @([\w.-]+):/
     super(objectMode: true)
 
   _transform: (file, _, callback) ->
-    source = file.contents.toString()
+    jsx    = file.contents.toString()
+    source = Source.fromJsx(jsx)
+    return
 
-    ast = new Parser().parse(source, @opts)
+    ast = new Parser().parse(source)
+    console.log '------------------------------'
+    console.log serialise(ast)
+    console.log '------------------------------'
     comments = (n.value for n in ast.children when n.type is 'CS_COMMENT')
 
     props = {}
