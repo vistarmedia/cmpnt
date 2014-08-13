@@ -1,5 +1,6 @@
 React = require 'react'
 
+Icon     = require '../../src/ui/icon'
 TabGroup = require '../../src/ui/tab-group'
 
 RunExample = require './run-example'
@@ -43,11 +44,34 @@ Component = React.createClass
 
   render: ->
     comp = @props.component
+    tabs = []
+
+    if comp.example?
+      tabs.push(
+        <TabGroup.Tab key='example' label='Example'>
+          <RunExample code=comp.example func=comp.example_compiled />
+        </TabGroup.Tab>)
+
+    if comp.style?
+      tabs.push(
+        <TabGroup.Tab key='style' label='Style'>
+          <p><pre className='code'>{comp.style}</pre></p>
+        </TabGroup.Tab>)
+
+    if comp.source?
+      tabs.push(
+        <TabGroup.Tab key='source' label='Source'>
+          <p><pre className='code'>{comp.source}</pre></p>
+        </TabGroup.Tab>)
 
     <span>
       <div className='row'>
         <div className='col-md-12'>
-          <h2>{comp.name} <small>{comp.path}</small></h2>
+          <h2>
+            <Icon name='cube' />
+            {comp.name}
+            <small>{comp.path}</small>
+          </h2>
           <p>{comp.description}</p>
         </div>
       </div>
@@ -58,14 +82,7 @@ Component = React.createClass
 
       <div className='row'>
         <div className='col-md-12'>
-          <TabGroup>
-            <TabGroup.Tab label='Example'>
-              <RunExample code=comp.example func=comp.example_compiled />
-            </TabGroup.Tab>
-            <TabGroup.Tab label='Source'>
-              <p><pre>{comp.source}</pre></p>
-            </TabGroup.Tab>
-          </TabGroup>
+          <TabGroup>{tabs}</TabGroup>
         </div>
       </div>
     </span>
@@ -78,9 +95,12 @@ ComponentGroup = React.createClass
   render: ->
     <div className='component-group'>
       <div className='row'>
-        <div className='col-xs-6 col-md-4'>
+        <div className='col-xs-6 col-md-6'>
           <a id=@props.name></a>
-          <h1>{@props.name}</h1>
+          <h1>
+            {@props.name}
+            <Icon name='cubes' />
+          </h1>
         </div>
       </div>
       {<Component key=c.path component=c /> for c in @props.components}

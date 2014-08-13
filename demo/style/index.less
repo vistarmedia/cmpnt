@@ -1,10 +1,15 @@
 @import "./bootstrap/bootstrap";
+@import "../../build/index";
 
 h1 {
   color:      white;
   background: black;
   padding:    5px;
-  margin:     5px -5px;
+  margin:     20px -5px 5px -5px;
+
+  .icon {
+    float:    right;
+  }
 }
 
 .component h3 {
@@ -13,5 +18,17 @@ h1 {
   border-left:    3px solid @brand-primary;
 }
 
-.view {
+pre.code {
+  word-wrap:      normal;
+}
+
+.example {
+  text-align:     center;
+  border-radius:  5px;
+  border:         1px solid @gray-lighter;
+  padding:        20px;
+
+  .inner {
+    text-align:   left;
+  }
 }

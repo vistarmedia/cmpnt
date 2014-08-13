@@ -1,5 +1,6 @@
 Parser        = require 'coffee-react-transform/lib/parser'
 coffee        = require 'coffee-script'
+fs            = require 'fs'
 gutil         = require 'gulp-util'
 jsxTransform  = require 'coffee-react-transform'
 path          = require 'path'
@@ -136,6 +137,10 @@ module.exports = (filename, opt={}) ->
         compiled = compileExample(props.example)
         if compiled?
           props.example_compiled = compiled
+
+      style = file.path.replace('.coffee', '.less')
+      if fs.existsSync(style)
+        props.style = fs.readFileSync(style).toString()
 
       line = if i is 0
         JSON.stringify(props)

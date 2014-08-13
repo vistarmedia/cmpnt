@@ -5,10 +5,13 @@
 #
 # @example: ->
 #   React.createClass
+#
 #     render: ->
 #       <span>
-#         <Icon name='desktop' />
-#         <Icon name='search' size='large' />
+#         <p><Icon /> Empty icon</p>
+#         <p><Icon name='bomb' /> Bomb</p>
+#         <p><Icon name='bomb' status='success' /> Successful bomb(?)</p>
+#         <p><Icon name='bomb' size='large'/> Large Bomb</p>
 #       </span>
 React = require 'react'
 

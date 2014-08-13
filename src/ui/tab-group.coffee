@@ -4,22 +4,18 @@
 # child views.
 #
 # @example: ->
-#   console.log('tab group')
+#   React.createClass
+#     render: ->
+#       <TabGroup>
+#         <TabGroup.Tab label="Fish">
+#           <h2>Fish are cool</h2>
+#         </TabGroup.Tab>
 #
-# @pending:
-#   <TabGroup>
-#
-#     <TabGroup.Tab label="Fish">
-#       <h1>Fish are cool</h1>
-#     </TabGroup.Tab>
-#
-#     <TabGroup.Tab label="Dogs">
-#       <h1>Dogs are cool</h1>
-#     </TabGroup.Tab>
-#
-#   </TabGroup>
+#         <TabGroup.Tab label="Dogs">
+#           <h2>Dogs are cool</h2>
+#         </TabGroup.Tab>
+#       </TabGroup>
 React = require 'react'
-
 
 
 TabGroup = React.createClass
@@ -78,7 +74,7 @@ TabGroup.Header = React.createClass
           e.preventDefault()
           @updateActive(label)
 
-        <li key=label className={if label is @props.active then 'active'}>
+        <li key={label} className={if label is @props.active then 'active'}>
           <a href="#" onClick=clickHandler>{label}</a>
         </li>
     <ul className='nav nav-tabs'>{labelTabs}</ul>

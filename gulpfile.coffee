@@ -14,6 +14,7 @@ project =
   dest:   './build/'
   src:    './src/index.coffee'
   srcs:   './src/**/*.coffee'
+  style:  './src/**/*.less'
   test:   './test/**/*_spec.coffee'
 
 demo =
@@ -31,6 +32,12 @@ gulp.task 'project:doc', ->
     .pipe(docparse('index.js'))
     .pipe(gulp.dest(demo.doc))
 
+gulp.task 'project:style', ->
+  gulp.src(project.style)
+    .pipe(concat('index.less'))
+    .pipe(gulp.dest(project.dest))
+
+
 _sourceTask = (name, proj, deps=[]) ->
   gulp.task name, deps, ->
     gulp.src(proj.src, read: false)
@@ -42,8 +49,8 @@ _sourceTask = (name, proj, deps=[]) ->
       .pipe(gulp.dest(proj.dest))
 
 
-_styleTask = (name, proj) ->
-  gulp.task name, ->
+_styleTask = (name, proj, deps=[]) ->
+  gulp.task name, deps, ->
     gulp.src(proj.style)
       .pipe(less())
       .pipe(concat('app.css'))
@@ -54,6 +61,7 @@ _staticTask = (name, proj) ->
   gulp.task name, ->
     gulp.src(proj.static)
       .pipe(gulp.dest(proj.dest))
+
 
 _testTask = (name, proj) ->
   gulp.task name, ->
@@ -67,8 +75,7 @@ _testTask = (name, proj) ->
 _sourceTask('demo:src', demo, ['project:doc'])
 _sourceTask('project:src', project)
 
-_styleTask('demo:style', demo)
-_styleTask('project:style', project)
+_styleTask('demo:style', demo, ['project:style'])
 
 _staticTask('demo:static', demo)
 _staticTask('project:static', project)
@@ -79,7 +86,7 @@ _testTask('project:test', project)
 
 gulp.task 'src', ['demo:src']
 
-gulp.task 'style', ['demo:style']
+gulp.task 'style', ['project:style', 'demo:style']
 
 gulp.task 'static', ['demo:static']
 

@@ -10,15 +10,29 @@
 #
 #     render: ->
 #       <Button onClick=@onClick>Careful now!</Button>
-React = require 'react'
+React       = require 'react'
+{classSet}  = require('react/addons').addons
+
 
 Button = React.createClass
 
   propTypes:
     onClick: React.PropTypes.func
 
+  onClick: (e) ->
+    e?.preventDefault()
+    @props.onClick?()
+
   render: ->
-    <button>{@props.children}</button>
+    classes = classSet
+      'btn':          true
+      'btn-default':  true
+      'btn-lg':       true
+      'disabled':     @props.disabled
+
+    <button className={classes} onClick=@onClick>
+      {@props.children}
+    </button>
 
 
 module.exports = Button

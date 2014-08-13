@@ -1,4 +1,5 @@
 require '../test_case'
+
 {expect} = require 'chai'
 
 Icon = require '../../src/ui/icon'
