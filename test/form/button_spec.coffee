@@ -16,5 +16,11 @@ describe 'Button', ->
     el     = button.getDOMNode()
     expect(el).to.haveClass 'disabled'
 
-  it 'should invoke its onClick handler'
+  it 'should invoke its onClick handler', (done) ->
+    onClick = -> done()
+    button  = @render <Button onClick=onClick />
+    @simulate.click(button.getDOMNode())
 
+  it 'should pass through className', ->
+    el = @render(<Button className='pants' />).getDOMNode()
+    expect(el).to.haveClass 'pants'

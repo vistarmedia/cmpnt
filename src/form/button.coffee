@@ -17,20 +17,22 @@ React       = require 'react'
 Button = React.createClass
 
   propTypes:
-    onClick: React.PropTypes.func
+    onClick:    React.PropTypes.func
+    className:  React.PropTypes.string
+
+  getDefaultProps: ->
+    className: ''
 
   onClick: (e) ->
     e?.preventDefault()
     @props.onClick?()
 
   render: ->
-    classes = classSet
-      'btn':          true
-      'btn-default':  true
-      'btn-lg':       true
-      'disabled':     @props.disabled
+    classes = if @props.className? then [@props.className] else []
+    classes = classes.concat('btn', 'btn-default', 'btn-large')
+    classes.push 'disabled' if @props.disabled
 
-    <button className={classes} onClick=@onClick>
+    <button className={classes.join(' ')} onClick=@onClick>
       {@props.children}
     </button>
 

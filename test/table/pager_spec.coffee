@@ -25,6 +25,14 @@ describe 'Pager Item', ->
 
     @simulate.click item.getDOMNode()
 
+  it 'should not be active by default', ->
+    el = @render(<Pager.Item page=0 />).getDOMNode()
+    expect(el).to.not.haveClass 'active'
+
+  it 'should indicate an active item', ->
+    el = @render(<Pager.Item page=0 active=true />).getDOMNode()
+    expect(el).to.haveClass 'active'
+
 describe 'Pager', ->
 
   it 'should accept an item count', ->
@@ -79,165 +87,157 @@ describe 'Pager', ->
     mounted = true
     pager = @render cls
 
+  it 'should know the number of pages', ->
+    pager = @render <Pager count=21 itemsPerPage=10 />
+    expect(pager.state.numPages).to.equal 3
 
-#   it 'should know the number of pages', ->
-#     pager = @render(<Pager count=21 itemsPerPage=10 />)
-#     expect(pager.numPages()).to.equal 3
-# 
-#     pager = @render(<Pager count=20 itemsPerPage=10 />)
-#     expect(pager.numPages()).to.equal 2
-# 
-#     pager = @render(<Pager count=19 itemsPerPage=10 />)
-#     expect(pager.numPages()).to.equal 2
-# 
-#   it 'should render previous and next items', ->
-#     el = @render(<Pager count=21 itemsPerPage=10 />).getDOMNode()
-# 
-#     previous = el.getElementsByClassName('prev')[0]
-#     expect(previous).to.have.textContent 'Previous'
-# 
-#     next = el.getElementsByClassName('next')[0]
-#     expect(next).to.have.textContent 'Next'
-# 
-#   it 'should advance the page when clicking "Next"', ->
-#     pager   = @render(<Pager count=21 />)
-#     pagerEl = pager.getDOMNode()
-# 
-#     expect(pager.state.page).to.equal 0
-#     next = pagerEl.getElementsByClassName('next')[0]
-#     link = next.getElementsByTagName('A')[0]
-#     @simulate.click(link)
-#     expect(pager.state.page).to.equal 1
-# 
-#   it 'should not advance at the last page', ->
-#     pager   = @render(<Pager count=9 />)
-#     pagerEl = pager.getDOMNode()
-# 
-#     next = pagerEl.getElementsByClassName('next')[0]
-#     link = next.getElementsByTagName('A')[0]
-#     @simulate.click(link)
-#     expect(pager.state.page).to.equal 0
-# 
-#   it 'should display the page numbers', ->
-#     pager   = @render(<Pager count=50 />)
-#     pagerEl = pager.getDOMNode()
-# 
-#     selectors = pagerEl.getElementsByTagName('li')
-#     # 5 pages + prev/next
-#     expect(selectors).to.have.length 5 + 2
-# 
-#   it 'should change the page # when clicking a selector', ->
-#     pager = @render(<Pager count=50 />)
-# 
-#     sel4 = pager.getDOMNode().getElementsByTagName('li')[4]
-#     link = sel4.getElementsByTagName('A')[0]
-# 
-#     expect(pager.state.page).to.equal 0
-#     @simulate.click(link)
-#     expect(pager.state.page).to.equal 3
-# 
-#   describe 'when pages < maxVisible', ->
-#     it 'should show all pages', ->
-#       pager = @render(<Pager itemsPerPage=5 count=25 maxVisible=5 />)
-#       expect(pager.numPages()).to.equal 5
-# 
-#       visible = pager.visiblePages()
-#       expect(visible).to.have.length 5
-#       expect(visible[0]).to.equal 0
-#       expect(visible[1]).to.equal 1
-#       expect(visible[2]).to.equal 2
-#       expect(visible[3]).to.equal 3
-#       expect(visible[4]).to.equal 4
-# 
-#   describe 'when truncating truncating', ->
-#     beforeEach ->
-#       @pager = @render(<Pager itemsPerPage=1 count=25 maxVisible=7 />)
-# 
-#     it 'should only have maxPages items', ->
-#       expect(@pager.visiblePages()).to.have.length 7
-# 
-#     describe 'right items', ->
-#       beforeEach ->
-#         @pager.setState(page: 0)
-#         @visible = @pager.visiblePages()
-# 
-#       it 'should have 7 items', ->
-#         expect(@visible).to.have.length 7
-# 
-#       it 'should show the first page', ->
-#         expect(@visible[0]).to.equal 0
-# 
-#       it 'should show the last page', ->
-#         expect(@visible[6]).to.equal 24
-# 
-#       it 'should truncate at the last-1 position', ->
-#         expect(@visible[5]).to.not.exist
-# 
-#       it 'should fiddle to and past the middle', ->
-#         expect(@visible[1]).to.equal 1
-#         expect(@visible[2]).to.equal 2
-#         expect(@visible[3]).to.equal 3
-#         expect(@visible[4]).to.equal 4
-# 
-#     describe 'left items', ->
-#       beforeEach ->
-#         @pager.setState(page: 24)
-#         @visible = @pager.visiblePages()
-# 
-#       it 'should have 7 items', ->
-#         expect(@visible).to.have.length 7
-# 
-#       it 'should show the first page', ->
-#         expect(@visible[0]).to.equal 0
-# 
-#       it 'should show the last page', ->
-#         expect(@visible[6]).to.equal 24
-# 
-#       it 'should truncate at the 1 position', ->
-#         expect(@visible[1]).to.not.exist
-# 
-#       it 'should fill middle values', ->
-#         expect(@visible[2]).to.equal 20
-#         expect(@visible[3]).to.equal 21
-#         expect(@visible[4]).to.equal 22
-#         expect(@visible[5]).to.equal 23
-# 
-#     describe 'middle items', ->
-#       beforeEach ->
-#         @pager.setState(page: 11)
-#         @visible = @pager.visiblePages()
-# 
-#       it 'should have 7 items', ->
-#         expect(@visible).to.have.length 7
-# 
-#       it 'should show the first page', ->
-#         expect(@visible[0]).to.equal 0
-# 
-#       it 'should show the last page', ->
-#         expect(@visible[6]).to.equal 24
-# 
-#       it 'should truncate at the 1 position', ->
-#         expect(@visible[1]).to.not.exist
-# 
-#       it 'should truncate at the -2 position', ->
-#         expect(@visible[5]).to.not.exist
-# 
-#       it 'should fill in middle values', ->
-#         expect(@visible[2]).to.equal 10
-#         expect(@visible[3]).to.equal 11
-#         expect(@visible[4]).to.equal 12
-# 
-# 
-# 
-#   # it 'should truncate the maximum number of items', ->
-#   #   items = @render(<Pager count=50 />).items()
-#   #   expect(items).to.have.length 5
-# 
-# 
-#   #   items = @render(<Pager count=50 maxPages=3 />).items()
-#   #   expect(items).to.have.length 4
-# 
-#   #   expect(@render(items[0]).getDOMNode()).to.have.textContent '1'
-#   #   expect(@render(items[1]).getDOMNode()).to.have.textContent '2'
-#   #   expect(@render(items[2]).getDOMNode()).to.have.textContent '...'
-#   #   expect(@render(items[3]).getDOMNode()).to.have.textContent '5'
+    pager = @render <Pager count=20 itemsPerPage=10 />
+    expect(pager.state.numPages).to.equal 2
+
+    pager = @render <Pager count=19 itemsPerPage=10 />
+    expect(pager.state.numPages).to.equal 2
+
+
+  it 'should advance the page when clicking "Next"', ->
+    pager   = @render(<Pager count=21 />)
+    pagerEl = pager.getDOMNode()
+
+    nextButtons = pagerEl.querySelectorAll('[data-reactid$=".$next"]')
+    expect(nextButtons).to.have.length 1
+
+    expect(pager.state.page).to.equal 0
+    @simulate.click nextButtons[0]
+    expect(pager.state.page).to.equal 1
+
+  it 'should disable the next button on the last page', ->
+    el = @render(<Pager count=9 />).getDOMNode()
+    next = el.querySelector('[data-reactid$=".$next"]')
+    expect(next).to.haveClass 'disabled'
+
+  it 'should not advance at the last page', ->
+    pager   = @render(<Pager count=9 />)
+    pagerEl = pager.getDOMNode()
+
+    nextButton = pagerEl.querySelectorAll('[data-reactid$=".$next"]')
+
+    expect(pager.state.numPages).to.equal 1
+    expect(pager.state.page).to.equal 0
+    @simulate.click(nextButton)
+    expect(pager.state.page).to.equal 0
+
+  it 'should display the page numbers', ->
+    el = @render(<Pager count=50 />).getDOMNode()
+    selectors = el.getElementsByTagName('button')
+
+    # 5 pages + prev/next
+    expect(selectors).to.have.length 5 + 2
+
+  it 'should have one page selector active', ->
+    el = @render(<Pager count=50 />).getDOMNode()
+    firstPage  = el.querySelector('[data-reactid$=":$0"]')
+    secondPage = el.querySelector('[data-reactid$=":$1"]')
+    expect(firstPage).to.have.textContent '1'
+    expect(secondPage).to.have.textContent '2'
+
+    expect(firstPage).to.haveClass 'active'
+    expect(secondPage).to.not.haveClass 'active'
+
+  it 'should change the page # when clicking a selector', ->
+    pager = @render <Pager count=50 />
+    el    = pager.getDOMNode()
+
+    secondPage = el.querySelector('[data-reactid$=":$1"]')
+    expect(pager.state.page).to.equal 0
+    @simulate.click(secondPage)
+    expect(pager.state.page).to.equal 1
+
+  describe 'when pages < maxVisible', ->
+    it 'should show all pages', ->
+      pager = @render(<Pager itemsPerPage=5 count=25 maxVisible=5 />)
+      expect(pager.state.numPages).to.equal 5
+
+      visible = pager.visiblePages()
+      expect(visible).to.have.length 5
+      expect(visible[0]).to.equal 0
+      expect(visible[1]).to.equal 1
+      expect(visible[2]).to.equal 2
+      expect(visible[3]).to.equal 3
+      expect(visible[4]).to.equal 4
+
+  describe 'when truncating', ->
+    beforeEach ->
+      @pager = @render(<Pager itemsPerPage=1 count=25 maxVisible=7 />)
+
+    it 'should only have maxPages items', ->
+      expect(@pager.visiblePages()).to.have.length 7
+
+    describe 'right items', ->
+      beforeEach ->
+        @pager.setState(page: 0)
+        @visible = @pager.visiblePages()
+
+      it 'should have 7 items', ->
+        expect(@visible).to.have.length 7
+
+      it 'should show the first page', ->
+        expect(@visible[0]).to.equal 0
+
+      it 'should show the last page', ->
+        expect(@visible[6]).to.equal 24
+
+      it 'should truncate at the last-1 position', ->
+        expect(@visible[5]).to.not.exist
+
+      it 'should fiddle to and past the middle', ->
+        expect(@visible[1]).to.equal 1
+        expect(@visible[2]).to.equal 2
+        expect(@visible[3]).to.equal 3
+        expect(@visible[4]).to.equal 4
+
+    describe 'left items', ->
+      beforeEach ->
+        @pager.setState(page: 24)
+        @visible = @pager.visiblePages()
+
+      it 'should have 7 items', ->
+        expect(@visible).to.have.length 7
+
+      it 'should show the first page', ->
+        expect(@visible[0]).to.equal 0
+
+      it 'should show the last page', ->
+        expect(@visible[6]).to.equal 24
+
+      it 'should truncate at the 1 position', ->
+        expect(@visible[1]).to.not.exist
+
+      it 'should fill middle values', ->
+        expect(@visible[2]).to.equal 20
+        expect(@visible[3]).to.equal 21
+        expect(@visible[4]).to.equal 22
+        expect(@visible[5]).to.equal 23
+
+    describe 'middle items', ->
+      beforeEach ->
+        @pager.setState(page: 11)
+        @visible = @pager.visiblePages()
+
+      it 'should have 7 items', ->
+        expect(@visible).to.have.length 7
+
+      it 'should show the first page', ->
+        expect(@visible[0]).to.equal 0
+
+      it 'should show the last page', ->
+        expect(@visible[6]).to.equal 24
+
+      it 'should truncate at the 1 position', ->
+        expect(@visible[1]).to.not.exist
+
+      it 'should truncate at the -2 position', ->
+        expect(@visible[5]).to.not.exist
+
+      it 'should fill in middle values', ->
+        expect(@visible[2]).to.equal 10
+        expect(@visible[3]).to.equal 11
+        expect(@visible[4]).to.equal 12
