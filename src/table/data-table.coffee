@@ -46,15 +46,18 @@ DataTable = React.createClass
     models:   []
 
   getInitialState: ->
-    start:      0
-    end:        0
-    searchTerm: ''
+    start:          0
+    end:            0
+    filteredModels: @props.models
 
   onRangeChange: (start, end) ->
     @setState(start: start, end: end)
 
   onUpdateFilter: (e) ->
-    @setState(searchTerm: e.currentTarget.value)
+    term     = e.currentTarget.value
+    filtered = @props.filter(@props.models, term)
+    # TODO: Move to page 0?
+    @setState(filteredModels: filtered)
 
   render: ->
     hasFilter = @props.filter?
@@ -66,12 +69,7 @@ DataTable = React.createClass
       'table-hover':      @props.hover
       'table-condensed':  @props.compact
 
-    models = if hasFilter
-      @props.filter(@props.models, @state.searchTerm)
-    else
-      @props.models
-
-    visible = models[@state.start..@state.end]
+    visible = @state.filteredModels[@state.start..@state.end]
 
     <span>
       {@_filter() if hasFilter}
@@ -82,11 +80,11 @@ DataTable = React.createClass
         </table>
       </div>
       <div className='row'>
-        <Pager count         = models.length
+        <Pager count         = @state.filteredModels.length
                maxVisible    = 7
                onRangeChange = @onRangeChange />
         <p>
-          Showing {@state.start+1} to {@state.end+1} of {@props.models.length}
+          Showing {@state.start+1} to {@state.end+1} of {@state.filteredModels.length}
         </p>
       </div>
     </span>

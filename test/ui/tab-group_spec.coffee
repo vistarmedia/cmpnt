@@ -94,3 +94,5 @@ describe 'Tab Group', ->
         <TabGroup.Tab label='Three'>Third</TabGroup.Tab>
       </TabGroup>)
     expect(tabGroup.state.active).to.equal 'Two'
+
+  it 'should not have hidden tabs on the DOM'
