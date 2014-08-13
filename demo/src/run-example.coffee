@@ -1,10 +1,12 @@
-React = require 'react'
+Backbone  = require 'backbone'
+React     = require 'react'
 
 Button    = require '../../src/form/button'
 
 Icon      = require '../../src/ui/icon'
 TabGroup  = require '../../src/ui/tab-group'
 
+DataTable = require '../../src/table/data-table'
 Pager     = require '../../src/table/pager'
 
 

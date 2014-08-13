@@ -32,6 +32,7 @@ gulp.task 'project:doc', ->
     .pipe(docparse('index.js'))
     .pipe(gulp.dest(demo.doc))
 
+
 gulp.task 'project:style', ->
   gulp.src(project.style)
     .pipe(concat('index.less'))

@@ -11,7 +11,6 @@
 #     render: ->
 #       <Button onClick=@onClick>Careful now!</Button>
 React       = require 'react'
-{classSet}  = require('react/addons').addons
 
 
 Button = React.createClass
