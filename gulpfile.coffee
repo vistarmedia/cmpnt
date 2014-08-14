@@ -1,6 +1,5 @@
-require 'gulp-cjsx'
-
 browserify  = require 'gulp-browserify'
+cjsx        = require 'gulp-cjsx'
 concat      = require 'gulp-concat'
 gulp        = require 'gulp'
 gutil       = require 'gulp-util'
@@ -73,8 +72,13 @@ _testTask = (name, proj) ->
         @emit('end')
 
 
+gulp.task 'project:src', ->
+  gulp.src(project.srcs)
+    .pipe(cjsx())
+    .pipe(gulp.dest(project.dest))
+
+
 _sourceTask('demo:src', demo, ['project:doc'])
-_sourceTask('project:src', project)
 
 _styleTask('demo:style', demo, ['project:style'])
 
@@ -84,6 +88,7 @@ _staticTask('project:static', project)
 _testTask('demo:test', demo)
 _testTask('project:test', project)
 
+gulp.task 'project', ['project:src', 'project:style']
 
 gulp.task 'src', ['demo:src']
 

@@ -44,6 +44,7 @@ Component = React.createClass
 
   render: ->
     comp = @props.component
+    description = (<p>{d}</p> for d in comp.description.split('\n\n'))
     tabs = []
 
     if comp.example?
@@ -72,7 +73,7 @@ Component = React.createClass
             {comp.name}
             <small>{comp.path}</small>
           </h2>
-          <p>{comp.description}</p>
+          {description}
         </div>
       </div>
 
@@ -86,6 +87,7 @@ Component = React.createClass
         </div>
       </div>
     </span>
+
 
 ComponentGroup = React.createClass
   propTypes:
@@ -105,6 +107,7 @@ ComponentGroup = React.createClass
       </div>
       {<Component key=c.path component=c /> for c in @props.components}
     </div>
+
 
 Dashboard = React.createClass
   getInitialState: ->

@@ -4,6 +4,7 @@
 # models.
 #
 # TODO: Document column object shape
+#
 # TODO: Document expected model shape
 #
 # @example: ->
@@ -12,7 +13,7 @@
 #   React.createClass
 #
 #     getInitialState: ->
-#       models:   (new Model(id: i, name: "Model #{i+1}") for i in [0..499])
+#       models:   (new Model(id: i, name: "Model #{i+1}") for i in [0..299])
 #       columns:  [
 #         {field: 'id',   label: 'ID'},
 #         {field: 'name', label: 'Name'}

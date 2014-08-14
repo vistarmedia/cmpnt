@@ -35,11 +35,10 @@ TabGroup = React.createClass
     @setState(active: label)
 
   render: ->
-    tabs = for tab, i in @state.tabs
-      cls = ['tab-pane']
+    tabs = []
+    for tab, i in @state.tabs
       if tab.props.label is @state.active
-        cls.push 'active'
-      <div key=i className={cls.join(' ')}>{tab}</div>
+        tabs.push <div key=i className='tab-pane active'>{tab}</div>
 
     <span>
       <TabGroup.Header
