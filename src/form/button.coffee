@@ -20,9 +20,6 @@ Button = React.createClass
     onClick:    React.PropTypes.func
     className:  React.PropTypes.string
 
-  getDefaultProps: ->
-    className: ''
-
   onClick: (e) ->
     e?.preventDefault()
     @props.onClick?()

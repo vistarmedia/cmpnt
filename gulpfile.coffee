@@ -63,10 +63,10 @@ _staticTask = (name, proj) ->
       .pipe(gulp.dest(proj.dest))
 
 
-_testTask = (name, proj) ->
+_testTask = (name, proj, reporter='dot', bail=true) ->
   gulp.task name, ->
     gulp.src(proj.test, read: false)
-      .pipe(mocha(reporter: 'dot', bail: true))
+      .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
         console.log(err.toString())
         @emit('end')
@@ -87,6 +87,7 @@ _staticTask('project:static', project)
 
 _testTask('demo:test', demo)
 _testTask('project:test', project)
+_testTask('project:test:xunit', project, reporter='xunit-file', bail=false)
 
 gulp.task 'project', ['project:src', 'project:style']
 

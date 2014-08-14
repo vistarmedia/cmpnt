@@ -24,3 +24,9 @@ describe 'Button', ->
   it 'should pass through className', ->
     el = @render(<Button className='pants' />).getDOMNode()
     expect(el).to.haveClass 'pants'
+
+  it 'should not start or end with a space', ->
+    cls = @render(<Button />).getDOMNode().className
+
+    expect(cls[0]).to.not.equal ' '
+    expect(cls[cls.length-1]).to.not.equal ' '
