@@ -19,6 +19,8 @@ docsByGroup = ->
 
 
 View = React.createClass
+  displayName: 'View'
+
   propTypes:
     view: React.PropTypes.object.isRequired
 
@@ -39,12 +41,14 @@ View = React.createClass
     </div>
 
 Component = React.createClass
+  displayName: 'Component'
+
   propTypes:
     component: React.PropTypes.object.isRequired
 
   render: ->
     comp = @props.component
-    description = (<p>{d}</p> for d in comp.description.split('\n\n'))
+    description = (<p key=i>{d}</p> for d, i in comp.description.split('\n\n'))
     tabs = []
 
     if comp.example?
@@ -90,6 +94,8 @@ Component = React.createClass
 
 
 ComponentGroup = React.createClass
+  displayName: 'ComponentGroup'
+
   propTypes:
     name:       React.PropTypes.string.isRequired
     components: React.PropTypes.array.isRequired
@@ -110,6 +116,8 @@ ComponentGroup = React.createClass
 
 
 Dashboard = React.createClass
+  displayName: 'Dashboard'
+
   getInitialState: ->
     docsByGroup: docsByGroup()
 

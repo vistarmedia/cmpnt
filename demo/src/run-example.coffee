@@ -11,6 +11,8 @@ Pager     = require '../../src/table/pager'
 
 
 RunExample = React.createClass
+  displayName: 'RunExample'
+
   propTypes:
     code: React.PropTypes.string.isRequired
     func: React.PropTypes.string

@@ -1,7 +1,9 @@
 # @name: Tab Group
 #
 # @description: Show a header with tabs that can select between some number of
-# child views.
+# child views. When a TabGroup lands on the DOM, all tabs will be rendered and
+# remain on the DOM and hidden with CSS (so they should not be used for
+# high-level navigation).
 #
 # @example: ->
 #   React.createClass
@@ -14,11 +16,20 @@
 #         <TabGroup.Tab label="Dogs">
 #           <h2>Dogs are cool</h2>
 #         </TabGroup.Tab>
+#
+#         <TabGroup.Tab label="Forms">
+#           <p>
+#             Tabs remain on the page. Type something below, and navigate away
+#             and back
+#           </p>
+#           <input type='text' />
+#         </TabGroup.Tab>
 #       </TabGroup>
 React = require 'react'
 
 
 TabGroup = React.createClass
+  displayName: 'TabGroup'
 
   propTypes:
     active: React.PropTypes.string
@@ -35,10 +46,11 @@ TabGroup = React.createClass
     @setState(active: label)
 
   render: ->
-    tabs = []
-    for tab, i in @state.tabs
+    tabs = for tab, i in @state.tabs
+      cls = ['tab-pane']
       if tab.props.label is @state.active
-        tabs.push <div key=i className='tab-pane active'>{tab}</div>
+        cls.push 'active'
+      <div key=i className={cls.join(' ')}>{tab}</div>
 
     <span>
       <TabGroup.Header
@@ -54,6 +66,8 @@ TabGroup = React.createClass
 # Header which renders the labels. When a tab is click, it will invoke the
 # onClick handler with the current label
 TabGroup.Header = React.createClass
+  displayName: 'TabGroup.Header'
+
   propTypes:
     onChange: React.PropTypes.func
     labels:   React.PropTypes.arrayOf(React.PropTypes.string).isRequired
@@ -81,6 +95,8 @@ TabGroup.Header = React.createClass
 
 
 TabGroup.Tab = React.createClass
+  displayName: 'TabGroup.Tab'
+
   propTypes:
     label: React.PropTypes.string.isRequired
 

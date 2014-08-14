@@ -31,7 +31,10 @@ React       = require 'react'
 
 Pager = require './pager'
 
+
 DataTable = React.createClass
+  displayName: 'DataTable'
+
   propTypes:
     striped:  React.PropTypes.bool
     hover:    React.PropTypes.bool

@@ -95,14 +95,21 @@ describe 'Tab Group', ->
       </TabGroup>)
     expect(tabGroup.state.active).to.equal 'Two'
 
-  it 'should not have hidden tabs on the DOM', ->
+  it 'should have hidden tabs on the DOM', ->
     tabGroup = @render(
       <TabGroup active='One'>
         <TabGroup.Tab label='One'><span className='1'>First</span></TabGroup.Tab>
         <TabGroup.Tab label='Two'><span className='2'>Second</span></TabGroup.Tab>
       </TabGroup>)
+
     el = tabGroup.getDOMNode()
 
-    # Tab 'One' should be on the DOM, tab 'Two' should not
+    tabs = el.querySelectorAll('.tab-pane')
+    expect(tabs).to.have.length 2
+
+    expect(tabs[0]).to.haveClass 'active'
+    expect(tabs[1]).to.not.haveClass 'active'
+
     expect(el.querySelector('span.1')).to.exist
-    expect(el.querySelector('span.2')).to.not.exist
+    expect(el.querySelector('span.2')).to.exist
+

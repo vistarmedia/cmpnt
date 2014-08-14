@@ -14,6 +14,7 @@ React       = require 'react'
 
 
 Button = React.createClass
+  displayName: 'Button'
 
   propTypes:
     onClick:    React.PropTypes.func

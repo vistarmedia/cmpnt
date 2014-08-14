@@ -32,7 +32,7 @@ Button = require '../form/button'
 # Pager will accept a 'count' property and invoke an 'onRangeChange' callback
 # that should take the starting and ending positions.
 Pager = React.createClass
-  name: 'Pager'
+  displayName: 'Pager'
 
   propTypes:
     count:          React.PropTypes.number.isRequired
@@ -158,6 +158,8 @@ Pager = React.createClass
 # Single item of a pager. May be 'previous', 'next', or some number indicating
 # the current page number.
 Pager.Item = React.createClass
+  displayName: 'Pager.Item'
+
   propTypes:
     disabled: React.PropTypes.bool
     active:   React.PropTypes.bool

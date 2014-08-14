@@ -17,6 +17,7 @@ React = require 'react'
 
 
 Icon = React.createClass
+  displayName: 'Icon'
 
   propTypes:
     name:       React.PropTypes.string
