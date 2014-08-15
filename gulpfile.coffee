@@ -1,3 +1,4 @@
+_           = require 'xunit-file'
 browserify  = require 'gulp-browserify'
 cjsx        = require 'gulp-cjsx'
 concat      = require 'gulp-concat'
