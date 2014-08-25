@@ -66,17 +66,30 @@ _staticTask = (name, proj) ->
 
 _testTask = (name, proj, reporter='dot', bail=true) ->
   gulp.task name, ->
-    gulp.src(proj.test, read: false)
-      .pipe(mocha(reporter: reporter, bail: bail))
-      .on 'error', (err) ->
-        console.log(err.toString())
-        @emit('end')
+    exitOnFinish runTests, proj
+
+
+runTests = (project, reporter='dot', bail=true) ->
+  gulp.src(project.test, read: false)
+    .pipe(mocha(reporter: reporter, bail: bail))
+    .on 'error', (err) ->
+      gutil.log(err.toString())
+
+
+exitOnFinish = (func, args...) ->
+  func(args...)
+    .on 'error', -> process.exit(1)
+    .on 'end',   -> process.exit(0)
 
 
 gulp.task 'project:src', ->
   gulp.src(project.srcs)
     .pipe(cjsx())
     .pipe(gulp.dest(project.dest))
+
+
+gulp.task 'project:test:watch', ->
+  gulp.watch([project.srcs, project.test], -> runTests(project))
 
 
 _sourceTask('demo:src', demo, ['project:doc'])
@@ -99,5 +112,7 @@ gulp.task 'style', ['project:style', 'demo:style']
 gulp.task 'static', ['demo:static']
 
 gulp.task 'test', ['project:test']
+
+gulp.task 'test:watch', ['project:test:watch']
 
 gulp.task 'default', ['src', 'style', 'static']
