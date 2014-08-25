@@ -61,7 +61,8 @@ DataTable = React.createClass
     term     = e.currentTarget.value
     filtered = @props.filter(@props.models, term)
     # TODO: Move to page 0?
-    @setState(filteredModels: filtered)
+    if term is @state.filter then return
+    @setState(filteredModels: filtered, filter: term)
 
   render: ->
     hasFilter = @props.filter?

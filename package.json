@@ -21,6 +21,7 @@
     "gulp-mocha":             "0.5.x",
     "gulp-util":              "2.2.x",
     "mocha":                  "^1",
+    "sinon":                  "1.10.3",
     "through":                "2.3.x",
     "xunit-file":             "0.0.x"
   }
