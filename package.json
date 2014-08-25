@@ -1,9 +1,11 @@
 {
   "dependencies": {
-    "react":                "0.10.x",
+    "react":                "0.11.x",
     "routington":           "1.0.x"
   },
-
+  "scripts": {
+    "test": "gulp test"
+  },
   "devDependencies": {
     "backbone":               "1.1.2",
     "chai":                   "1.9.x",
