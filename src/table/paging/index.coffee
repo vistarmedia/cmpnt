@@ -25,7 +25,7 @@
 #       </span>
 React = require 'react'
 
-Button = require '../form/button'
+Button = require '../../form/button'
 
 
 
@@ -181,6 +181,9 @@ Pager.Item = React.createClass
             className = className>
       {@props.children}
     </Button>
+
+
+Pager.ItemsPerPageSelect = require('./items-per-page-select')
 
 
 module.exports = Pager

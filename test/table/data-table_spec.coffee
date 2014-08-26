@@ -23,9 +23,13 @@ describe 'Data Table', ->
     ]
 
     @_filterImpl = (models, term) -> models
-    filter = (models, term) => @_filterImpl(models, term)
+    @filter = (models, term) => @_filterImpl(models, term)
 
-    @table = @render <DataTable columns=@columns models=@models filter=filter />
+    @table = @render DataTable
+      columns:  @columns,
+      models:   @models,
+      filter:   @filter
+
     @input = @table.getDOMNode().getElementsByTagName('input')[0]
 
   it 'should render formatted column headers', ->
@@ -76,8 +80,54 @@ describe 'Data Table', ->
 
     @table.render.restore()
 
-  # TODO
-  it 'should move to page 0 on filter change'
+  it 'should not render items per page select if no perPage prop', ->
+    el     = @table.getDOMNode()
+    select = el.querySelector('select')
+    expect(select).not.to.exist
 
   # TODO
-  it 'should let the collection decide how to filter'
+  #it 'should move to page 0 on filter change'
+
+  # TODO
+  #it 'should let the collection decide how to filter'
+
+  context 'using items per page select', ->
+
+    beforeEach ->
+      @table = @render DataTable
+        columns:       @columns
+        filter:        @filter
+        models:        @models
+        itemsPerPage:  10
+      @tableEl = @table.getDOMNode()
+      @rows    = -> @tableEl.querySelectorAll('tbody > tr')
+
+    it 'should render a per page selector', ->
+      select = @tableEl.querySelector('select')
+      expect(select).to.exist
+
+    it 'should update the number of rows displayed when changed', ->
+      select = @tableEl.querySelector('select')
+
+      expect(@rows()).to.have.length 10
+
+      select.value = 5
+      @simulate.change(select)
+
+      expect(@rows()).to.have.length 5
+
+    it 'should retain the selected number of rows on paging', ->
+      select     = @tableEl.querySelector('select')
+      nextButton = @tableEl.querySelector('button[data-reactid$="next"]')
+
+      expect(@rows()).to.have.length 10
+
+      select.value = 5
+      @simulate.change(select)
+      @simulate.click(nextButton)
+
+      expect(@rows()).to.have.length 5
+
+      @simulate.click(nextButton)
+
+      expect(@rows()).to.have.length 5

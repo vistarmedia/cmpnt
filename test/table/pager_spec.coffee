@@ -3,10 +3,11 @@ require '../test_case'
 React    = require 'react'
 {expect} = require 'chai'
 
-Pager = require '../../src/table/pager'
+Pager = require '../../src/table/paging'
 
 
 describe 'Pager Item', ->
+
   it 'should directly render children', ->
     item = @render <Pager.Item page=0><h1>Hi!</h1></Pager.Item>
     children = item.getDOMNode().childNodes
@@ -32,6 +33,26 @@ describe 'Pager Item', ->
   it 'should indicate an active item', ->
     el = @render(<Pager.Item page=0 active=true />).getDOMNode()
     expect(el).to.haveClass 'active'
+
+
+describe 'Pager.ItemsPerPageSelect', ->
+
+  it 'should accept a perPageCount', ->
+    select = @render <Pager.ItemsPerPageSelect perPage=25 />
+    expect(select.props.perPage).to.equal 25
+
+  it 'should accept a perPageOptions', ->
+    select = @render Pager.ItemsPerPageSelect(perPageOptions: [25, 50, 100])
+    expect(select.props.perPageOptions).to.eql [25, 50, 100]
+
+  it 'should update perPage on select', ->
+    select = @render <Pager.ItemsPerPageSelect />
+    el     = select.getDOMNode()
+    selectEl = el.getElementsByTagName('select')[0]
+    selectEl.value = '5'
+    @simulate.change(selectEl)
+    expect(select.state.perPage).to.equal 5
+
 
 describe 'Pager', ->
 
@@ -165,6 +186,7 @@ describe 'Pager', ->
       expect(visible[4]).to.equal 4
 
   describe 'when truncating', ->
+
     beforeEach ->
       @pager = @render(<Pager itemsPerPage=1 count=25 maxVisible=7 />)
 

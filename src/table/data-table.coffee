@@ -3,6 +3,13 @@
 # @description: A data table which can display some columns for a collection of
 # models.
 #
+# If given a "filter" property, an input allowing the user to filter all rows
+# will be displayed.
+#
+# If given an "itemsPerPage" property, a select will be rendered which will
+# allow the user to select how many items per page they'd like to see.  If
+# omitted, this select will not be rendered.
+#
 # TODO: Document column object shape
 #
 # TODO: Document expected model shape
@@ -23,25 +30,27 @@
 #       m for m in models when m.get('name').indexOf(term) > -1
 #
 #     render: ->
-#       <DataTable columns = @state.columns
-#                  models  = @state.models
-#                  filter  = @filterByName />
+#       <DataTable columns      = @state.columns
+#                  models       = @state.models
+#                  filter       = @filterByName
+#                  itemsPerPage = 10 />
 React       = require 'react'
 {classSet}  = require('react/addons').addons
 
-Pager = require './pager'
+Pager = require './paging'
 
 
 DataTable = React.createClass
   displayName: 'DataTable'
 
   propTypes:
-    striped:  React.PropTypes.bool
-    hover:    React.PropTypes.bool
-    compact:  React.PropTypes.bool
-    filter:   React.PropTypes.func
-    models:   React.PropTypes.arrayOf(React.PropTypes.object)
-    columns:  React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+    striped:         React.PropTypes.bool
+    hover:           React.PropTypes.bool
+    compact:         React.PropTypes.bool
+    itemsPerPage:    React.PropTypes.number
+    filter:          React.PropTypes.func
+    models:          React.PropTypes.arrayOf(React.PropTypes.object)
+    columns:         React.PropTypes.arrayOf(React.PropTypes.object).isRequired
 
   getDefaultProps: ->
     striped:  false
@@ -50,12 +59,16 @@ DataTable = React.createClass
     models:   []
 
   getInitialState: ->
-    start:          0
-    end:            0
-    filteredModels: @props.models
+    start:           0
+    end:             0
+    itemsPerPage:    @props.itemsPerPage
+    filteredModels:  @props.models
 
   onRangeChange: (start, end) ->
     @setState(start: start, end: end)
+
+  getVisibleOnPage: (models) ->
+    models[@state.start..@state.end]
 
   onUpdateFilter: (e) ->
     term     = e.currentTarget.value
@@ -64,8 +77,15 @@ DataTable = React.createClass
     if term is @state.filter then return
     @setState(filteredModels: filtered, filter: term)
 
+  onChangeRecordsPerPage: (count) ->
+    @setState
+      itemsPerPage:  count
+      start:         0
+      end:           count - 1
+
   render: ->
-    hasFilter = @props.filter?
+    hasFilter             = @props.filter?
+    hasItemsPerPageSelect = @props.itemsPerPage?
 
     className = classSet
       'table':            true
@@ -74,10 +94,21 @@ DataTable = React.createClass
       'table-hover':      @props.hover
       'table-condensed':  @props.compact
 
-    visible = @state.filteredModels[@state.start..@state.end]
+    visible = @getVisibleOnPage(@state.filteredModels)
 
     <span>
-      {@_filter() if hasFilter}
+      <div className='row'>
+        {@_filter() if hasFilter}
+
+        {if hasItemsPerPageSelect
+          <div className='col-xs-6'>
+            <Pager.ItemsPerPageSelect itemsPerPage = @state.itemsPerPage
+                                      onChange     = @onChangeRecordsPerPage />
+          </div>
+        }
+
+
+      </div>
       <div className='row'>
         <table className={className}>
           {@_header(@props.columns)}
@@ -87,6 +118,7 @@ DataTable = React.createClass
       <div className='row'>
         <Pager count         = @state.filteredModels.length
                maxVisible    = 7
+               itemsPerPage  = @state.itemsPerPage
                onRangeChange = @onRangeChange />
         <p>
           Showing {@state.start+1} to {@state.end+1} of {@state.filteredModels.length}
@@ -95,7 +127,7 @@ DataTable = React.createClass
     </span>
 
   _filter: ->
-    <div className='row'>
+    <div className='col-xs-6'>
       <input type='text'
              placeholder='Search...'
              onKeyUp=@onUpdateFilter />

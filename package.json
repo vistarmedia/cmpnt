@@ -12,6 +12,7 @@
     "coffee-react-transform": "0.5.x",
     "coffee-script":          "1.7.x",
     "coffeeify":              "0.6.x",
+    "connect":                "2.25.7",
     "domino":                 "1.0.17",
     "gulp":                   "3.8.x",
     "gulp-browserify":        "0.5.x",
@@ -21,6 +22,7 @@
     "gulp-mocha":             "0.5.x",
     "gulp-util":              "2.2.x",
     "mocha":                  "^1",
+    "serve-static":           "1.5.3",
     "sinon":                  "1.10.3",
     "through":                "2.3.x",
     "xunit-file":             "0.0.x"

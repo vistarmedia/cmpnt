@@ -2,10 +2,12 @@ _           = require 'xunit-file'
 browserify  = require 'gulp-browserify'
 cjsx        = require 'gulp-cjsx'
 concat      = require 'gulp-concat'
+connect     = require 'connect'
 gulp        = require 'gulp'
 gutil       = require 'gulp-util'
 less        = require 'gulp-less'
 mocha       = require 'gulp-mocha'
+serve       = require 'serve-static'
 
 docparse    = require './docparse'
 
@@ -90,6 +92,14 @@ gulp.task 'project:src', ->
 
 gulp.task 'project:test:watch', ->
   gulp.watch([project.srcs, project.test], -> runTests(project))
+
+gulp.task 'serve', ->
+  app = connect()
+  app.use(serve(demo.dest))
+  app.listen(process.env['PORT'] or 4011)
+
+gulp.task 'watch:serve', ['serve'], ->
+  gulp.watch([project.srcs, demo.srcs, demo.style], ['src', 'style', 'static'])
 
 
 _sourceTask('demo:src', demo, ['project:doc'])
