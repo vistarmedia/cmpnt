@@ -24,16 +24,16 @@ build: clean update
 	$(GULP) project
 	$(GULP) default
 
-publish: build
+publish:
 	cd $(BUILD_DIR) && npm publish .
 
 prerelease_version:
 	sed -i s/$(PUBLISHED_VERSION)/$(PUBLISHED_VERSION)-pre-$(VERSION)/g \
 		$(BUILD_DIR)/package.json
 
-prerelease: prerelease_version publish publish_docs
+prerelease: build prerelease_version publish publish_docs
 
-release: publish publish_docs
+release: build publish publish_docs
 
 link: build
 	cd $(BUILD_DIR) && npm link .
