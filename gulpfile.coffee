@@ -68,7 +68,7 @@ _staticTask = (name, proj) ->
 
 _testTask = (name, proj, reporter='dot', bail=true) ->
   gulp.task name, ->
-    exitOnFinish runTests, proj
+    exitOnFinish runTests, proj, reporter, false
 
 
 runTests = (project, reporter='dot', bail=true) ->
