@@ -53,6 +53,12 @@ describe 'Pager.ItemsPerPageSelect', ->
     @simulate.change(selectEl)
     expect(select.state.perPage).to.equal 5
 
+  it 'should not notify if the count <= 0', ->
+    onChange = -> fail()
+    select = @render <Pager.ItemsPerPageSelect onChange=onChange />
+
+    select.onChangeRecordsPerPage(target: {value: ''})
+
 
 describe 'Pager', ->
 

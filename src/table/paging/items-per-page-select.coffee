@@ -45,9 +45,10 @@ ItemsPerPageSelect = React.createClass
 
   onChangeRecordsPerPage: (e) ->
     val = parseInt(e.target.value, 10)
-    @setState
-      perPage:  val
-    @props.onChange?(val)
+    if val > 0
+      @setState
+        perPage:  val
+      @props.onChange?(val)
 
   render: ->
     options = for i in @props.perPageOptions

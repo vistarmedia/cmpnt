@@ -53,35 +53,37 @@ DataTable = React.createClass
     columns:         React.PropTypes.arrayOf(React.PropTypes.object).isRequired
 
   getDefaultProps: ->
-    striped:  false
-    hover:    true
-    compact:  false
-    models:   []
+    striped:      false
+    hover:        true
+    compact:      false
+    models:       []
 
   getInitialState: ->
-    start:           0
-    end:             0
+    pageStart:       0
     itemsPerPage:    @props.itemsPerPage
-    filteredModels:  @props.models
-
-  onRangeChange: (start, end) ->
-    @setState(start: start, end: end)
-
-  getVisibleOnPage: (models) ->
-    models[@state.start..@state.end]
 
   onUpdateFilter: (e) ->
-    term     = e.currentTarget.value
-    filtered = @props.filter(@props.models, term)
-    # TODO: Move to page 0?
-    if term is @state.filter then return
-    @setState(filteredModels: filtered, filter: term)
+    @setState(filterTerm: e.currentTarget.value)
+
+  onRangeChange: (start, end) ->
+    @setState(pageStart: start)
+
+  getValid: (models) ->
+    if @props.filter? and @state.filterTerm?
+      @props.filter(@props.models, @state.filterTerm)
+    else
+      @props.models
+
+  getVisibleOnPage: (models) ->
+    if @props.itemsPerPage?
+      start = @state.pageStart
+      end   = @state.itemsPerPage + start - 1
+      models[start..end]
+    else
+      models
 
   onChangeRecordsPerPage: (count) ->
-    @setState
-      itemsPerPage:  count
-      start:         0
-      end:           count - 1
+    @setState(itemsPerPage: count, start: 0)
 
   render: ->
     hasFilter             = @props.filter?
@@ -94,7 +96,8 @@ DataTable = React.createClass
       'table-hover':      @props.hover
       'table-condensed':  @props.compact
 
-    visible = @getVisibleOnPage(@state.filteredModels)
+    valid   = @getValid(@props.models)
+    visible = @getVisibleOnPage(valid)
 
     <span>
       <div className='row'>
@@ -116,12 +119,12 @@ DataTable = React.createClass
         </table>
       </div>
       <div className='row'>
-        <Pager count         = @state.filteredModels.length
+        <Pager count         = valid.length
                maxVisible    = 7
                itemsPerPage  = @state.itemsPerPage
                onRangeChange = @onRangeChange />
         <p>
-          Showing {@state.start+1} to {@state.end+1} of {@state.filteredModels.length}
+          Showing {@state.pageStart+1} to {@state.pageStart+@props.itemsPerPage} of {valid.length}
         </p>
       </div>
     </span>

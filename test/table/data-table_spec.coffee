@@ -1,5 +1,4 @@
 require '../test_case'
-sinon = require 'sinon'
 
 React     = require 'react'
 Backbone  = require 'backbone'
@@ -25,10 +24,10 @@ describe 'Data Table', ->
     @_filterImpl = (models, term) -> models
     @filter = (models, term) => @_filterImpl(models, term)
 
-    @table = @render DataTable
-      columns:  @columns,
-      models:   @models,
-      filter:   @filter
+    @table = @render <DataTable columns = @columns
+                                models  = @models
+                                filter  = @filter
+                                itemsPerPage = 10 />
 
     @input = @table.getDOMNode().getElementsByTagName('input')[0]
 
@@ -68,28 +67,36 @@ describe 'Data Table', ->
   it 'should change the filter when the input is changed', ->
     @input.value = 'guuuuurl'
     @simulate.keyUp(@input)
-    expect(@table.state.filter).to.equal 'guuuuurl'
-
-  it 'should not invoke a callback when there has been no change', ->
-    @input.value = 'my cool filter'
-    render = sinon.spy(@table, 'render')
-
-    @simulate.keyUp(@input)
-    @simulate.keyUp(@input)
-    expect(render.calledOnce).to.be.true
-
-    @table.render.restore()
+    expect(@table.state.filterTerm).to.equal 'guuuuurl'
 
   it 'should not render items per page select if no perPage prop', ->
-    el     = @table.getDOMNode()
+    table = @render <DataTable columns      = @columns
+                               filter       = @filter
+                               models       = [] />
+    el     = table.getDOMNode()
     select = el.querySelector('select')
     expect(select).not.to.exist
 
-  # TODO
-  #it 'should move to page 0 on filter change'
+  it 'should update update when the models prop has changed', ->
+    el = @table.getDOMNode()
+    expect(el.querySelectorAll('tbody > tr')).to.have.length 10
+
+    @table.setProps(models: [new Model(id: 3, name: 'Frank')])
+    expect(el.querySelectorAll('tbody > tr')).to.have.length 1
+
+  it 'should page correctly if the number of models grows', ->
+    table = @render <DataTable columns      = @columns
+                               filter       = @filter
+                               itemsPerPage = 10
+                               models       = [] />
+    el = table.getDOMNode()
+
+    expect(el.querySelectorAll('tbody > tr')).to.have.length 0
+    table.setProps(models: @models)
+    expect(el.querySelectorAll('tbody > tr')).to.have.length 10
 
   # TODO
-  #it 'should let the collection decide how to filter'
+  #it 'should move to page 0 on filter change'
 
   context 'using items per page select', ->
 
