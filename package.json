@@ -23,6 +23,7 @@
     "mocha":                  "^1",
     "serve-static":           "1.5.3",
     "sinon":                  "1.10.3",
+    "sinon-chai":             "2.5.0",
     "through":                "2.3.x",
     "xunit-file":             "0.0.x"
   }

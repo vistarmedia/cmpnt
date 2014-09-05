@@ -95,8 +95,34 @@ describe 'Data Table', ->
     table.setProps(models: @models)
     expect(el.querySelectorAll('tbody > tr')).to.have.length 10
 
+  it 'should use the row class given in the "row" prop', ->
+    CustomTestRow = React.createClass
+      render: ->
+        <tr key={@props.model.id}>
+          <td>
+            {@props.model.id}
+          </td>
+          <td>
+            custom row for {@props.model.get('name')}
+          </td>
+        </tr>
+
+    table = @render DataTable
+      columns:       @columns
+      filter:        @filter
+      models:        @models
+      itemsPerPage:  10
+      row:           CustomTestRow
+    tableEl  = table.getDOMNode()
+    firstRow = tableEl.querySelector('tr:nth-child(1) > td:nth-child(2)')
+
+    expect(firstRow.innerHTML).to.contain "custom row for"
+
   # TODO
-  #it 'should move to page 0 on filter change'
+  it 'should move to page 0 on filter change'
+
+  # TODO
+  it 'should move to page 0 on filter change'
 
   context 'using items per page select', ->
 
