@@ -26,7 +26,7 @@ Button = React.createClass
 
   render: ->
     classes = if @props.className? then [@props.className] else []
-    classes = classes.concat('btn', 'btn-default', 'btn-large')
+    classes = classes.concat('btn', 'btn-large')
     classes.push 'disabled' if @props.disabled
 
     <button className={classes.join(' ')} onClick=@onClick>
