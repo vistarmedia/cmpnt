@@ -17,9 +17,9 @@ describe 'DataTable Row', ->
     @model1  = new Model id: 'model-1', name: 'Fredsled Montgomery', age: 45
     @model2  = new Model id: 'model-2', name: 'Fredsled Jenkins', age: 43
     @columns = [
-      'id'
-      'name'
-      'age'
+      {field: 'id'},
+      {field: 'name'},
+      {field: 'age'},
     ]
     @table = @render(
       <table>
@@ -44,16 +44,13 @@ describe 'DataTable Row', ->
   context 'when using formatters', ->
 
     it 'should format using formatting function', ->
-      formatters =
-        id: (model) ->
-          <a href="/#/model/#{model.id}">{model.id}</a>
+      @columns[0].format = (id) ->
+        <a href="/#/model/#{id}">{id}</a>
 
       tableWithFormat = @render(
         <table>
           <tbody>
-            <Row model   = @model1
-                 columns = @columns
-                 format  = formatters />
+            <Row model=@model1 columns=@columns />
           </tbody>
         </table>)
 

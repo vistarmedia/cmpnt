@@ -30,7 +30,7 @@
 #       models:   (new Model(id: i, name: "Model #{i+1}") for i in [0..299])
 #       columns:  [
 #         {field: 'id',   label: 'ID'},
-#         {field: 'name', label: 'Name'}
+#         {field: 'name', label: 'Name', format: (name) -> "#{name}!"}
 #       ]
 #
 #     filterByName: (models, term) ->
@@ -126,7 +126,9 @@ DataTable = React.createClass
       <div className='row'>
         <table className={className}>
           {@_header(@props.columns)}
-          {@_rows(visible)}
+          <tbody>
+            {@_row(model) for model in visible}
+          </tbody>
         </table>
       </div>
       <div className='row'>
@@ -155,14 +157,8 @@ DataTable = React.createClass
       <tr>{headings}</tr>
     </thead>
 
-  _rows: (models) ->
-    columns = (c.field for c in @props.columns)
-    <tbody>
-      {@_row(model, columns) for model in models}
-    </tbody>
-
-  _row: (model, columns) ->
-    @props.row key: "row-#{model.cid}", model: model, columns: columns
+  _row: (model) ->
+    @props.row key: "row-#{model.cid}", model: model, columns: @props.columns
 
 
 DataTable.Row = Row
