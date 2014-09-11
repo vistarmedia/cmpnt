@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "react":                "0.11.x"
+    "chart.js":             "1.0.1-beta.2",
+    "react":                "0.11.x",
+    "lodash":               "2.4.1"
   },
   "scripts": {
     "test": "gulp test"
