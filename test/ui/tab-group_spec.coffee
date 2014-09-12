@@ -77,15 +77,6 @@ describe 'Tab Group', ->
         <TabGroup.Tab label='Three'>Third</TabGroup.Tab>
       </TabGroup>
 
-  it 'should know the labels of its children', ->
-    tabGroup = @render(@tabGroupCls)
-    expect(tabGroup.state.tabs).to.have.length 3
-    expect(tabGroup.state.labels).to.have.length 3
-
-    expect(tabGroup.state.labels[0]).to.equal 'One'
-    expect(tabGroup.state.labels[1]).to.equal 'Two'
-    expect(tabGroup.state.labels[2]).to.equal 'Three'
-
   it 'should allow the active tab to be over-ridden', ->
     tabGroup = @render(
       <TabGroup active='Two'>

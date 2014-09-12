@@ -35,27 +35,26 @@ TabGroup = React.createClass
     active: React.PropTypes.string
 
   getInitialState: ->
-    tabs       = (c for c in @props.children when c.props?.label?)
-    labels     = (t.props.label for t in tabs)
-
-    tabs:       tabs
-    labels:     labels
-    active:     @props.active or labels[0]
+    active: @props.active
 
   onChange: (label) ->
     @setState(active: label)
 
   render: ->
-    tabs = for tab, i in @state.tabs
+    children = (c for c in @props.children when c.props?.label?)
+    labels   = (c.props.label for c in children)
+    active   = @state.active or labels[0]
+
+    tabs = for tab, i in children
       cls = ['tab-pane']
-      if tab.props.label is @state.active
+      if tab.props.label is active
         cls.push 'active'
       <div key=i className={cls.join(' ')}>{tab}</div>
 
     <span>
       <TabGroup.Header
-        active   = @state.active
-        labels   = @state.labels
+        active   = active
+        labels   = labels
         onChange = @onChange />
       <div className='tab-content'>
         {tabs}
