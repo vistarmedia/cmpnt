@@ -123,15 +123,15 @@ DataTable = React.createClass
 
 
       </div>
-      <div className='row'>
-        <table className={className}>
-          {@_header(@props.columns)}
-          <tbody>
-            {@_row(model) for model in visible}
-          </tbody>
-        </table>
-      </div>
-      <div className='row'>
+
+      <table className={className}>
+        {@_header(@props.columns)}
+        <tbody>
+          {@_row(model) for model in visible}
+        </tbody>
+      </table>
+
+      <p>
         <Pager count         = valid.length
                maxVisible    = 7
                itemsPerPage  = @state.itemsPerPage
@@ -139,7 +139,7 @@ DataTable = React.createClass
         <p>
           Showing {@state.pageStart+1} to {@state.pageStart+@props.itemsPerPage} of {valid.length}
         </p>
-      </div>
+      </p>
     </span>
 
   _filter: ->
