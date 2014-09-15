@@ -55,7 +55,7 @@ LineChart = React.createClass
       height = (width * 0.6).toFixed()
       @setState(width: width, height: height)
 
-    ctx = @refs.chart.getDOMNode().getContext("2d")
+    ctx = @refs.chart.getDOMNode().getContext?("2d")
     @chart = new Chart(ctx).Line @_chartData(), { bezierCurve: false }
 
   componentWillUnmount: ->
