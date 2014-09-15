@@ -1,6 +1,6 @@
 {
   "name":     "cmpnt",
-  "version":  "0.0.9",
+  "version":  "0.0.10",
 
   "dependencies": {
     "chart.js":             "1.0.1-beta.2",

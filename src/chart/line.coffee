@@ -27,9 +27,11 @@ _     = require 'lodash'
 LineChart = React.createClass
   displayName: 'LineChart'
 
-  getDefaultProps: ->
+  getInitialState: ->
     width: 600
     height: 300
+
+  getDefaultProps: ->
     data: []
 
   dataDefaults:
@@ -43,9 +45,16 @@ LineChart = React.createClass
   propTypes:
     width:  React.PropTypes.number
     height: React.PropTypes.number
-    data:   React.PropTypes.object
+    data:   React.PropTypes.object.isRequired
 
   componentDidMount: ->
+    if @props.width? and @props.height?
+      @setState width: @props.width, height: @props.height
+    else
+      width = @getDOMNode().clientWidth
+      height = (width * 0.6).toFixed()
+      @setState(width: width, height: height)
+
     ctx = @refs.chart.getDOMNode().getContext("2d")
     @chart = new Chart(ctx).Line @_chartData(), { bezierCurve: false }
 
@@ -54,7 +63,10 @@ LineChart = React.createClass
 
   render: ->
     <div className="line-chart">
-      <canvas ref="chart" width={@props.width} height={@props.height} />
+      <canvas ref="chart"
+              width={@state.width}
+              height={@state.height}
+              style={width: @state.width, height: @state.height} />
     </div>
 
   _chartData: ->
@@ -64,5 +76,4 @@ LineChart = React.createClass
     _.extend @props.data, { datasets: mergedDatasets }
 
 
-module.exports =
-  LineChart:  LineChart
+module.exports = LineChart
