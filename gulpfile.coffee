@@ -5,6 +5,7 @@ concat      = require 'gulp-concat'
 connect     = require 'connect'
 gulp        = require 'gulp'
 gutil       = require 'gulp-util'
+http        = require 'http'
 less        = require 'gulp-less'
 mocha       = require 'gulp-mocha'
 serve       = require 'serve-static'
@@ -78,11 +79,28 @@ runTests = (project, reporter='dot', bail=true) ->
       gutil.log(err.toString())
 
 
+getCurrentVersion = (cb) ->
+  options =
+    hostname: 'registry.npmjs.org'
+    path:     '/cmpnt/'
+    headers:
+      'accept': 'application/json'
+
+  out = []
+  req = http.get options, (res) ->
+    res.on 'data', (c) -> out.push(c)
+    res.on 'end', -> cb(JSON.parse(Buffer.concat(out))['dist-tags']['latest'])
+
 exitOnFinish = (func, args...) ->
   func(args...)
     .on 'error', -> process.exit(1)
     .on 'end',   -> process.exit(0)
 
+
+gulp.task 'autoversion', ->
+  getCurrentVersion (version) ->
+    [major, minor, patch] = version.split('.')
+    process.stdout.write "#{major}.#{minor}.#{Number(patch) + 1}"
 
 gulp.task 'project:src', ->
   gulp.src(project.srcs)
