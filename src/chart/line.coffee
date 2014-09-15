@@ -56,10 +56,11 @@ LineChart = React.createClass
       @setState(width: width, height: height)
 
     ctx = @refs.chart.getDOMNode().getContext?("2d")
-    @chart = new Chart(ctx).Line @_chartData(), { bezierCurve: false }
+    if ctx?
+      @chart = new Chart(ctx).Line @_chartData(), { bezierCurve: false }
 
   componentWillUnmount: ->
-    @chart.destroy()
+    @chart?.destroy()
 
   render: ->
     <div className="line-chart">
