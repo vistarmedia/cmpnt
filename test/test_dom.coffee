@@ -30,7 +30,8 @@ beforeEach ->
     @_nodes.push(el)
     React.renderComponent(cls, el)
 
-  @simulate = TestUtils.Simulate
+  @simulate   = TestUtils.Simulate
+  @allByType  = TestUtils.scryRenderedComponentsWithType
 
 
 # Nuke the global state of window/document/navigator

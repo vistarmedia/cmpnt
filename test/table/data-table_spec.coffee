@@ -5,6 +5,7 @@ Backbone  = require 'backbone'
 {expect}  = require 'chai'
 
 DataTable = require '../../src/table/data-table'
+Pager     = require '../../src/table/paging'
 
 
 class Model extends Backbone.Model
@@ -164,3 +165,12 @@ describe 'Data Table', ->
       @simulate.click(nextButton)
 
       expect(@rows()).to.have.length 5
+
+    it 'should show the pager if there is greater than one page', ->
+      expect(@allByType(@table, Pager)).to.have.length 1
+      expect(@allByType(@table, Pager.ItemsPerPageSelect)).to.have.length 1
+
+    it 'should not show the pager if there is only one page', ->
+      @table.setProps models: @models[0..4]
+      expect(@allByType(@table, Pager)).to.have.length 0
+      expect(@allByType(@table, Pager.ItemsPerPageSelect)).to.have.length 0

@@ -107,14 +107,16 @@ DataTable = React.createClass
       'table-hover':      @props.hover
       'table-condensed':  @props.compact
 
-    valid   = @getValid(@props.models)
-    visible = @getVisibleOnPage(valid)
+    valid       = @getValid(@props.models)
+    visible     = @getVisibleOnPage(valid)
+    maxVisible  = 7
+    showPager   = valid.length > maxVisible
 
     <span>
       <div className='row'>
         {@_filter() if hasFilter}
 
-        {if hasItemsPerPageSelect
+        {if showPager and hasItemsPerPageSelect
           <div className='col-xs-6'>
             <Pager.ItemsPerPageSelect itemsPerPage = @state.itemsPerPage
                                       onChange     = @onChangeRecordsPerPage />
@@ -131,15 +133,19 @@ DataTable = React.createClass
         </tbody>
       </table>
 
-      <p>
-        <Pager count         = valid.length
-               maxVisible    = 7
-               itemsPerPage  = @state.itemsPerPage
-               onRangeChange = @onRangeChange />
-        <p>
-          Showing {@state.pageStart+1} to {@state.pageStart+@props.itemsPerPage} of {valid.length}
-        </p>
-      </p>
+      {if showPager
+        <div>
+          <p>
+            <Pager count         = valid.length
+                   maxVisible    = maxVisible
+                   itemsPerPage  = @state.itemsPerPage
+                   onRangeChange = @onRangeChange />
+          </p>
+          <p>
+            Showing {@state.pageStart+1} to {@state.pageStart+@props.itemsPerPage} of {valid.length}
+          </p>
+        </div>
+      }
     </span>
 
   _filter: ->
