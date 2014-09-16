@@ -1,7 +1,7 @@
 Backbone  = require 'backbone'
 React     = require 'react'
 
-{LineChart} = require '../../src/chart/line'
+LineChart = require '../../src/chart/line'
 
 Button    = require '../../src/form/button'
 
