@@ -5,7 +5,7 @@ BUILD_DIR=./build
 DOCSITE_DIR=./demo/build
 
 ifeq "$(ENVIRONMENT)" "production"
-AUTOVERSION=$(shell $(GULP) autoversion --silent)
+AUTOVERSION:=$(shell $(GULP) autoversion --silent)
 endif
 
 
@@ -41,7 +41,7 @@ tag:
 	@git tag $(AUTOVERSION) HEAD
 	@git push origin --tags
 
-release: build publish tag publish_docs
+release: build tag publish publish_docs
 
 link: build
 	cd $(BUILD_DIR) && npm link .
