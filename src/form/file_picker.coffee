@@ -1,4 +1,16 @@
-React       = require 'react'
+# @name: FilePicker
+#
+# @description: Renders a button that, when clicked, opens a file upload
+# dialog. Passes the result files into the `onChange` function.
+#
+# @example: ->
+#   React.createClass
+#     onChange: (files) ->
+#       alert "Got file: #{files[0].name}"
+#
+#     render: ->
+#       <FilePicker onChange=@onChange>Upload File</FilePicker>
+React = require 'react'
 
 Button = require './button'
 

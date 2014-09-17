@@ -3,7 +3,8 @@ React     = require 'react'
 
 LineChart = require '../../src/chart/line'
 
-Button    = require '../../src/form/button'
+Button     = require '../../src/form/button'
+FilePicker = require '../../src/form/file_picker'
 
 Icon      = require '../../src/ui/icon'
 TabGroup  = require '../../src/ui/tab-group'
