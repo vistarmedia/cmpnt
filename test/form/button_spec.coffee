@@ -1,6 +1,7 @@
 require '../test_case'
 
 {expect} = require 'chai'
+sinon    = require 'sinon'
 
 Button = require '../../src/form/button'
 
@@ -16,10 +17,12 @@ describe 'Button', ->
     el     = button.getDOMNode()
     expect(el).to.haveClass 'disabled'
 
-  it 'should invoke its onClick handler', (done) ->
-    onClick = -> done()
+  it 'should invoke its onClick handler', ->
+    onClick = sinon.spy()
     button  = @render <Button onClick=onClick />
     @simulate.click(button.getDOMNode())
+
+    expect(onClick).to.have.been.called
 
   it 'should pass through className', ->
     el = @render(<Button className='pants' />).getDOMNode()
