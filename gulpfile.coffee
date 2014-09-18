@@ -1,4 +1,3 @@
-_           = require 'xunit-file'
 browserify  = require 'gulp-browserify'
 cjsx        = require 'gulp-cjsx'
 concat      = require 'gulp-concat'
@@ -69,6 +68,7 @@ _staticTask = (name, proj) ->
 
 _testTask = (name, proj, reporter='dot', bail=true) ->
   gulp.task name, ->
+    require 'xunit-file'
     exitOnFinish runTests, proj, reporter, false
 
 
