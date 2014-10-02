@@ -1,6 +1,8 @@
 Backbone  = require 'backbone'
 React     = require 'react'
 
+DownloadLink = require '../../src/download-link'
+
 LineChart = require '../../src/chart/line'
 
 Button     = require '../../src/form/button'
