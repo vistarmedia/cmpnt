@@ -62,6 +62,28 @@ describe 'Data Table', ->
       name = nameCol.textContent
       expect(name).to.contain 'Model 10'
 
+  it 'should sort rows', ->
+    @table.setSort('id', 1)
+    @table.render()
+
+    el = @table.getDOMNode()
+    rows = el.querySelectorAll('tbody > tr')
+    expect(rows).to.have.length 10
+    expect(rows[0].innerHTML).to.contain 'Model 1'
+
+    @table.setSort('id', -1)
+    @table.render()
+
+    rows = el.querySelectorAll('tbody > tr')
+    expect(rows).to.have.length 10
+    expect(rows[0].innerHTML).to.contain 'Model 500'
+
+    @table.setState({ pageStart: 100 })
+    @table.render()
+
+    rows = el.querySelectorAll('tbody > tr')
+    expect(rows[0].innerHTML).to.contain 'Model 400'
+
   it 'should initially have undefined filter', ->
     expect(@table.state.filter).to.be.undefined
 

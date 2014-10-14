@@ -42,6 +42,7 @@
 #                  filter       = @filterByName
 #                  row          = @props.row
 #                  itemsPerPage = 10 />
+_           = require 'lodash'
 React       = require 'react'
 {classSet}  = require('react/addons').addons
 
@@ -72,6 +73,21 @@ DataTable = React.createClass
   getInitialState: ->
     pageStart:       0
     itemsPerPage:    @props.itemsPerPage
+    sort:            null
+
+  # Sorts by a field name on model and a direction (1 - asc, -1 - desc)
+  setSort: (field, dir) ->
+    @setState({ sort: [field, dir] })
+
+  onToggleSort: (e) ->
+    field = e.currentTarget.getAttribute('name')
+    dir = 1
+
+    if @state.sort? and @state.sort[0] is field
+      # switch direction if we were already on this field
+      dir = @state.sort[1] * -1
+
+    @setSort field, dir
 
   onUpdateFilter: (e) ->
     @setState(filterTerm: e.currentTarget.value)
@@ -93,6 +109,24 @@ DataTable = React.createClass
     else
       models
 
+  getSorted: (models) ->
+    if @state.sort?
+      sorted = _.clone(models)
+      [field, dir] = @state.sort
+
+      sorted.sort (first, second) ->
+        if first.get(field) > second.get(field)
+          # switch the sign for descending
+          1 * dir
+        else if first.get(field) < second.get(field)
+          -1 * dir
+        else
+          0
+
+      sorted
+    else
+      models
+
   onChangeRecordsPerPage: (count) ->
     @setState(itemsPerPage: count, start: 0)
 
@@ -108,7 +142,8 @@ DataTable = React.createClass
       'table-condensed':  @props.compact
 
     valid       = @getValid(@props.models)
-    visible     = @getVisibleOnPage(valid)
+    sorted      = @getSorted(valid)
+    visible     = @getVisibleOnPage(sorted)
     maxVisible  = 7
     showPager   = valid.length > maxVisible
 
@@ -127,7 +162,7 @@ DataTable = React.createClass
       </div>
 
       <table className={className}>
-        {@_header(@props.columns)}
+        {@_header(@props.columns, @state.sort)}
         <tbody>
           {@_row(model) for model in visible}
         </tbody>
@@ -155,9 +190,21 @@ DataTable = React.createClass
              onKeyUp=@onUpdateFilter />
     </div>
 
-  _header: (columns) ->
+  _header: (columns, sort) ->
+    sortArrow =
+      if sort? and sort[1] is 1
+        <span className="glyphicon glyphicon-arrow-down" />
+      else
+        <span className="glyphicon glyphicon-arrow-up" />
+
     headings = for column in columns
-      <th key={column.field}>{column.label or column.field}</th>
+      <th onClick=@onToggleSort name={column.field}
+        key={column.field}>
+          {column.label or column.field}
+          {if sort? and column.field is sort[0]
+            sortArrow
+          }
+      </th>
 
     <thead>
       <tr>{headings}</tr>
