@@ -14,6 +14,8 @@ TabGroup  = require '../../src/ui/tab-group'
 DataTable = require '../../src/table/data-table'
 Pager     = require '../../src/table/paging'
 
+SourceSink = require '../../src/views/source_sink'
+
 
 RunExample = React.createClass
   displayName: 'RunExample'

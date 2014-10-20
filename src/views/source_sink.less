@@ -1,0 +1,59 @@
+.source-sink {
+  @container-height: 200px;
+  @container-width:  40%;
+  @filter-height:    30px;
+  @clear-all-height: 22px;
+
+  position: relative;
+  min-height: 360px;
+
+  .input {
+    width:   100%;
+    padding: 6px 12px;
+    display: block;
+  }
+
+  .move {
+    position:   absolute;
+    top:        35%;
+    left:       @container-width;
+    width:      100% - (@container-width * 2);
+    text-align: center;
+    cursor:     pointer;
+  }
+
+  .source-container {
+    position:   absolute;
+    top:        0px;
+    left:       0px;
+    width:      @container-width;
+    min-height: @container-height;
+
+    select[multiple] {
+      height: @container-height - @filter-height;
+      .input;
+    }
+    input[type='text'] {
+      height: @filter-height;
+      .input;
+    }
+  }
+
+  .sink-container {
+    position:   absolute;
+    top:        0px;
+    left:       100% - @container-width;
+    width:      @container-width;
+    min-height: @container-height + @clear-all-height;
+
+    select[multiple] {
+      height: @container-height;
+      .input;
+    }
+    .clearall {
+      cursor: pointer;
+      height: @clear-all-height;
+      .input;
+    }
+  }
+}
