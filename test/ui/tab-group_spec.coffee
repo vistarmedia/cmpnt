@@ -21,7 +21,6 @@ describe 'Tab', ->
     expect(children[0]).to.have.tagName 'H1'
     expect(children[0]).to.have.innerHTML 'Cool tab, bro'
 
-
 describe 'Tab Group Header', ->
 
   it 'should be a list', ->
@@ -85,6 +84,45 @@ describe 'Tab Group', ->
         <TabGroup.Tab label='Three'>Third</TabGroup.Tab>
       </TabGroup>)
     expect(tabGroup.state.active).to.equal 'Two'
+
+  it 'should render inactive tabs when onlyRenderActive is not specified', ->
+    tabGroup = @render(
+      <TabGroup>
+        <TabGroup.Tab label='One'>First</TabGroup.Tab>
+        <TabGroup.Tab label='Two'>Second</TabGroup.Tab>
+        <TabGroup.Tab label='Three'>Third</TabGroup.Tab>
+      </TabGroup>)
+    el = tabGroup.getDOMNode()
+
+    tabs = el.querySelectorAll('.tab-pane')
+    expect(tabs).to.have.length 3
+
+  it 'should render inactive tabs when onlyRenderActive is false', ->
+    tabGroup = @render(
+      <TabGroup onlyRenderActive=false>
+        <TabGroup.Tab label='One'>First</TabGroup.Tab>
+        <TabGroup.Tab label='Two'>Second</TabGroup.Tab>
+        <TabGroup.Tab label='Three'>Third</TabGroup.Tab>
+      </TabGroup>)
+    el = tabGroup.getDOMNode()
+
+    tabs = el.querySelectorAll('.tab-pane')
+    expect(tabs).to.have.length 3
+
+  it 'should only render active tab when onlyRenderActive is true', ->
+    tabGroup = @render(
+      <TabGroup onlyRenderActive=true>
+        <TabGroup.Tab label='One'><span className='1'>First</span></TabGroup.Tab>
+        <TabGroup.Tab label='Two'><span className='2'>Second</span></TabGroup.Tab>
+        <TabGroup.Tab label='Three'><span className='3'>Third</span></TabGroup.Tab>
+      </TabGroup>)
+    el = tabGroup.getDOMNode()
+
+    tabs = el.querySelectorAll('.tab-pane')
+    expect(tabs).to.have.length 1
+    expect(el.querySelector('span.1')).to.exist
+    expect(el.querySelector('span.2')).to.not.exist
+    expect(el.querySelector('span.3')).to.not.exist
 
   it 'should have hidden tabs on the DOM', ->
     tabGroup = @render(

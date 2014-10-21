@@ -27,12 +27,15 @@
 #       </TabGroup>
 React = require 'react'
 
-
 TabGroup = React.createClass
   displayName: 'TabGroup'
 
   propTypes:
     active: React.PropTypes.string
+    onlyRenderActive: React.PropTypes.bool
+
+  getDefaultProps: ->
+    onlyRenderActive: false
 
   getInitialState: ->
     active: @props.active
@@ -49,7 +52,9 @@ TabGroup = React.createClass
       cls = ['tab-pane']
       if tab.props.label is active
         cls.push 'active'
-      <div key=i className={cls.join(' ')}>{tab}</div>
+        <div key=i className={cls.join(' ')}>{tab}</div>
+      else if !@props.onlyRenderActive
+        <div key=i className={cls.join(' ')}>{tab}</div>
 
     <span>
       <TabGroup.Header
