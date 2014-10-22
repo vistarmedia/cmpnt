@@ -117,7 +117,8 @@ gulp.task 'serve', ->
   app.listen(process.env['PORT'] or 4011)
 
 gulp.task 'watch:serve', ['serve'], ->
-  gulp.watch([project.srcs, demo.srcs, demo.style], ['src', 'style', 'static'])
+  gulp.watch([project.srcs, project.style, demo.srcs, demo.style],
+             ['src', 'style', 'static'])
 
 
 _sourceTask('demo:src', demo, ['project:doc'])
