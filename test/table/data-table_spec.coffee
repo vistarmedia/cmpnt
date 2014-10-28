@@ -37,8 +37,8 @@ describe 'Data Table', ->
     headers = el.querySelectorAll('thead > tr > th')
     expect(headers).to.have.length 2
 
-    expect(headers[0]).to.have.textContent 'ID'
-    expect(headers[1]).to.have.textContent 'Name'
+    expect(headers[0].textContent).to.include 'ID'
+    expect(headers[1].textContent).to.include 'Name'
 
   # Right now, this defaults to whatever the page defaults to, which is 10
   it 'should limit the number of rendered rows', ->

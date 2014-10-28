@@ -46,6 +46,7 @@ _           = require 'lodash'
 React       = require 'react'
 {classSet}  = require('react/addons').addons
 
+Icon  = require '../ui/icon'
 Pager = require './paging'
 Row   = require './row'
 
@@ -80,6 +81,7 @@ DataTable = React.createClass
     @setState({ sort: [field, dir] })
 
   onToggleSort: (e) ->
+    e.preventDefault()
     field = e.currentTarget.getAttribute('name')
     dir = 1
 
@@ -147,7 +149,7 @@ DataTable = React.createClass
     maxVisible  = 7
     showPager   = valid.length > maxVisible
 
-    <span>
+    <span className='data-table'>
       <div className='row'>
         {@_filter() if hasFilter}
 
@@ -191,19 +193,19 @@ DataTable = React.createClass
     </div>
 
   _header: (columns, sort) ->
-    sortArrow =
-      if sort? and sort[1] is 1
-        <span className="glyphicon glyphicon-arrow-down" />
-      else
-        <span className="glyphicon glyphicon-arrow-up" />
+    [sortCol, sortDir] = sort if sort?
 
     headings = for column in columns
-      <th onClick=@onToggleSort name={column.field}
-        key={column.field}>
-          {column.label or column.field}
-          {if sort? and column.field is sort[0]
-            sortArrow
-          }
+      sortIcon = if sortCol is column.field
+        switch sortDir
+          when 1 then <Icon name='sort-desc' />
+          else <Icon name='sort-asc' />
+
+      <th onClick   = @onToggleSort
+          name      = {column.field}
+          key       = {column.field}
+          className = 'sortable'>
+        {column.label or column.field} {sortIcon}
       </th>
 
     <thead>
