@@ -1,0 +1,26 @@
+.collapsible-list-panel {
+  .collapsible-list-panel-item {
+    margin-bottom: 10px;
+
+    button {
+      background-color: transparent;
+      outline:          none;
+
+      &:active {
+        outline: none;
+      }
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
+    &.collapsed {
+      margin-bottom: 0;
+
+      .item-content {
+        display: none;
+      }
+    }
+  }
+}

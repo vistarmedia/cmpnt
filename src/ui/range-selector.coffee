@@ -23,6 +23,8 @@ Icon    = require './icon'
 
 
 RangeSelector = React.createClass
+  displayName: 'RangeSelector'
+
   propTypes:
     options:  React.PropTypes.array
     value:    React.PropTypes.array
@@ -149,7 +151,7 @@ RangeSelector = React.createClass
 RangeSelector.Section = React.createClass
   propTypes:
     ordinal:    React.PropTypes.number.isRequired
-    value:      React.PropTypes.number.isRequired
+    value:      React.PropTypes.any.isRequired
     label:      React.PropTypes.string
     mouseOver:  React.PropTypes.func
     mouseUp:    React.PropTypes.func

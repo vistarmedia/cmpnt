@@ -12,7 +12,8 @@ Icon      = require '../../src/ui/icon'
 Pill      = require '../../src/ui/pill'
 TabGroup  = require '../../src/ui/tab-group'
 
-RangeSelector = require '../../src/ui/range-selector'
+CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
+RangeSelector         = require '../../src/ui/range-selector'
 
 DataTable = require '../../src/table/data-table'
 Pager     = require '../../src/table/paging'
