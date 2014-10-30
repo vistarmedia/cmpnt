@@ -27,6 +27,7 @@
 #       </TabGroup>
 React = require 'react'
 
+
 TabGroup = React.createClass
   displayName: 'TabGroup'
 
@@ -95,7 +96,6 @@ TabGroup.Header = React.createClass
           <a href="#" onClick=clickHandler>{label}</a>
         </li>
     <ul className='nav nav-tabs'>{labelTabs}</ul>
-
 
 
 TabGroup.Tab = React.createClass

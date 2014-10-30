@@ -145,6 +145,7 @@ RangeSelector = React.createClass
       </div>
     </div>
 
+
 RangeSelector.Section = React.createClass
   propTypes:
     ordinal:    React.PropTypes.number.isRequired

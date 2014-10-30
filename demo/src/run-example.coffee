@@ -9,6 +9,7 @@ Button     = require '../../src/form/button'
 FilePicker = require '../../src/form/file_picker'
 
 Icon      = require '../../src/ui/icon'
+Pill      = require '../../src/ui/pill'
 TabGroup  = require '../../src/ui/tab-group'
 
 RangeSelector = require '../../src/ui/range-selector'

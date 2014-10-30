@@ -20,3 +20,11 @@ module.exports = (chai, utils) ->
       "expected \#{this} to have class #{expected}, but got \#{act}",
       "expected \#{this} not have have class #{expected}, found \#{act}",
       expected, classes
+
+  chai.Assertion.addMethod 'haveElement', (expected) ->
+    component = flag(this, 'object')
+    rootNode  = component.getDOMNode()
+    @assert rootNode.querySelectorAll(expected).length > 0,
+      "expected \#{this} to contain element found by #{expected}",
+      "expected \#{this} not to contain #{expected}",
+      expected

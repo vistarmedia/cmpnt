@@ -82,6 +82,7 @@ OptionList = React.createClass
       {options}
     </select>
 
+
 FilteredOptionList = React.createClass
   propTypes:
     comparator: React.PropTypes.func.isRequired
@@ -114,6 +115,7 @@ FilteredOptionList = React.createClass
         comparator=@props.comparator
         format=@props.format />
     </div>
+
 
 SourceSink = React.createClass
   propTypes:
