@@ -60,13 +60,25 @@ Component = React.createClass
     if comp.style?
       tabs.push(
         <TabGroup.Tab key='style' label='Style'>
-          <p><pre className='code'>{comp.style}</pre></p>
+          <p>
+            <pre className='code'>
+              <code className='less'>
+                {comp.style}
+              </code>
+            </pre>
+          </p>
         </TabGroup.Tab>)
 
     if comp.source?
       tabs.push(
         <TabGroup.Tab key='source' label='Source'>
-          <p><pre className='code'>{comp.source}</pre></p>
+          <p>
+            <pre className='code'>
+              <code className='coffeescript'>
+                {comp.source}
+              </code>
+            </pre>
+          </p>
         </TabGroup.Tab>)
 
     <span>

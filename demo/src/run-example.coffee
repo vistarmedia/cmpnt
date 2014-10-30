@@ -37,7 +37,11 @@ RunExample = React.createClass
     <div className='row'>
       <div className='col-xs-6 col-md-6'>
         <h4>Source</h4>
-        <pre className='code'>{@props.code}</pre>
+        <pre className='code'>
+          <code className='coffeescript'>
+            {@props.code}
+          </code>
+        </pre>
       </div>
       <div className='col-xs-6 col-md-6'>
         <h4>Example</h4>
