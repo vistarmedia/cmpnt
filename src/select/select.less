@@ -1,0 +1,41 @@
+.select-list {
+  @hover-color: @light-gray;
+
+  &.hidden {
+    display: none;
+  }
+
+  &.dropdown-menu {
+    display: block;
+  }
+
+  &.list {
+  }
+
+  .item {
+    -moz-user-focus:     normal;
+    -khtml-user-focus:   normal;
+    -o-user-focus:       normal;
+    -webkit-user-focus:  normal;
+
+    &.hover > a {
+      background-color: @hover-color;
+    }
+
+    &.selected > a {
+      background-color: darken(@hover-color, 20%) !important;
+    }
+
+    &.selected.hover > a {
+      background-color: darken(@hover-color, 20%);
+    }
+
+    a {
+      outline: 0;
+
+      &:hover {
+        background-color: @hover-color;
+      }
+    }
+  }
+}

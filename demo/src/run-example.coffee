@@ -12,6 +12,8 @@ Icon      = require '../../src/ui/icon'
 Pill      = require '../../src/ui/pill'
 TabGroup  = require '../../src/ui/tab-group'
 
+SelectList  = require '../../src/select/list'
+
 CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
 RangeSelector         = require '../../src/ui/range-selector'
 

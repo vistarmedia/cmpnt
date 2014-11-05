@@ -30,8 +30,15 @@ beforeEach ->
     @_nodes.push(el)
     React.renderComponent(cls, el)
 
-  @simulate   = TestUtils.Simulate
-  @allByType  = TestUtils.scryRenderedComponentsWithType
+  @simulate        = TestUtils.Simulate
+  @findByClass     = TestUtils.findRenderedDOMComponentWithClass
+  @allByClass      = TestUtils.scryRenderedDOMComponentsWithClass
+  @findByTag       = TestUtils.findRenderedDOMComponentWithTag
+  @allByTag        = TestUtils.scryRenderedDOMComponentsWithTag
+  @allByType       = TestUtils.scryRenderedComponentsWithType
+  @findAllInTree   = TestUtils.findAllInRenderedTree
+  @findFirstInTree = (component, testFunction) ->
+    TestUtils.findAllInRenderedTree(component, testFunction)[0]
 
 
 # Nuke the global state of window/document/navigator
