@@ -35,10 +35,15 @@ beforeEach ->
   @allByClass      = TestUtils.scryRenderedDOMComponentsWithClass
   @findByTag       = TestUtils.findRenderedDOMComponentWithTag
   @allByTag        = TestUtils.scryRenderedDOMComponentsWithTag
+  @findByType      = TestUtils.findRenderedComponentWithType
   @allByType       = TestUtils.scryRenderedComponentsWithType
   @findAllInTree   = TestUtils.findAllInRenderedTree
   @findFirstInTree = (component, testFunction) ->
     TestUtils.findAllInRenderedTree(component, testFunction)[0]
+  @inputElement    = (comp) -> @findByTag(comp, 'input')
+  @inputValue      = (comp, value) ->
+    comp = @findByTag(comp, 'input')
+    comp.getDOMNode().setAttribute('value', value)
 
 
 # Nuke the global state of window/document/navigator

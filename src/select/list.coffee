@@ -78,12 +78,14 @@ SelectList = React.createClass
   displayName: 'SelectList'
 
   propTypes:
-    options:   Types.nameValueList.isRequired
-    onChange:  React.PropTypes.func
-    visible:   React.PropTypes.bool
+    options:      Types.nameValueList.isRequired
+    onChange:     React.PropTypes.func
+    visible:      React.PropTypes.bool
+    shouldFocus:  React.PropTypes.bool
 
   getDefaultProps: ->
-    visible: false
+    visible:      false
+    shouldFocus:  false
 
   getInitialState: ->
     selected:  []
@@ -113,7 +115,7 @@ SelectList = React.createClass
     component.setFocus(true)
 
   componentDidUpdate: ->
-    if @props.visible
+    if @props.shouldFocus
       @_focusItem()
 
   onKeyDown: (e) ->
@@ -148,7 +150,7 @@ SelectList = React.createClass
       e.preventDefault()
 
   _setFocusedItem: (name, value) ->
-    @setState focused: value
+    @select(name: name, value: value)
 
   _items: ->
     for item in @props.options
@@ -265,6 +267,7 @@ SelectItem = React.createClass
   render: ->
     <li className=@_classes() role='presentation'>
       <a role        = 'menuitem'
+         className   = 'list-item'
          tabIndex    = @props.tabIndex
          href        = @props.href
          onClick     = @onSelect

@@ -3,9 +3,223 @@ require '../test_case'
 {expect} = require 'chai'
 sinon    = require 'sinon'
 
-SelectList = require '../../src/select/list'
+SelectList   = require '../../src/select/list'
+SelectFilter = require '../../src/select/filter'
 
 SelectItem = SelectList.SelectItem
+Input      = SelectFilter.Input
+
+
+describe 'SelectFilter', ->
+
+  beforeEach ->
+    @items = [
+      {name: 'grass', value: 'id-1'}
+      {name: 'grassy', value: 'id-2'}
+      {name: 'sun', value: 'id-3'}
+      {name: 'sky', value: 'id-4'}
+      {name: 'kenny dennis', value: 'id-5'}
+      {name: 'dogs', value: 'id-6'}
+      {name: 'meat', value: 'id-7'}
+      {name: 'meaty', value: 'id-8'}
+      {name: 'horses', value: 'id-9'}
+    ]
+
+  it 'should open the list when input receives focus', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    expect(listComponent.props.visible).to.be.false
+
+    @simulate.focus(input)
+
+    expect(listComponent.props.shouldFocus).to.be.false
+    expect(listComponent.props.visible).to.be.true
+
+  it 'should close the list on blur if relatedTarget is not a list item', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    expect(listComponent.props.visible).to.be.false
+
+    @simulate.focus(input)
+
+    expect(listComponent.props.visible).to.be.true
+
+    @simulate.blur(input)
+
+    expect(listComponent.props.visible).to.be.false
+
+  it 'should not close the list on blur if list has focus', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    item          = @allByType(listComponent, SelectItem)[5]
+    itemElement   = @findByTag item, 'a'
+
+    expect(listComponent.props.visible).to.be.false
+
+    @simulate.focus(input)
+    @simulate.keyDown(input, key: 'Enter')
+
+    expect(listComponent.props.visible).to.be.true
+
+    @simulate.blur(input, relatedTarget: itemElement)
+
+    expect(listComponent.props.visible).to.be.true
+
+  it 'should focus the list when input receives "Enter" key', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    expect(listComponent.props.shouldFocus).to.be.false
+
+    @simulate.keyDown(input, key: 'Enter')
+
+    expect(select.state.focusList).to.be.true
+    expect(listComponent.props.shouldFocus).to.be.true
+
+  it 'should focus the list when input receives "ArrowDown" key', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    expect(listComponent.props.shouldFocus).to.be.false
+
+    @simulate.keyDown(input, key: 'ArrowDown')
+
+    expect(select.state.focusList).to.be.true
+    expect(listComponent.props.shouldFocus).to.be.true
+
+  it 'should close the list after a selection is made', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    @simulate.focus(input)
+
+    listComponent = @findByType select, SelectList
+    item          = @allByType(listComponent, SelectItem)[5]
+    itemElement   = @findByTag item, 'a'
+
+    @simulate.click(itemElement, target: itemElement)
+
+    expect(select.state.selected).to.have.length 1
+    expect(listComponent.props.shouldFocus).to.be.false
+    expect(listComponent.props.visible).to.be.false
+
+  it 'should render list elements', ->
+    select = @render(<SelectFilter options=@items />)
+    input  = @inputElement(select)
+
+    listComponent = @findByType select, SelectList
+    listElements  = @allByTag  listComponent, 'li'
+    expect(listElements).to.have.length 9
+
+  it 'should call the props onChange each time a selection is made', ->
+    selections = sinon.spy()
+    select = @render(<SelectFilter options=@items onChange=selections />)
+    input  = @inputElement(select)
+
+    @simulate.focus(input)
+
+    listComponent = @findByType select, SelectList
+    item1          = @allByType(listComponent, SelectItem)[5]
+    itemElement1   = @findByTag item1, 'a'
+    item2          = @allByType(listComponent, SelectItem)[6]
+    itemElement2   = @findByTag item2, 'a'
+
+    @simulate.click(itemElement1, target: itemElement1)
+    @simulate.click(itemElement2, target: itemElement1)
+
+    expect(selections).to.have.callCount 2
+
+  it 'should call the props onChange with selections', (done) ->
+    selections = (selectedItems) ->
+      expect(selectedItems).to.have.length 1
+      done()
+
+    select = @render(<SelectFilter options=@items onChange=selections />)
+    input  = @inputElement(select)
+
+    @simulate.focus(input)
+
+    listComponent = @findByType select, SelectList
+    item1          = @allByType(listComponent, SelectItem)[5]
+    itemElement1   = @findByTag item1, 'a'
+
+    @simulate.click(itemElement1, target: itemElement1)
+
+  context 'when filtering', ->
+
+    it 'should filter the list values on input keyUp', ->
+      select = @render(<SelectFilter options=@items />)
+      input  = @inputElement(select)
+
+      listComponent = @findByType select, SelectList
+      @inputValue(input, 'grass')
+      @simulate.keyUp(input)
+
+      listElements  = @allByTag  listComponent, 'li'
+      expect(listElements).to.have.length 1
+
+
+describe 'SelectList.Input', ->
+
+  context 'on keyUp', ->
+
+    it 'should call the onChange prop with the value of the input', (done) ->
+      onChange = (val) ->
+        expect(val).to.equal 'food'
+        done()
+
+      input = @render(<Input onChange=onChange />)
+
+      @inputValue(input, 'food')
+      @simulate.keyUp(@inputElement(input), key: 's')
+
+  context 'on keyDown, with matching commitKey', ->
+
+    it 'should call the onCommit prop with "Enter"', (done) ->
+      onCommit = (val) ->
+        expect(val).to.equal 'food'
+        done()
+
+      input = @render(<Input onCommit=onCommit />)
+
+      @inputValue(input, 'food')
+      @simulate.keyDown(@inputElement(input), key: 'Enter')
+
+    it 'should call the onCommit prop with "ArrowDown"', (done) ->
+      onCommit = (val) ->
+        expect(val).to.equal 'food'
+        done()
+
+      input = @render(<Input onCommit=onCommit />)
+
+      @inputValue(input, 'food')
+      @simulate.keyDown(@inputElement(input), key: 'ArrowDown')
+
+  context 'on focus', ->
+
+    it 'should call the onFocus prop', (done) ->
+      onFocus = -> done()
+
+      input = @render(<Input onFocus=onFocus />)
+
+      @simulate.focus(@inputElement(input))
+
+  context 'on blur', ->
+
+    it 'should call the onBlur prop', (done) ->
+      onBlur = -> done()
+
+      input = @render(<Input onBlur=onBlur />)
+
+      @simulate.blur(@inputElement(input))
 
 
 describe 'SelectList', ->
@@ -65,6 +279,15 @@ describe 'SelectList', ->
 
     it 'should preventDefault and stopPropagation on keyup'
       # TODO:  not sure how to test this
+
+    it 'should not focus an element automatically when made visible', ->
+      select = @render(<SelectList options=@items />)
+
+      select.setProps visible: true
+
+      expect(select.refs['ani-1'].state.hovered).to.be.false
+      expect(select.refs['ani-2'].state.hovered).to.be.false
+      expect(select.refs['ani-3'].state.hovered).to.be.false
 
     it 'should set state.focused to the selected element on click', ->
       select = @render(<SelectList options=@items visible=true />)
@@ -151,7 +374,7 @@ describe 'SelectList', ->
 
   context 'with no previously selected items', ->
 
-    it 'should select first item when made visible', ->
+    it 'should select first item when shouldFocus and visible', ->
       select = @render(<SelectList options=@items />)
 
       expect(select.refs['ani-1'].state.hovered).to.be.false
@@ -159,7 +382,7 @@ describe 'SelectList', ->
       expect(select.refs['ani-3'].state.hovered).to.be.false
 
       # call setProps here as if parent component made us visible
-      select.setProps visible: true
+      select.setProps visible: true, shouldFocus: true
 
       expect(select.refs['ani-1'].state.hovered).to.be.true
 
@@ -171,7 +394,7 @@ describe 'SelectList', ->
 
     it 'should not remove selection', ->
       select = @render(<SelectList options=@items />)
-      select.setProps visible: true
+      select.setProps visible: true, shouldFocus: true
 
       expect(select.refs['ani-1'].state.hovered).to.be.true
 
