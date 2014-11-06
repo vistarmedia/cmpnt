@@ -37,14 +37,18 @@ RangeSelector = React.createClass
 
   getInitialState: ->
     # We need to map the values to ordinals for easy manipulation
-    ords = @props.value
-      .map (v) => _.findIndex(@props.options, (o) -> o.value is v)
-      .filter (i) => i isnt -1
-
-    selected: ords
+    selected: @getOrdinalsFromValue(@props.value)
     active:   false
     current:  []
     onMode:   true
+
+  componentWillReceiveProps: (props) ->
+    @setState selected: @getOrdinalsFromValue(props.value)
+
+  getOrdinalsFromValue: (value) ->
+    value
+      .map (v) => _.findIndex(@props.options, (o) -> o.value is v)
+      .filter (i) => i isnt -1
 
   getOrdinal: (el) -> parseInt(el.getAttribute('data-ordinal'))
 

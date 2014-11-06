@@ -166,6 +166,13 @@ describe 'Range Selector', ->
         expect(monday.props.selected).to.be.false
         expect(tuesday.props.selected).to.be.false
 
+      it 'should reset selected values when new props are passed', ->
+        expect(@view.state.selected).to.have.length 3
+        expect(@view.state.selected).to.have.members [1,3,4]
+        @view.setProps value: [2,5]
+        expect(@view.state.selected).to.have.length 2
+        expect(@view.state.selected).to.have.members [2,5]
+
     it 'should handle a bogus value', ->
       view = @render <RangeSelector options=options value=[0,99,4] />
       monday = @allByType(view, RangeSelector.Section)[1]
