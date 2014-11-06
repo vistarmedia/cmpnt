@@ -37,8 +37,9 @@ RangeSelector = React.createClass
 
   getInitialState: ->
     # We need to map the values to ordinals for easy manipulation
-    ords = @props.value.map (v) =>
-      _.findIndex(@props.options, (o) -> o.value is v)
+    ords = @props.value
+      .map (v) => _.findIndex(@props.options, (o) -> o.value is v)
+      .filter (i) => i isnt -1
 
     selected: ords
     active:   false

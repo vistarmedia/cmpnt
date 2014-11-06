@@ -138,8 +138,7 @@ describe 'Range Selector', ->
     describe 'when it has a selection', ->
 
       beforeEach ->
-        @view = @render <RangeSelector options=options
-                                       value=[1,3,4] />
+        @view = @render <RangeSelector options=options value=[1,3,4] />
         @sections = @allByType @view, RangeSelector.Section
 
       it 'should set initial selection from props', ->
@@ -166,3 +165,10 @@ describe 'Range Selector', ->
         @simulate.mouseUp tuesday.getDOMNode()
         expect(monday.props.selected).to.be.false
         expect(tuesday.props.selected).to.be.false
+
+    it 'should handle a bogus value', ->
+      view = @render <RangeSelector options=options value=[0,99,4] />
+      monday = @allByType(view, RangeSelector.Section)[1]
+      @simulate.mouseDown monday.getDOMNode()
+      expect(view.state.selected).to.have.length 3
+      expect(view.state.selected).to.have.members [0, 1, 4]
