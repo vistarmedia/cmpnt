@@ -10,6 +10,7 @@ FilePicker = require '../../src/form/file_picker'
 
 Icon      = require '../../src/ui/icon'
 Pill      = require '../../src/ui/pill'
+PillGroup = require '../../src/ui/pill/group'
 TabGroup  = require '../../src/ui/tab-group'
 
 SelectList  = require '../../src/select/list'

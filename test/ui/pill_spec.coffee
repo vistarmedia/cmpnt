@@ -2,7 +2,8 @@ require '../test_case'
 
 {expect} = require 'chai'
 
-Pill = require '../../src/ui/pill'
+Pill      = require '../../src/ui/pill'
+PillGroup = require '../../src/ui/pill/group'
 
 
 describe 'Pill', ->
@@ -66,3 +67,41 @@ describe 'Pill', ->
       @simulate.click(anchor)
 
       expect(pill.getDOMNode()).to.haveClass 'hidden'
+
+
+describe 'Pill.Group', ->
+
+  it 'should render all items in props.options', ->
+    items = [
+      {name: 'Shawon Dunston', value: 'SS'}
+      {name: 'Hawk Dawson',    value: 'RF'}
+    ]
+
+    group   = @render(<PillGroup options=items />)
+    element = group.getDOMNode()
+
+    expect(@allByType(group, Pill)).to.have.length 2
+    expect(element.querySelector('.pill:nth-child(1)').textContent)
+      .to.have.string 'Shawon Dunston'
+    expect(element.querySelector('.pill:nth-child(2)').textContent)
+      .to.have.string 'Hawk Dawson'
+
+  it 'should call onChange with props.options minus what was closed', (done) ->
+    items = [
+      {name: 'Shawon Dunston', value: 'SS'}
+      {name: 'Hawk Dawson',    value: 'RF'}
+    ]
+
+    onChange = (list) ->
+      expect(list).to.have.length 1
+      expect(list[0].name).to.equal  'Hawk Dawson'
+      expect(list[0].value).to.equal 'RF'
+      done()
+
+    group  = @render(<PillGroup options=items onChange=onChange />)
+    pill   = @allByType(group, Pill)[0]
+    anchor = @findFirstInTree pill, (c) ->
+      c.tagName is 'A'
+
+    expect(anchor).to.exist
+    @simulate.click(anchor)

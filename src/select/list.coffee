@@ -71,19 +71,16 @@ _          = require 'lodash'
 React      = require 'react'
 {classSet} = require('react/addons').addons
 
+Types      = require '../types'
+
 
 SelectList = React.createClass
   displayName: 'SelectList'
 
   propTypes:
-    options:    React.PropTypes.arrayOf(
-      React.PropTypes.shape(
-        name:   React.PropTypes.string
-        value:  React.PropTypes.string
-      ).isRequired
-    ).isRequired
-    onChange:    React.PropTypes.func
-    visible:     React.PropTypes.bool
+    options:   Types.nameValueList.isRequired
+    onChange:  React.PropTypes.func
+    visible:   React.PropTypes.bool
 
   getDefaultProps: ->
     visible: false
