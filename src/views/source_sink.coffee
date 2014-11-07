@@ -136,10 +136,16 @@ SourceSink = React.createClass
     value:      []
 
   getInitialState: ->
-    sourceOptions:  _.difference(@props.options, @props.value)
+    @stateFromProps(@props)
+
+  componentWillReceiveProps: (props) ->
+    @setState(@stateFromProps(props))
+
+  stateFromProps: (props) ->
+    sourceOptions:  _.difference(props.options, props.value)
     sourceSelected: []
     sinkSelected:   []
-    sinkOptions:    @props.value
+    sinkOptions:    props.value
 
   sourceChanged: (options) ->
     @setState

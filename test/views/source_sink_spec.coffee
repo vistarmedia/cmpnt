@@ -121,6 +121,24 @@ describe 'Source Sink View', ->
         id: '5'
         label: 'Option 5'
 
+    it 'should reset state on re-render', ->
+      selected = [@options[4]]
+      sourceSink = @render <SourceSink options=@options value=selected
+        format=@format />
+
+      expect(sourceSink.state.sourceOptions).to.have.length 4
+      expect(sourceSink.state.sinkOptions).to.have.length 1
+      expect(sourceSink.state.sinkOptions).to.contain
+        id: '5'
+        label: 'Option 5'
+
+      sourceSink.setProps options: @options, value: [@options[2]]
+      expect(sourceSink.state.sourceOptions).to.have.length 4
+      expect(sourceSink.state.sinkOptions).to.have.length 1
+      expect(sourceSink.state.sinkOptions).to.contain
+        id: '3'
+        label: 'Option 3'
+
     it 'should sort values with the provided function', ->
       options = @sourceSink.getDOMNode().querySelectorAll('option')
 
