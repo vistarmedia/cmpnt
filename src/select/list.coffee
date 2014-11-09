@@ -8,8 +8,17 @@
 # up, arrow down, and enter key for navigating, selecting, and deselecting
 # items.
 #
+# The 'selected' prop can be used to allow a parent component to set selections.
+#
 # The function given to the "onChange" prop will be called with a list of
 # selected items when one is added or removed.
+#
+# The function given to the "onKeyDown" prop will be called on for events that
+# happen using the arrow up and arrow down keys and it will be called with the
+# synthetic event object and the value of @state.focused
+#
+# The 'onBlur' prop will be called only if an onBlur is triggered on a non-list
+# item element, allowing for custom close behavior for instance.
 #
 # It expects an array of things to render in the "value" prop.  It requires
 # objects with a key "name" (for the display name) and "value" (for an
@@ -46,7 +55,7 @@
 #
 #     _selectedItems: ->
 #       for item in @state.items
-#         <li key=item className='list-group-item'>{item}</li>
+#         <li key=item.value className='list-group-item'>{item.name}</li>
 #
 #     render: ->
 #       <div className='container'>
@@ -56,6 +65,7 @@
 #               {@_showOrHideText()} Luda's questions.  Are you?:
 #             </a>
 #             <SelectList options = @props.items
+#               selections        = @state.items
 #               visible           = @state.showSelect
 #               onChange          = @onChange
 #               />
@@ -79,17 +89,22 @@ SelectList = React.createClass
 
   propTypes:
     options:      Types.nameValueList.isRequired
+    selections:   Types.nameValueList
     onChange:     React.PropTypes.func
     visible:      React.PropTypes.bool
     shouldFocus:  React.PropTypes.bool
+    onKeyDown:    React.PropTypes.func
+    onKeyUp:      React.PropTypes.func
+    onBlur:       React.PropTypes.func
 
   getDefaultProps: ->
     visible:      false
     shouldFocus:  false
+    selections:   []
 
   getInitialState: ->
     selected:  []
-    focused:   @props.options[0].value
+    focused:   null
 
   _keys: [
     'ArrowDown'
@@ -97,22 +112,46 @@ SelectList = React.createClass
   ]
 
   onSelect: (name, value) ->
+    selections = _(_.clone(@props.selections))
+      .push(name: name, value: value).value()
     @setState
-      selected: _(@state.selected).push(value).value()
+      selected: selections
       focused: value, ->
-        @props.onChange?(@state.selected)
+        @props.onChange?(selections)
 
   onDeselect: (name, value) ->
+    selections = (_(@props.selections).filter((e) ->
+      e.value != value)).value()
     @setState
-      selected: _(@state.selected).without(value).value(), ->
-        @props.onChange?(@state.selected)
+      selected: selections
+    @props.onChange?(selections)
 
   _itemForValue: (value) ->
     @refs[value]
 
   _focusItem: ->
     component = @_itemForValue(@state.focused)
-    component.setFocus(true)
+    component?.setFocus(true)
+
+  _selectedNotInList: (list) ->
+    @state.focused not in _(list).pluck('value')
+
+  _shouldSetDefaultFocusedState: (props) ->
+    props.shouldFocus and @_selectedNotInList(props.options)
+
+  _firstNotSelectedItem: (props) ->
+    selectedValues = _(props.selections).pluck('value').value()
+    item = _.find props.options, (e) => e.value not in selectedValues
+    item?.value or props.selections[0]?.value
+
+  componentWillReceiveProps: (nextProps) ->
+    @setState
+      selected: nextProps.selections
+
+    if @_shouldSetDefaultFocusedState(nextProps)
+      @setState(focused: @_firstNotSelectedItem(nextProps))
+    else
+      @setState(focused: null)
 
   componentDidUpdate: ->
     if @props.shouldFocus
@@ -126,6 +165,7 @@ SelectList = React.createClass
         @_selectPrev(@state.focused)
       if e.key == 'ArrowDown'
         @_selectNext(@state.focused)
+      @props.onKeyDown?(e, @state.focused)
 
   _indexForValue: (value) ->
     _.findIndex @props.options, (e) ->
@@ -152,12 +192,20 @@ SelectList = React.createClass
   _setFocusedItem: (name, value) ->
     @select(name: name, value: value)
 
+  _isItemSelected: (item) ->
+    (_(@state.selected).find value: item.value)?
+
+  onBlur: (e) ->
+    if not e.relatedTarget?.className.match(/list-item/)
+      @props.onBlur?(e)
+
   _items: ->
     for item in @props.options
       <SelectItem key        = item.value
                   name       = item.name
                   ref        = item.value
                   value      = item.value
+                  selected   = @_isItemSelected(item)
                   isActive   = {item.value is @state.focused}
                   onSelect   = @onSelect
                   onDeselect = @onDeselect
@@ -167,7 +215,8 @@ SelectList = React.createClass
   render: ->
     <ul className = @_classes()
         onKeyDown = @onKeyDown
-        onKeyUp   = @onKeyUp>
+        onKeyUp   = @onKeyUp
+        onBlur    = @onBlur>
       {@_items()}
     </ul>
 
@@ -235,7 +284,7 @@ SelectItem = React.createClass
     classSet
       hover:         @hasFocus()
       item:          true
-      selected:      @state.selected
+      selected:      @props.selected
 
   _onMouseOut: (e) ->
     @setHover(false)
@@ -254,7 +303,7 @@ SelectItem = React.createClass
     @props.onBlur?(e)
 
   hasFocus: ->
-    @props.isActive or @state.hovered or @state.selected
+    @props.isActive or @state.hovered or @props.selected
 
   _onKeyUp: (e) ->
     if e.key is 'ArrowUp' or e.key is 'ArrowDown'

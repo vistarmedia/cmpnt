@@ -9,8 +9,7 @@
 # Pressing enter or the down arrow on the keyboard will focus the list in its
 # current state.
 #
-# The "onChange" property will be called with a list of the values of the
-# selected items.
+# The "onChange" property will be called with a list of the selected items.
 #
 # @example: ->
 #
@@ -30,21 +29,22 @@
 #         {name: 'item 9', value: 'id-9'}
 #       ]
 #
-#     updateSelections: (list) ->
+#     handleSelections: (list) ->
 #       @setState selected: list
 #
 #     _selectedItems: ->
-#       for value in @state.selected
-#         <li data-value=value>
-#           {value}
+#       for item in @state.selected
+#         <li data-value=item.value>
+#           {item.name}
 #         </li>
 #
 #     render: ->
 #       <div className='container'>
 #         <div className='row'>
 #           <div className='col-xs-2'>
-#             <SelectFilter options=@state.items
-#                           onChange=@updateSelections />
+#             <SelectFilter options    = @state.items
+#                           onChange   = @handleSelections
+#                           selections = @state.selected />
 #           </div>
 #           <div className='col-xs-2'>
 #             <ul>
@@ -56,6 +56,7 @@
 #
 
 
+_          = require 'lodash'
 React      = require 'react'
 {classSet} = require('react/addons').addons
 
@@ -65,26 +66,27 @@ SelectList = require './list'
 
 
 defaultFilter = (options, term) ->
-  if not term
+  if not term or term.length is 0
     return options
-  o for o in options when o.name?.toLowerCase() == term.toLowerCase()
+  o for o in options when o.name?.match(///#{term}///i)
 
 
 SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
   propTypes:
-    options:   Types.nameValueList.isRequired
-    filter:    React.PropTypes.func
-    onChange:  React.PropTypes.func
+    options:      Types.nameValueList.isRequired
+    selections:   Types.nameValueList
+    filter:       React.PropTypes.func
+    onChange:     React.PropTypes.func
 
   getDefaultProps: ->
-    filter: defaultFilter
+    filter:      defaultFilter
+    selections:  []
 
   getInitialState: ->
     opened:        false
     filterTerm:    undefined
-    selected:      []
     filtered:      @props.options
 
   filterResults: (term) ->
@@ -92,6 +94,7 @@ SelectFilter = React.createClass
 
   onUpdateFilter: (term) ->
     @setState
+      filterTerm: term
       filtered:   @filterResults(term)
 
   open: ->
@@ -107,12 +110,19 @@ SelectFilter = React.createClass
   onInputFocus: (e) ->
     @open()
 
-  giveListFocus: (inputValue) ->
-    @setState focusList: true
+  onBlurList: (e) ->
+    @close()
+
+  handleInputCommit: (inputValue) ->
+    if @state.filtered.length is 1
+      results = _.union @props.selections, @state.filtered
+      @props.onChange?(results)
+      @setState focusList: false
+    else
+      @setState focusList: true
 
   setSelected: (list) ->
     @setState
-      selected:      list
       focusList:     false
       opened:        false
     @props.onChange?(list)
@@ -122,12 +132,17 @@ SelectFilter = React.createClass
       <Input onFocus  = @onInputFocus
              onBlur   = @onInputBlur
              onChange = @onUpdateFilter
-             onCommit = @giveListFocus
+             onCommit = @handleInputCommit
+             value    = @state.filterTerm
+             ref      = 'input'
              />
       <SelectList options     = @state.filtered
                   visible     = @state.opened
+                  selections  = @props.selections
                   shouldFocus = @state.focusList
                   onChange    = @setSelected
+                  onBlur      = @onBlurList
+                  ref         = 'list'
                   />
     </div>
 
@@ -136,16 +151,19 @@ Input = React.createClass
   displayName: 'SelectFilter.Input'
 
   propTypes:
+    onBlur:   React.PropTypes.func
     onChange: React.PropTypes.func
     onCommit: React.PropTypes.func
     onFocus:  React.PropTypes.func
-    onBlur:   React.PropTypes.func
     value:    React.PropTypes.string
 
   getDefaultProps: ->
     hint:       'Select an item...'
     value:      ''
     commitKeys: ['Enter', 'ArrowDown']
+
+  getInitialState: ->
+    focused: false
 
   onKeyUp: (e) ->
     @props.onChange?(e.target.value)
@@ -156,11 +174,25 @@ Input = React.createClass
       e.stopPropagation()
       @props.onCommit?(e.target.value)
 
+  focus: ->
+    @setState focused: true
+
+  onChange: (e) ->
+    @props.onChange?(e.target.value)
+
   onFocus: (e) ->
     @props.onFocus?(e)
 
   onBlur: (e) ->
+    @setState focused: false
     @props.onBlur?(e)
+
+  _inputElement: ->
+    @refs.input.getDOMNode().focus()
+
+  componentDidUpdate: ->
+    if @state.focused
+      @_inputElement().focus()
 
   render: ->
     <span className='input'>
@@ -171,11 +203,15 @@ Input = React.createClass
              onKeyUp      = @onKeyUp
              onKeyDown    = @onKeyDown
              onBlur       = @onBlur
+             onChange     = @onChange
+             value        = @props.value
+             ref          = 'input'
              />
     </span>
 
 
 SelectFilter.Input = Input
+SelectFilter.defaultFilter = defaultFilter
 
 
 module.exports = SelectFilter

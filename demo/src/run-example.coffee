@@ -13,8 +13,9 @@ Pill      = require '../../src/ui/pill'
 PillGroup = require '../../src/ui/pill/group'
 TabGroup  = require '../../src/ui/tab-group'
 
-SelectList   = require '../../src/select/list'
+Multiselect  = require '../../src/select/multi'
 SelectFilter = require '../../src/select/filter'
+SelectList   = require '../../src/select/list'
 
 CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
 RangeSelector         = require '../../src/ui/range-selector'
