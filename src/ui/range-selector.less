@@ -1,9 +1,10 @@
-@range-refresh-width:     26px;
-@range-selection-color:   #5da35e;
-@range-selector-height:   30px;
-@range-selection-padding: (@range-selector-height / 2) - 6px;
 
 .range-selector {
+  @range-refresh-width:     26px;
+  @range-selection-color:   @btn-primary-bg;
+  @range-selector-height:   30px;
+  @range-selection-padding: (@range-selector-height / 2) - 6px;
+
   height:                 @range-selector-height;
   margin:                 0;
   -webkit-touch-callout:  none;
@@ -39,7 +40,7 @@
 
       &.selected {
         background-color: @range-selection-color;
-        color:            #fff;
+        color:            @btn-primary-color;
       }
     }
   }
