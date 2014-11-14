@@ -77,6 +77,7 @@ SelectFilter = React.createClass
   propTypes:
     options:      Types.nameValueList.isRequired
     selections:   Types.nameValueList
+    inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func
 
@@ -129,12 +130,13 @@ SelectFilter = React.createClass
 
   render: ->
     <div className='btn-group select-filter'>
-      <Input onFocus  = @onInputFocus
-             onBlur   = @onInputBlur
-             onChange = @onUpdateFilter
-             onCommit = @handleInputCommit
-             value    = @state.filterTerm
-             ref      = 'input'
+      <Input onFocus    = @onInputFocus
+             onBlur     = @onInputBlur
+             onChange   = @onUpdateFilter
+             onCommit   = @handleInputCommit
+             value      = @state.filterTerm
+             ref        = 'input'
+             className  = @props.inputClass
              />
       <SelectList options     = @state.filtered
                   visible     = @state.opened
@@ -151,11 +153,12 @@ Input = React.createClass
   displayName: 'SelectFilter.Input'
 
   propTypes:
-    onBlur:   React.PropTypes.func
-    onChange: React.PropTypes.func
-    onCommit: React.PropTypes.func
-    onFocus:  React.PropTypes.func
-    value:    React.PropTypes.string
+    className:  React.PropTypes.string
+    onBlur:     React.PropTypes.func
+    onChange:   React.PropTypes.func
+    onCommit:   React.PropTypes.func
+    onFocus:    React.PropTypes.func
+    value:      React.PropTypes.string
 
   getDefaultProps: ->
     hint:       'Select an item...'
@@ -195,8 +198,11 @@ Input = React.createClass
       @_inputElement().focus()
 
   render: ->
+    classes = classSet('dropdown-toggle': true)
+    classes[@props.className] = true if @props.className?
+
     <span className='input'>
-      <input className    = 'dropdown-toggle form-control'
+      <input className    = classes
              type         = 'text'
              autoComplete = 'off'
              onFocus      = @onFocus
