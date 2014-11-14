@@ -196,7 +196,7 @@ Input = React.createClass
 
   render: ->
     <span className='input'>
-      <input className    = 'dropdown-toggle'
+      <input className    = 'dropdown-toggle form-control'
              type         = 'text'
              autoComplete = 'off'
              onFocus      = @onFocus
