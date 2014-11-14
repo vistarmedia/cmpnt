@@ -198,11 +198,11 @@ Input = React.createClass
       @_inputElement().focus()
 
   render: ->
-    classes = classSet('dropdown-toggle': true)
+    classes = 'dropdown-toggle': true
     classes[@props.className] = true if @props.className?
 
     <span className='input'>
-      <input className    = classes
+      <input className    = classSet(classes)
              type         = 'text'
              autoComplete = 'off'
              onFocus      = @onFocus
