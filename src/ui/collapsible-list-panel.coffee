@@ -5,11 +5,11 @@
 # @example: ->
 #   React.createClass
 #     render: ->
-#       <CollapsibleListPanel title="Characters">
-#         <CollapsibleListPanel.Item label="Letters" visible=true>
+#       <CollapsibleListPanel title='Characters'>
+#         <CollapsibleListPanel.Item label='Letters' visible=true>
 #           <p>A, B, C</p>
 #         </CollapsibleListPanel.Item>
-#         <CollapsibleListPanel.Item label="Numbers">
+#         <CollapsibleListPanel.Item label='Numbers'>
 #           <p>1, 2, 3</p>
 #         </CollapsibleListPanel.Item>
 #       </CollapsibleListPanel>
@@ -29,13 +29,13 @@ CollapsibleListPanel = React.createClass
 
   render: ->
     title = if @props.title
-      <div className="panel-heading">{@props.title}</div>
+      <div className='panel-heading'>{@props.title}</div>
     else
       null
 
-    <div className="collapsible-list-panel panel panel-default">
+    <div className='collapsible-list-panel panel panel-default'>
       {title}
-      <div className="panel-body">
+      <div className='panel-body'>
         {@props.children}
       </div>
     </div>
@@ -59,17 +59,17 @@ Item = React.createClass
     @setState visible: not @state.visible
 
   render: ->
-    icon    = if @state.visible then "minus-square" else "plus-square"
+    icon    = if @state.visible then 'minus-square' else 'plus-square'
     classes = classSet
-      "collapsible-list-panel-item": true
-      "collapsed": not @state.visible
+      'collapsible-list-panel-item': true
+      'collapsed': not @state.visible
 
     <div className=classes>
       <CollapsibleListPanel.Toggle
           onClick = @buttonClicked
           on      = @state.visible
           label   = @props.label />
-      <div className="item-content">
+      <div className='item-content'>
         {@props.children}
       </div>
     </div>
@@ -87,8 +87,8 @@ Toggle = React.createClass
     on: false
 
   render: ->
-    icon  = if @props.on then "minus-square" else "plus-square"
-    <Button onClick=@props.onClick>
+    icon  = if @props.on then 'minus-square' else 'plus-square'
+    <Button className='collapsible-list-button' onClick=@props.onClick>
       <Icon name=icon />
       <label>{@props.label}</label>
     </Button>
