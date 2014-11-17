@@ -16,8 +16,8 @@
 #
 #     getInitialState: ->
 #       items: [
-#         {name: 'Mike Schmidt',      value: '3B'}
-#         {name: 'Ryne Sandberg',     value: '2B'}
+#         {name: 'Mike Schmidt',  id: '3B'}
+#         {name: 'Ryne Sandberg', id: '2B'}
 #       ]
 #
 #     onChange: (selectedList) ->
@@ -53,16 +53,16 @@ PillGroup = React.createClass
 
   propTypes:
     onChange:  React.PropTypes.func
-    options:   Types.nameValueList.isRequired
+    options:   Types.idNameList.isRequired
 
-  _onCloseItem: (value) ->
-    filtered = _(@props.options).filter (e) -> e.value isnt value
+  _onCloseItem: (id) ->
+    filtered = _(@props.options).filter (e) -> e.id isnt id
     @props.onChange?(filtered.value())
 
   _items: ->
     for item in @props.options
-      <Pill key = item.value
-        value   = item.value
+      <Pill key = item.id
+        value   = item.id
         onClose = @_onCloseItem>
         {item.name}
       </Pill>

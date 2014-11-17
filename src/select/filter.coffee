@@ -18,15 +18,15 @@
 #     getInitialState: ->
 #       selected: []
 #       items: [
-#         {name: 'item 1', value: 'id-1'}
-#         {name: 'item 2', value: 'id-2'}
-#         {name: 'item 3', value: 'id-3'}
-#         {name: 'item 4', value: 'id-4'}
-#         {name: 'item 5', value: 'id-5'}
-#         {name: 'item 6', value: 'id-6'}
-#         {name: 'item 7', value: 'id-7'}
-#         {name: 'item 8', value: 'id-8'}
-#         {name: 'item 9', value: 'id-9'}
+#         {name: 'item 1', id: 'id-1'}
+#         {name: 'item 2', id: 'id-2'}
+#         {name: 'item 3', id: 'id-3'}
+#         {name: 'item 4', id: 'id-4'}
+#         {name: 'item 5', id: 'id-5'}
+#         {name: 'item 6', id: 'id-6'}
+#         {name: 'item 7', id: 'id-7'}
+#         {name: 'item 8', id: 'id-8'}
+#         {name: 'item 9', id: 'id-9'}
 #       ]
 #
 #     handleSelections: (list) ->
@@ -34,7 +34,7 @@
 #
 #     _selectedItems: ->
 #       for item in @state.selected
-#         <li data-value=item.value>
+#         <li data-value=item.id>
 #           {item.name}
 #         </li>
 #
@@ -75,8 +75,8 @@ SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
   propTypes:
-    options:      Types.nameValueList.isRequired
-    selections:   Types.nameValueList
+    options:      Types.idNameList.isRequired
+    selections:   Types.idNameList
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func

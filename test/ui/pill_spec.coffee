@@ -73,8 +73,8 @@ describe 'Pill.Group', ->
 
   it 'should render all items in props.options', ->
     items = [
-      {name: 'Shawon Dunston', value: 'SS'}
-      {name: 'Hawk Dawson',    value: 'RF'}
+      {name: 'Shawon Dunston', id: 'SS'}
+      {name: 'Hawk Dawson',    id: 'RF'}
     ]
 
     group   = @render(<PillGroup options=items />)
@@ -88,14 +88,14 @@ describe 'Pill.Group', ->
 
   it 'should call onChange with props.options minus what was closed', (done) ->
     items = [
-      {name: 'Shawon Dunston', value: 'SS'}
-      {name: 'Hawk Dawson',    value: 'RF'}
+      {name: 'Shawon Dunston', id: 'SS'}
+      {name: 'Hawk Dawson',    id: 'RF'}
     ]
 
     onChange = (list) ->
       expect(list).to.have.length 1
       expect(list[0].name).to.equal  'Hawk Dawson'
-      expect(list[0].value).to.equal 'RF'
+      expect(list[0].id).to.equal 'RF'
       done()
 
     group  = @render(<PillGroup options=items onChange=onChange />)

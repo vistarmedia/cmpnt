@@ -8,15 +8,15 @@
 #     getInitialState: ->
 #       selected: []
 #       selectable: [
-#         {name: 'akon',          value: 'id-1'}
-#         {name: 'alizzz',        value: 'id-2'}
-#         {name: 'aesop rock',    value: 'id-3'}
-#         {name: 'adebisi shank', value: 'id-4'}
-#         {name: 'apparat',       value: 'id-5'}
-#         {name: 'armand hammer', value: 'id-6'}
-#         {name: 'baby huey',     value: 'id-7'}
-#         {name: 'baths',         value: 'id-8'}
-#         {name: 'billy paul',    value: 'id-9'}
+#         {name: 'akon',          id: 'id-1'}
+#         {name: 'alizzz',        id: 'id-2'}
+#         {name: 'aesop rock',    id: 'id-3'}
+#         {name: 'adebisi shank', id: 'id-4'}
+#         {name: 'apparat',       id: 'id-5'}
+#         {name: 'armand hammer', id: 'id-6'}
+#         {name: 'baby huey',     id: 'id-7'}
+#         {name: 'baths',         id: 'id-8'}
+#         {name: 'billy paul',    id: 'id-9'}
 #       ]
 #
 #     onChange: (list) ->
@@ -47,7 +47,7 @@ Multiselect = React.createClass
     selected: []
 
   propTypes:
-    options:   Types.nameValueList.isRequired
+    options:   Types.idNameList.isRequired
     onChange:  React.PropTypes.func
     filter:    React.PropTypes.func
 

@@ -6,11 +6,11 @@
 React      = require 'react'
 
 
-nameValue = React.PropTypes.shape
-  name:   React.PropTypes.string
-  value:  React.PropTypes.string
+idName = React.PropTypes.shape
+  id:   React.PropTypes.any
+  name: React.PropTypes.string
 
 
 module.exports =
-  nameValue:      nameValue
-  nameValueList:  React.PropTypes.arrayOf(nameValue.isRequired)
+  idName:     idName
+  idNameList: React.PropTypes.arrayOf(idName.isRequired)

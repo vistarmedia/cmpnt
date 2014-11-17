@@ -21,7 +21,7 @@
 # item element, allowing for custom close behavior for instance.
 #
 # It expects an array of things to render in the "value" prop.  It requires
-# objects with a key "name" (for the display name) and "value" (for an
+# objects with a key "name" (for the display name) and "id" (for an
 # identifier).
 #
 #
@@ -34,9 +34,9 @@
 #
 #     getDefaultProps: ->
 #       items: [
-#         {name: 'custom made',        value: 'ani-1'}
-#         {name: 'custom paid',        value: 'ani-2'}
-#         {name: 'just custom fitted', value: 'ani-3'}
+#         {name: 'custom made',        id: 'ani-1'}
+#         {name: 'custom paid',        id: 'ani-2'}
+#         {name: 'just custom fitted', id: 'ani-3'}
 #       ]
 #
 #     toggleSelect: (e) ->
@@ -55,7 +55,7 @@
 #
 #     _selectedItems: ->
 #       for item in @state.items
-#         <li key=item.value className='list-group-item'>{item.name}</li>
+#         <li key=item.id className='list-group-item'>{item.name}</li>
 #
 #     render: ->
 #       <div className='container'>
@@ -88,8 +88,8 @@ SelectList = React.createClass
   displayName: 'SelectList'
 
   propTypes:
-    options:      Types.nameValueList.isRequired
-    selections:   Types.nameValueList
+    options:      Types.idNameList.isRequired
+    selections:   Types.idNameList
     onChange:     React.PropTypes.func
     visible:      React.PropTypes.bool
     shouldFocus:  React.PropTypes.bool
@@ -111,38 +111,38 @@ SelectList = React.createClass
     'ArrowUp'
   ]
 
-  onSelect: (name, value) ->
+  onSelect: (name, id) ->
     selections = _(_.clone(@props.selections))
-      .push(name: name, value: value).value()
+      .push(name: name, id: id).value()
     @setState
       selected: selections
-      focused: value, ->
+      focused: id, ->
         @props.onChange?(selections)
 
-  onDeselect: (name, value) ->
+  onDeselect: (name, id) ->
     selections = (_(@props.selections).filter((e) ->
-      e.value != value)).value()
+      e.id != id)).value()
     @setState
       selected: selections
     @props.onChange?(selections)
 
-  _itemForValue: (value) ->
-    @refs[value]
+  _itemForId: (id) ->
+    @refs[id]
 
   _focusItem: ->
-    component = @_itemForValue(@state.focused)
+    component = @_itemForId(@state.focused)
     component?.setFocus(true)
 
   _selectedNotInList: (list) ->
-    @state.focused not in _(list).pluck('value')
+    @state.focused not in _(list).pluck('id')
 
   _shouldSetDefaultFocusedState: (props) ->
     props.shouldFocus and @_selectedNotInList(props.options)
 
   _firstNotSelectedItem: (props) ->
-    selectedValues = _(props.selections).pluck('value').value()
-    item = _.find props.options, (e) => e.value not in selectedValues
-    item?.value or props.selections[0]?.value
+    selectedIds = _(props.selections).pluck('id').value()
+    item = _.find props.options, (e) => e.id not in selectedIds
+    item?.id or props.selections[0]?.id
 
   componentWillReceiveProps: (nextProps) ->
     @setState
@@ -167,33 +167,33 @@ SelectList = React.createClass
         @_selectNext(@state.focused)
       @props.onKeyDown?(e, @state.focused)
 
-  _indexForValue: (value) ->
+  _indexForId: (id) ->
     _.findIndex @props.options, (e) ->
-      e.value is value
+      e.id is id
 
-  _selectNext: (value) ->
-    index = @_indexForValue(value)
+  _selectNext: (id) ->
+    index = @_indexForId(id)
     if (index + 1) < @props.options.length
       @select(@props.options[index + 1])
 
-  _selectPrev: (value) ->
-    index = @_indexForValue(value)
+  _selectPrev: (id) ->
+    index = @_indexForId(id)
     if index isnt 0
       @select(@props.options[index - 1])
 
   select: (element) ->
-    @setState focused: element.value
+    @setState focused: element.id
 
   onKeyUp: (e) ->
     if @props.visible
       e.stopPropagation()
       e.preventDefault()
 
-  _setFocusedItem: (name, value) ->
-    @select(name: name, value: value)
+  _setFocusedItem: (name, id) ->
+    @select(name: name, id: id)
 
   _isItemSelected: (item) ->
-    (_(@state.selected).find value: item.value)?
+    (_(@state.selected).find id: item.id)?
 
   onBlur: (e) ->
     if not e.relatedTarget?.className.match(/list-item/)
@@ -201,12 +201,12 @@ SelectList = React.createClass
 
   _items: ->
     for item in @props.options
-      <SelectItem key        = item.value
+      <SelectItem key        = item.id
                   name       = item.name
-                  ref        = item.value
-                  value      = item.value
+                  ref        = item.id
+                  id         = item.id
                   selected   = @_isItemSelected(item)
-                  isActive   = {item.value is @state.focused}
+                  isActive   = {item.id is @state.focused}
                   onSelect   = @onSelect
                   onDeselect = @onDeselect
                   onHover    = @_setFocusedItem
@@ -234,16 +234,16 @@ SelectItem = React.createClass
   displayName: 'SelectItem'
 
   propTypes:
-    name:        React.PropTypes.string.isRequired
-    value:       React.PropTypes.string.isRequired
-    href:        React.PropTypes.string
-    tabIndex:    React.PropTypes.string
-    selected:    React.PropTypes.bool
-    hovered:     React.PropTypes.bool
-    isActive:    React.PropTypes.bool
-    onSelect:    React.PropTypes.func
-    onDeselect:  React.PropTypes.func
-    onFocus:     React.PropTypes.func
+    name:       React.PropTypes.string.isRequired
+    id:         React.PropTypes.string.isRequired
+    href:       React.PropTypes.string
+    tabIndex:   React.PropTypes.string
+    selected:   React.PropTypes.bool
+    hovered:    React.PropTypes.bool
+    isActive:   React.PropTypes.bool
+    onSelect:   React.PropTypes.func
+    onDeselect: React.PropTypes.func
+    onFocus:    React.PropTypes.func
 
   getDefaultProps: ->
     tabIndex:  '-1'
@@ -268,7 +268,7 @@ SelectItem = React.createClass
 
   setHover: (bool) ->
     @setState hovered: bool
-    @props.onHover?(@props.name, @props.value)
+    @props.onHover?(@props.name, @props.id)
 
   onSelect: (e) ->
     e.preventDefault()
@@ -276,9 +276,9 @@ SelectItem = React.createClass
     toggleValue = not @state.selected
     @selected(toggleValue)
     if toggleValue
-      @props.onSelect?(@props.name, @props.value)
+      @props.onSelect?(@props.name, @props.id)
     else
-      @props.onDeselect?(@props.name, @props.value)
+      @props.onDeselect?(@props.name, @props.id)
 
   _classes: ->
     classSet
