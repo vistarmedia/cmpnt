@@ -43,6 +43,7 @@ Icon = React.createClass
 
     switch @props.size
       when 'large' then classes.push('fa-lg')
+      when '5x'    then classes.push('fa-5x')
 
     <i className={classes.join(' ')} />
 
