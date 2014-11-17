@@ -14,26 +14,26 @@
 #   React.createClass
 #     render: ->
 #       options = [{
-#         label: 'Option 1'
+#         name: 'Option 1'
 #         id: '1'
 #       }, {
-#         label: 'Option 2'
+#         name: 'Option 2'
 #         id: '2'
 #       }, {
-#         label: 'Option 3'
+#         name: 'Option 3'
 #         id: '3'
 #       }, {
-#         label: 'Value 1'
+#         name: 'Value 1'
 #         id: '4'
 #       }]
 #
 #       value = [options[3]]
 #
-#       format = (m) -> m.label
+#       format = (m) -> m.name
 #       comparator = (a, b) ->
-#         if a.label > b.label
+#         if a.name > b.name
 #           1
-#         else if a.label < b.label
+#         else if a.name < b.name
 #           -1
 #         else
 #           0
@@ -100,7 +100,7 @@ FilteredOptionList = React.createClass
 
   render: ->
     filtered = (opt for opt in @props.options when\
-      opt.label.toLowerCase().indexOf(@state.filter) isnt -1)
+      opt.name.toLowerCase().indexOf(@state.filter) isnt -1)
 
     <div className='filter-container'>
       <input className='form-control'
@@ -130,7 +130,7 @@ SourceSink = React.createClass
       if a.id < b.id then -1
       else if a.id > b.id then 1
       else 0
-    format:     (o) -> o.label
+    format:     (o) -> o.name
     onChange:   ->
     options:    []
     value:      []

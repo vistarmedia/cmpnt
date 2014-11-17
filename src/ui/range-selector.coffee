@@ -6,13 +6,13 @@
 #   React.createClass
 #     render: ->
 #       <RangeSelector options={[
-#           {value: 0, label: 'Sun'}
-#           {value: 1, label: 'Mon'}
-#           {value: 2, label: 'Tue'}
-#           {value: 3, label: 'Wed'}
-#           {value: 4, label: 'Thu'}
-#           {value: 5, label: 'Fri'}
-#           {value: 6, label: 'Sat'}
+#           {id: 0, name: 'Sun'}
+#           {id: 1, name: 'Mon'}
+#           {id: 2, name: 'Tue'}
+#           {id: 3, name: 'Wed'}
+#           {id: 4, name: 'Thu'}
+#           {id: 5, name: 'Fri'}
+#           {id: 6, name: 'Sat'}
 #         ]} />
 _           = require 'lodash'
 React       = require 'react'
@@ -47,15 +47,15 @@ RangeSelector = React.createClass
 
   getOrdinalsFromValue: (value) ->
     value
-      .map (v) => _.findIndex(@props.options, (o) -> o.value is v)
+      .map (v) => _.findIndex(@props.options, (o) -> o.id is v)
       .filter (i) => i isnt -1
 
   getOrdinal: (el) -> parseInt(el.getAttribute('data-ordinal'))
 
   applyChange: (attrs) ->
     @setState attrs, =>
-      selectedVals = @state.selected.map (ord) => @props.options[ord].value
-      @props.onChange selectedVals
+      selectedIds = @state.selected.map (ord) => @props.options[ord].id
+      @props.onChange selectedIds
 
   select: (el, toggleOn) ->
     ord = @getOrdinal(el)     # the ordinal of the current selection section
@@ -133,8 +133,8 @@ RangeSelector = React.createClass
     sections = for opt, i in @props.options
       @transferPropsTo(
         <RangeSelector.Section ordinal=i
-                               value=opt.value
-                               label=opt.label
+                               id=opt.id
+                               label=opt.name
                                key="section-#{i}"
                                selected=@isSelected(i)
                                mouseOver=@mouseOver
@@ -156,7 +156,7 @@ RangeSelector = React.createClass
 RangeSelector.Section = React.createClass
   propTypes:
     ordinal:    React.PropTypes.number.isRequired
-    value:      React.PropTypes.any.isRequired
+    id:         React.PropTypes.any.isRequired
     label:      React.PropTypes.string
     mouseOver:  React.PropTypes.func
     mouseUp:    React.PropTypes.func
@@ -168,8 +168,7 @@ RangeSelector.Section = React.createClass
     selected: false
 
   render: ->
-    val     = @props.value
-    content = if @props.label then @props.label else val
+    content = if @props.label then @props.label else @props.id
 
     classes =
       "range-section": true

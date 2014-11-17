@@ -12,10 +12,10 @@ describe 'Collapsible List Panel', ->
     @view = @render(
       <CollapsibleListPanel title="The List">
         <CollapsibleListPanel.Item label="Some Bull">
-          <RangeSelector options={[{value: 0, label: 'Zero'}]} />
+          <RangeSelector options={[{id: 0, name: 'Zero'}]} />
         </CollapsibleListPanel.Item>
         <CollapsibleListPanel.Item label="More Baloney">
-          <RangeSelector options={[{value: 'A', label: 'Letter A'}]} />
+          <RangeSelector options={[{id: 'A', name: 'Letter A'}]} />
         </CollapsibleListPanel.Item>
       </CollapsibleListPanel>)
 

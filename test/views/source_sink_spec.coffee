@@ -11,7 +11,7 @@ FilteredOptionList = SourceSink.FilteredOptionList
 describe 'Source Sink View', ->
   beforeEach ->
     @options = for i in [1..5]
-      label: "Option #{i}"
+      name: "Option #{i}"
       id: "#{i}"
 
     @comparator = (a, b) ->
@@ -19,7 +19,7 @@ describe 'Source Sink View', ->
       else if a.id > b.id then 1
       else 0
 
-    @format = (m) -> m.label
+    @format = (m) -> m.name
 
   describe 'Option List', ->
     beforeEach ->
@@ -35,7 +35,7 @@ describe 'Source Sink View', ->
       opt = @list.getDOMNode().querySelectorAll('option')[0]
       opt.selected = true
       @simulate.change @list.getDOMNode()
-      expect(@onSelect).to.have.been.calledWith([{id: '1', label: 'Option 1'}])
+      expect(@onSelect).to.have.been.calledWith([{id: '1', name: 'Option 1'}])
 
     it 'should sort values with comparator', ->
       options = @list.getDOMNode().querySelectorAll('option')
@@ -87,7 +87,7 @@ describe 'Source Sink View', ->
 
   describe 'Source Sink View', ->
     beforeEach ->
-      @format = (m) -> m.label
+      @format = (m) -> m.name
       @onChange = sinon.spy()
 
       @sourceSink = @render <SourceSink options=@options
@@ -110,7 +110,7 @@ describe 'Source Sink View', ->
 
       expect(sourceSink.state.sourceSelected).to.contain
         id: '2'
-        label: 'Option 2'
+        name: 'Option 2'
 
       sinkEl = el.querySelector('.sink-container select')
       sinkEl.querySelectorAll('option')[0].selected = true
@@ -119,7 +119,7 @@ describe 'Source Sink View', ->
 
       expect(sourceSink.state.sinkSelected).to.contain
         id: '5'
-        label: 'Option 5'
+        name: 'Option 5'
 
     it 'should reset state on re-render', ->
       selected = [@options[4]]
@@ -130,14 +130,14 @@ describe 'Source Sink View', ->
       expect(sourceSink.state.sinkOptions).to.have.length 1
       expect(sourceSink.state.sinkOptions).to.contain
         id: '5'
-        label: 'Option 5'
+        name: 'Option 5'
 
       sourceSink.setProps options: @options, value: [@options[2]]
       expect(sourceSink.state.sourceOptions).to.have.length 4
       expect(sourceSink.state.sinkOptions).to.have.length 1
       expect(sourceSink.state.sinkOptions).to.contain
         id: '3'
-        label: 'Option 3'
+        name: 'Option 3'
 
     it 'should sort values with the provided function', ->
       options = @sourceSink.getDOMNode().querySelectorAll('option')

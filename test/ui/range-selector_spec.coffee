@@ -7,16 +7,27 @@ RangeSelector = require '../../src/ui/range-selector'
 
 
 options = [
-  {value: 0, label: 'Sun'}
-  {value: 1, label: 'Mon'}
-  {value: 2, label: 'Tue'}
-  {value: 3, label: 'Wed'}
-  {value: 4, label: 'Thu'}
-  {value: 5, label: 'Fri'}
-  {value: 6, label: 'Sat'}
+  {id: 0, name: 'Sun'}
+  {id: 1, name: 'Mon'}
+  {id: 2, name: 'Tue'}
+  {id: 3, name: 'Wed'}
+  {id: 4, name: 'Thu'}
+  {id: 5, name: 'Fri'}
+  {id: 6, name: 'Sat'}
 ]
 
 describe 'Range Selector', ->
+
+    it 'should display the proper options', ->
+      view = @render <RangeSelector options=options value=[1,3,4] />
+      html = view.getDOMNode().innerHTML
+      expect(html).to.contain 'Sun'
+      expect(html).to.contain 'Mon'
+      expect(html).to.contain 'Tue'
+      expect(html).to.contain 'Wed'
+      expect(html).to.contain 'Thu'
+      expect(html).to.contain 'Fri'
+      expect(html).to.contain 'Sat'
 
     describe 'firing the the onChange event', ->
 
