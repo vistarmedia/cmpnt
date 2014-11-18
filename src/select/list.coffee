@@ -314,7 +314,7 @@ SelectItem = React.createClass
       @onSelect(e)
 
   render: ->
-    <li className=@_classes() role='presentation'>
+    <li key=@props.id className=@_classes() role='presentation'>
       <a role        = 'menuitem'
          className   = 'list-item'
          tabIndex    = @props.tabIndex

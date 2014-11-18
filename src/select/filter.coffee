@@ -34,7 +34,7 @@
 #
 #     _selectedItems: ->
 #       for item in @state.selected
-#         <li data-value=item.id>
+#         <li data-value=item.id key=item.id>
 #           {item.name}
 #         </li>
 #

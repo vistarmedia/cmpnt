@@ -24,7 +24,7 @@
 #       @setState(items: selectedList)
 #
 #     _items: ->
-#       items = (<li key=p.value>{p.name}</li> for p in @state.items)
+#       items = (<li key=p.id>{p.name}</li> for p in @state.items)
 #       <ul>
 #         {items}
 #       </ul>
