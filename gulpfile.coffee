@@ -2,10 +2,12 @@ browserify  = require 'gulp-browserify'
 cjsx        = require 'gulp-cjsx'
 concat      = require 'gulp-concat'
 connect     = require 'connect'
+connectjs   = require 'connect-livereload'
 gulp        = require 'gulp'
 gutil       = require 'gulp-util'
 http        = require 'http'
 less        = require 'gulp-less'
+livereload  = require 'gulp-livereload'
 mocha       = require 'gulp-mocha'
 serve       = require 'serve-static'
 
@@ -107,14 +109,20 @@ gulp.task 'project:src', ->
     .pipe(cjsx())
     .pipe(gulp.dest(project.dest))
 
-
-gulp.task 'project:test:watch', ->
+gulp.task 'project:test:watch', ['project:test'], ->
   gulp.watch([project.srcs, project.test], -> runTests(project))
 
-gulp.task 'serve', ->
+gulp.task 'serve', ['default'], ->
   app = connect()
-  app.use(serve(demo.dest))
+  lr  = livereload()
+  app
+    .use(connectjs())
+    .use(serve(demo.dest))
+    .use(serve(project.dest))
   app.listen(process.env['PORT'] or 4011)
+  livereload.listen()
+  gulp.watch("#{demo.dest}/**").on 'change', (file) ->
+    lr.changed(file.path)
 
 gulp.task 'watch:serve', ['serve'], ->
   gulp.watch([project.srcs, project.style, demo.srcs, demo.style],

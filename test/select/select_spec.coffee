@@ -784,7 +784,6 @@ describe 'SelectList', ->
 
     expect(onBlur).not.to.have.been.called
 
-
   context 'when visible', ->
 
     beforeEach ->
@@ -825,7 +824,7 @@ describe 'SelectList', ->
       middleItemAnchor = @getAnchor select, 'ani-2'
 
       @simulate.focus(middleItemAnchor)
-      @simulate.keyDown(middleItemAnchor, key: 'Enter')
+      @simulate.keyPress(middleItemAnchor, key: 'Enter')
 
       expect(select.state.focused).to.equal 'ani-2'
 
@@ -839,7 +838,7 @@ describe 'SelectList', ->
 
       expect(select.state.focused).to.equal 'ani-2'
 
-      @simulate.keyDown(middleItemAnchor, key: 'ArrowDown')
+      @simulate.keyPress(middleItemAnchor, key: 'ArrowDown')
 
       expect(select.state.focused).to.equal 'ani-3'
 

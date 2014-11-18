@@ -191,7 +191,7 @@ Input = React.createClass
     @props.onBlur?(e)
 
   _inputElement: ->
-    @refs.input.getDOMNode().focus()
+    @refs.input.getDOMNode()
 
   componentDidUpdate: ->
     if @state.focused

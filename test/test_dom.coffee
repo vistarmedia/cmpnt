@@ -45,6 +45,10 @@ beforeEach ->
     comp = @findByTag(comp, 'input')
     comp.getDOMNode().setAttribute('value', value)
 
+  @simulate.keyPress = (component, key) =>
+    @simulate.keyDown(component, key)
+    @simulate.keyUp(component, key)
+
 
 # Nuke the global state of window/document/navigator
 afterEach ->

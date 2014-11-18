@@ -20,7 +20,7 @@
 # The 'onBlur' prop will be called only if an onBlur is triggered on a non-list
 # item element, allowing for custom close behavior for instance.
 #
-# It expects an array of things to render in the "value" prop.  It requires
+# It expects an array of things to render in the "options" prop.  It requires
 # objects with a key "name" (for the display name) and "id" (for an
 # identifier).
 #
@@ -167,6 +167,18 @@ SelectList = React.createClass
         @_selectNext(@state.focused)
       @props.onKeyDown?(e, @state.focused)
 
+  onKeyUp: (e) ->
+    if @props.visible
+      e.stopPropagation()
+      e.preventDefault()
+
+  onBlur: (e) ->
+    if not e.relatedTarget?.className.match(/list-item/)
+      @props.onBlur?(e)
+
+  select: (element) ->
+    @setState focused: element.id
+
   _indexForId: (id) ->
     _.findIndex @props.options, (e) ->
       e.id is id
@@ -181,23 +193,11 @@ SelectList = React.createClass
     if index isnt 0
       @select(@props.options[index - 1])
 
-  select: (element) ->
-    @setState focused: element.id
-
-  onKeyUp: (e) ->
-    if @props.visible
-      e.stopPropagation()
-      e.preventDefault()
-
   _setFocusedItem: (name, id) ->
     @select(name: name, id: id)
 
   _isItemSelected: (item) ->
     (_(@state.selected).find id: item.id)?
-
-  onBlur: (e) ->
-    if not e.relatedTarget?.className.match(/list-item/)
-      @props.onBlur?(e)
 
   _items: ->
     for item in @props.options
@@ -280,6 +280,9 @@ SelectItem = React.createClass
     else
       @props.onDeselect?(@props.name, @props.id)
 
+  hasFocus: ->
+    @props.isActive or @state.hovered or @props.selected
+
   _classes: ->
     classSet
       hover:         @hasFocus()
@@ -302,13 +305,6 @@ SelectItem = React.createClass
     @setHover(false)
     @props.onBlur?(e)
 
-  hasFocus: ->
-    @props.isActive or @state.hovered or @props.selected
-
-  _onKeyUp: (e) ->
-    if e.key is 'ArrowUp' or e.key is 'ArrowDown'
-      @setHover(true)
-
   _onKeyDown: (e) ->
     if e.key is 'Enter' and @hasFocus()
       @onSelect(e)
@@ -321,7 +317,6 @@ SelectItem = React.createClass
          href        = @props.href
          onClick     = @onSelect
          onKeyDown   = @_onKeyDown
-         onKeyUp     = @_onKeyUp
          onMouseOver = @_onMouseOver
          onMouseOut  = @_onMouseOut
          onBlur      = @_onBlur
