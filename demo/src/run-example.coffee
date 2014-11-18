@@ -8,6 +8,8 @@ LineChart = require '../../src/chart/line'
 Button     = require '../../src/form/button'
 FilePicker = require '../../src/form/file_picker'
 
+LoginLayout = require '../../src/layout/login'
+
 Icon      = require '../../src/ui/icon'
 Pill      = require '../../src/ui/pill'
 PillGroup = require '../../src/ui/pill/group'
@@ -24,6 +26,8 @@ DataTable = require '../../src/table/data-table'
 Pager     = require '../../src/table/paging'
 
 SourceSink = require '../../src/views/source_sink'
+
+Login = require '../../src/login'
 
 
 RunExample = React.createClass
