@@ -48,7 +48,7 @@ Login = React.createClass
     @props.onSubmit?(email, password)
 
   render: ->
-    <span>
+    <span className='login'>
       {@_title()}
       {@_error()}
       {@_body()}
