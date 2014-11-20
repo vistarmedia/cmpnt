@@ -32,12 +32,6 @@
 #     handleSelections: (list) ->
 #       @setState selected: list
 #
-#     _selectedItems: ->
-#       for item in @state.selected
-#         <li data-value=item.id key=item.id>
-#           {item.name}
-#         </li>
-#
 #     render: ->
 #       <div className='container'>
 #         <div className='row'>
@@ -54,6 +48,11 @@
 #         </div>
 #       </div>
 #
+#     _selectedItems: ->
+#       for item in @state.selected
+#         <li data-value=item.id key=item.id>
+#           {item.name}
+#         </li>
 
 
 _          = require 'lodash'
@@ -105,7 +104,7 @@ SelectFilter = React.createClass
     @setState opened: false, focusList: false
 
   onInputBlur: (e) ->
-    if not e.relatedTarget
+    if @_eventOnElementNotOnList(e)
       @close()
 
   onInputFocus: (e) ->
@@ -147,6 +146,9 @@ SelectFilter = React.createClass
                   ref         = 'list'
                   />
     </div>
+
+  _eventOnElementNotOnList: (e) ->
+    not e.relatedTarget or (not e.relatedTarget?.className?.match(/list-item/))
 
 
 Input = React.createClass
@@ -190,9 +192,6 @@ Input = React.createClass
     @setState focused: false
     @props.onBlur?(e)
 
-  _inputElement: ->
-    @refs.input.getDOMNode()
-
   componentDidUpdate: ->
     if @state.focused
       @_inputElement().focus()
@@ -214,6 +213,9 @@ Input = React.createClass
              ref          = 'input'
              />
     </span>
+
+  _inputElement: ->
+    @refs.input.getDOMNode()
 
 
 SelectFilter.Input = Input

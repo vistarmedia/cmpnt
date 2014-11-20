@@ -386,7 +386,7 @@ describe 'SelectFilter', ->
     expect(listComponent.props.visible).to.be.false
     expect(listComponent.props.shouldFocus).to.be.false
 
-  it 'should set onpend=false onBlur if e.relatedTarget is null', ->
+  it 'should set opened=false onBlur if e.relatedTarget is null', ->
     select = @render(<SelectFilter options=@items />)
     listComponent = @findByType select, SelectList
     ulElement = @findByTag listComponent, 'ul'
@@ -430,7 +430,7 @@ describe 'SelectFilter', ->
 
     expect(listComponent.props.visible).to.be.true
 
-    @simulate.blur(input, relatedTarget: itemElement)
+    @simulate.blur(input, relatedTarget: itemElement.getDOMNode())
 
     expect(listComponent.props.visible).to.be.true
 

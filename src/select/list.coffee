@@ -43,19 +43,9 @@
 #       e.preventDefault()
 #       @setState(showSelect: not @state.showSelect)
 #
-#     _showOrHideText: ->
-#       if @state.showSelect
-#         'Hide'
-#       else
-#         'Show'
-#
 #     onChange: (selectedItems) ->
 #       @setState
 #         items: selectedItems
-#
-#     _selectedItems: ->
-#       for item in @state.items
-#         <li key=item.id className='list-group-item'>{item.name}</li>
 #
 #     render: ->
 #       <div className='container'>
@@ -75,6 +65,16 @@
 #           </ul>
 #         </div>
 #       </div>
+#
+#     _showOrHideText: ->
+#       if @state.showSelect
+#         'Hide'
+#       else
+#         'Show'
+#
+#     _selectedItems: ->
+#       for item in @state.items
+#         <li key=item.id className='list-group-item'>{item.name}</li>
 
 
 _          = require 'lodash'
@@ -106,57 +106,6 @@ SelectList = React.createClass
     selected:  []
     focused:   null
 
-  _keys: [
-    'ArrowDown'
-    'ArrowUp'
-  ]
-
-  onSelect: (name, id) ->
-    selections = _(_.clone(@props.selections))
-      .push(name: name, id: id).value()
-    @setState
-      selected: selections
-      focused: id, ->
-        @props.onChange?(selections)
-
-  onDeselect: (name, id) ->
-    selections = (_(@props.selections).filter((e) ->
-      e.id != id)).value()
-    @setState
-      selected: selections
-    @props.onChange?(selections)
-
-  _itemForId: (id) ->
-    @refs[id]
-
-  _focusItem: ->
-    component = @_itemForId(@state.focused)
-    component?.setFocus(true)
-
-  _selectedNotInList: (list) ->
-    @state.focused not in _(list).pluck('id')
-
-  _shouldSetDefaultFocusedState: (props) ->
-    props.shouldFocus and @_selectedNotInList(props.options)
-
-  _firstNotSelectedItem: (props) ->
-    selectedIds = _(props.selections).pluck('id').value()
-    item = _.find props.options, (e) => e.id not in selectedIds
-    item?.id or props.selections[0]?.id
-
-  componentWillReceiveProps: (nextProps) ->
-    @setState
-      selected: nextProps.selections
-
-    if @_shouldSetDefaultFocusedState(nextProps)
-      @setState(focused: @_firstNotSelectedItem(nextProps))
-    else
-      @setState(focused: null)
-
-  componentDidUpdate: ->
-    if @props.shouldFocus
-      @_focusItem()
-
   onKeyDown: (e) ->
     if @props.visible and e.key in @_keys
       e.stopPropagation()
@@ -176,8 +125,80 @@ SelectList = React.createClass
     if not e.relatedTarget?.className.match(/list-item/)
       @props.onBlur?(e)
 
+  onSelect: (name, id) ->
+    selections = _(_.clone(@props.selections))
+      .push(name: name, id: id).value()
+    @setState
+      selected: selections
+      focused: id, ->
+        @props.onChange?(selections)
+
+  onDeselect: (name, id) ->
+    selections = (_(@props.selections).filter((e) ->
+      e.id != id)).value()
+    @setState
+      selected: selections
+    @props.onChange?(selections)
+
+  componentWillReceiveProps: (nextProps) ->
+    @setState
+      selected: nextProps.selections
+
+    if @_shouldSetDefaultFocusedState(nextProps)
+      @setState(focused: @_firstNotSelectedItem(nextProps))
+    else
+      @setState(focused: null)
+
+  componentDidUpdate: ->
+    if @props.shouldFocus
+      @_focusItem()
+
   select: (element) ->
     @setState focused: element.id
+
+  render: ->
+    <ul className = @_classes()
+        onKeyDown = @onKeyDown
+        onKeyUp   = @onKeyUp
+        onBlur    = @onBlur>
+      {@_items()}
+    </ul>
+
+  _items: ->
+    for item in @props.options
+      <SelectItem key        = item.id
+                  name       = item.name
+                  ref        = item.id
+                  id         = item.id
+                  selected   = @_isItemSelected(item)
+                  isActive   = {item.id is @state.focused}
+                  onSelect   = @onSelect
+                  onDeselect = @onDeselect
+                  onHover    = @_setFocusedItem
+                  />
+
+  _keys: [
+    'ArrowDown'
+    'ArrowUp'
+  ]
+
+  _itemForId: (id) ->
+    @refs[id]
+
+  _focusItem: ->
+    component = @_itemForId(@state.focused)
+    component?.setFocus(true)
+
+  _selectedNotInList: (list) ->
+    @state.focused not in _(list).pluck('id')
+
+  _shouldSetDefaultFocusedState: (props) ->
+    props.shouldFocus and @_selectedNotInList(props.options)
+
+  _firstNotSelectedItem: (props) ->
+    selectedIds = _(props.selections).pluck('id').value()
+    item = _.find props.options, (e) => e.id not in selectedIds
+    item?.id or props.selections[0]?.id
 
   _indexForId: (id) ->
     _.findIndex @props.options, (e) ->
@@ -198,27 +219,6 @@ SelectList = React.createClass
 
   _isItemSelected: (item) ->
     (_(@state.selected).find id: item.id)?
-
-  _items: ->
-    for item in @props.options
-      <SelectItem key        = item.id
-                  name       = item.name
-                  ref        = item.id
-                  id         = item.id
-                  selected   = @_isItemSelected(item)
-                  isActive   = {item.id is @state.focused}
-                  onSelect   = @onSelect
-                  onDeselect = @onDeselect
-                  onHover    = @_setFocusedItem
-                  />
-
-  render: ->
-    <ul className = @_classes()
-        onKeyDown = @onKeyDown
-        onKeyUp   = @onKeyUp
-        onBlur    = @onBlur>
-      {@_items()}
-    </ul>
 
   _classes: ->
     classes =
@@ -283,6 +283,23 @@ SelectItem = React.createClass
   hasFocus: ->
     @props.isActive or @state.hovered or @props.selected
 
+  render: ->
+    <li key=@props.id className=@_classes() role='presentation'>
+      <a role        = 'menuitem'
+         className   = 'list-item'
+         tabIndex    = @props.tabIndex
+         href        = @props.href
+         onClick     = @onSelect
+         onKeyDown   = @_onKeyDown
+         onMouseOver = @_onMouseOver
+         onMouseOut  = @_onMouseOut
+         onBlur      = @_onBlur
+         onFocus     = @_onFocus>
+
+        {@props.name}
+      </a>
+    </li>
+
   _classes: ->
     classSet
       hover:         @hasFocus()
@@ -308,23 +325,6 @@ SelectItem = React.createClass
   _onKeyDown: (e) ->
     if e.key is 'Enter' and @hasFocus()
       @onSelect(e)
-
-  render: ->
-    <li key=@props.id className=@_classes() role='presentation'>
-      <a role        = 'menuitem'
-         className   = 'list-item'
-         tabIndex    = @props.tabIndex
-         href        = @props.href
-         onClick     = @onSelect
-         onKeyDown   = @_onKeyDown
-         onMouseOver = @_onMouseOver
-         onMouseOut  = @_onMouseOut
-         onBlur      = @_onBlur
-         onFocus     = @_onFocus>
-
-        {@props.name}
-      </a>
-    </li>
 
 
 SelectList.SelectItem = SelectItem
