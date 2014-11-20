@@ -26,7 +26,7 @@ DownloadLink = React.createClass
 
   componentWillUnmount: ->
     if @uri?
-      URL.removeObjectURL(@uri)
+      URL.revokeObjectURL(@uri)
 
   render: ->
     <a href=@uri download=@props.fileName>{@props.children}</a>
