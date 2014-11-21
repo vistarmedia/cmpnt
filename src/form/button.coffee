@@ -2,6 +2,7 @@
 #
 # @description: Renders a button and calls the given `onClick` function, if
 # given, when clicked. Any children passed will be redirected inside the button.
+# Passing a type will style the button accordingly.
 #
 # @example: ->
 #   React.createClass
@@ -9,27 +10,46 @@
 #       alert "oh no you didn't!"
 #
 #     render: ->
-#       <Button onClick=@onClick>Careful now!</Button>
-React       = require 'react'
+#       <Button type='primary' onClick=@onClick>Careful now!</Button>
+React      = require 'react'
+{classSet} = require('react/addons').addons
 
 
 Button = React.createClass
   displayName: 'Button'
 
   propTypes:
-    onClick:    React.PropTypes.func
-    className:  React.PropTypes.string
+    onClick:     React.PropTypes.func
+    className:   React.PropTypes.string
+    type:
+      React.PropTypes.oneOf [
+        'default'
+        'primary',
+        'link',
+        'success',
+        'info',
+        'warning',
+        'danger'
+      ]
+
+  getDefaultProps: ->
+    type: 'default'
 
   onClick: (e) ->
     e?.preventDefault()
     @props.onClick?()
 
   render: ->
-    classes = if @props.className? then [@props.className] else []
-    classes = classes.concat('btn', 'btn-large')
-    classes.push 'disabled' if @props.disabled
+    classes =
+      btn:      true
+      disabled: @props.disabled
+    classes['btn-large'] = true
+    classes["btn-#{@props.type}"] = true
 
-    <button className={classes.join(' ')} onClick=@onClick>
+    if @props.className?
+      classes[@props.className] = true
+
+    <button className=classSet(classes) onClick=@onClick>
       {@props.children}
     </button>
 
