@@ -35,34 +35,7 @@ describe 'Source Sink View', ->
       opt = @list.getDOMNode().querySelectorAll('option')[0]
       opt.selected = true
       @simulate.change @list.getDOMNode()
-      expect(@onSelect).to.have.been.calledWith([{id: '1', name: 'Option 1'}])
-
-    it 'should sort values with comparator', ->
-      options = @list.getDOMNode().querySelectorAll('option')
-      expect(options[0].getAttribute('value')).to.equal '1'
-      expect(options[1].getAttribute('value')).to.equal '2'
-      expect(options[2].getAttribute('value')).to.equal '3'
-      expect(options[3].getAttribute('value')).to.equal '4'
-      expect(options[4].getAttribute('value')).to.equal '5'
-
-      comparator = (a, b) ->
-        if a.id > b.id then -1
-        else if a.id < b.id then 1
-        else 0
-
-      @list = @render <OptionList
-        options=@options
-        onSelect=@onSelect
-        format=@format
-        selected=[]
-        comparator=comparator />
-      options = @list.getDOMNode().querySelectorAll('option')
-
-      expect(options[0].getAttribute('value')).to.equal '5'
-      expect(options[1].getAttribute('value')).to.equal '4'
-      expect(options[2].getAttribute('value')).to.equal '3'
-      expect(options[3].getAttribute('value')).to.equal '2'
-      expect(options[4].getAttribute('value')).to.equal '1'
+      expect(@onSelect).to.have.been.calledWith([id: '1', name: 'Option 1'])
 
   describe 'Filtered Option List', ->
     it 'should only include filtered values', ->
@@ -94,7 +67,7 @@ describe 'Source Sink View', ->
         name='Test Source Sink' format=@format onChange=@onChange />
 
     it 'should add to selected state on click', ->
-      selected = [@options[4]]
+      selected = [@options[4].id]
 
       sourceSink = @render <SourceSink options=@options value=selected
         format=@format />
@@ -122,7 +95,7 @@ describe 'Source Sink View', ->
         name: 'Option 5'
 
     it 'should reset state on re-render', ->
-      selected = [@options[4]]
+      selected = [@options[4].id]
       sourceSink = @render <SourceSink options=@options value=selected
         format=@format />
 
@@ -132,37 +105,12 @@ describe 'Source Sink View', ->
         id: '5'
         name: 'Option 5'
 
-      sourceSink.setProps options: @options, value: [@options[2]]
+      sourceSink.setProps options: @options, value: [@options[2].id]
       expect(sourceSink.state.sourceOptions).to.have.length 4
       expect(sourceSink.state.sinkOptions).to.have.length 1
       expect(sourceSink.state.sinkOptions).to.contain
         id: '3'
         name: 'Option 3'
-
-    it 'should sort values with the provided function', ->
-      options = @sourceSink.getDOMNode().querySelectorAll('option')
-
-      expect(options.length).to.equal 5
-      expect(options[0].getAttribute('value')).to.equal '1'
-      expect(options[1].getAttribute('value')).to.equal '2'
-      expect(options[2].getAttribute('value')).to.equal '3'
-      expect(options[3].getAttribute('value')).to.equal '4'
-      expect(options[4].getAttribute('value')).to.equal '5'
-
-      comparator = (a, b) ->
-        if a.id > b.id then -1
-        else if a.id < b.id then 1
-        else 0
-
-      sourceSink = @render <SourceSink options=@options
-        comparator=comparator format=@format />
-      options = sourceSink.getDOMNode().querySelectorAll('option')
-
-      expect(options[0].getAttribute('value')).to.equal '5'
-      expect(options[1].getAttribute('value')).to.equal '4'
-      expect(options[2].getAttribute('value')).to.equal '3'
-      expect(options[3].getAttribute('value')).to.equal '2'
-      expect(options[4].getAttribute('value')).to.equal '1'
 
     it 'should enable and disable buttons depending on selection', ->
       tosink = @sourceSink.getDOMNode().querySelector('.tosink')
@@ -186,14 +134,12 @@ describe 'Source Sink View', ->
       expect(tosource.classList.contains('disabld')).to.equal false
 
     it 'should move selected values to sink and back', ->
-      onChange = sinon.spy()
-
       @sourceSink.setState
         sourceSelected: [@options[0], @options[1]]
 
       @simulate.click @sourceSink.getDOMNode().querySelector('.tosink')
 
-      expect(@onChange).to.have.been.calledWith [@options[0], @options[1]]
+      expect(@onChange).to.have.been.calledWith [@options[0].id, @options[1].id]
 
       expect(@sourceSink.state.sourceSelected).to.deep.equal []
       expect(@sourceSink.state.sinkOptions).to.contain @options[0]
@@ -207,7 +153,7 @@ describe 'Source Sink View', ->
 
       @simulate.click @sourceSink.getDOMNode().querySelector('.tosource')
 
-      expect(@onChange).to.have.been.calledWith [@options[0]]
+      expect(@onChange).to.have.been.calledWith [@options[0].id]
 
       expect(@sourceSink.state.sinkSelected).to.deep.equal []
       expect(@sourceSink.state.sinkOptions).to.have.length 1

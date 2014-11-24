@@ -5,7 +5,7 @@
 # passed to the onChange function when modified.
 #
 # The display value is calculated by passing each model to the "format"
-# property. Displayed values will be sorted using the "comparator" property.
+# property.
 #
 # NOTE: Option ids must be strings, otherwise they will be coerced into
 # strings during selection and the view won't function correctly.
@@ -27,22 +27,14 @@
 #         id: '4'
 #       }]
 #
-#       value = [options[3]]
+#       value = ['3']
 #
 #       format = (m) -> m.name
-#       comparator = (a, b) ->
-#         if a.name > b.name
-#           1
-#         else if a.name < b.name
-#           -1
-#         else
-#           0
 #
 #       <SourceSink
 #         options=options
 #         value=value
-#         format=format
-#         comparator=comparator />
+#         format=format />
 _       = require 'lodash'
 React   = require 'react'
 
@@ -51,11 +43,10 @@ Button  = require '../form/button'
 
 OptionList = React.createClass
   propTypes:
-    comparator: React.PropTypes.func.isRequired
-    format:     React.PropTypes.func.isRequired
-    onSelect:   React.PropTypes.func.isRequired
-    options:    React.PropTypes.array.isRequired
-    selected:   React.PropTypes.array.isRequired
+    format:   React.PropTypes.func.isRequired
+    onSelect: React.PropTypes.func.isRequired
+    options:  React.PropTypes.array.isRequired
+    selected: React.PropTypes.array.isRequired
 
   selectChanged: (e) ->
     opts = e.currentTarget.querySelectorAll('option')
@@ -67,10 +58,8 @@ OptionList = React.createClass
 
   render: ->
     selectedIds = (o.id for o in @props.selected)
-    sorted = _.clone(@props.options)
-    sorted.sort(@props.comparator)
 
-    options = for model in sorted
+    options = for model in @props.options
       <option key=model.id value=model.id>
           {@props.format(model)}
       </option>
@@ -85,11 +74,10 @@ OptionList = React.createClass
 
 FilteredOptionList = React.createClass
   propTypes:
-    comparator: React.PropTypes.func.isRequired
-    format:     React.PropTypes.func.isRequired
-    options:    React.PropTypes.array.isRequired
-    onSelect:   React.PropTypes.func.isRequired
-    selected:   React.PropTypes.array.isRequired
+    format:   React.PropTypes.func.isRequired
+    options:  React.PropTypes.array.isRequired
+    onSelect: React.PropTypes.func.isRequired
+    selected: React.PropTypes.array.isRequired
 
   getInitialState: ->
     filter: ''
@@ -112,28 +100,22 @@ FilteredOptionList = React.createClass
         options=filtered
         onSelect=@props.onSelect
         selected=@props.selected
-        comparator=@props.comparator
         format=@props.format />
     </div>
 
 
 SourceSink = React.createClass
   propTypes:
-    comparator: React.PropTypes.func
-    format:     React.PropTypes.func
-    options:    React.PropTypes.array
-    onChange:   React.PropTypes.func
-    value:      React.PropTypes.array
+    format:   React.PropTypes.func
+    options:  React.PropTypes.array
+    onChange: React.PropTypes.func
+    value:    React.PropTypes.array
 
   getDefaultProps: ->
-    comparator: (a, b) ->
-      if a.id < b.id then -1
-      else if a.id > b.id then 1
-      else 0
-    format:     (o) -> o.name
-    onChange:   ->
-    options:    []
-    value:      []
+    format:   (o) -> o.name
+    onChange: ->
+    options:  []
+    value:    []
 
   getInitialState: ->
     @stateFromProps(@props)
@@ -142,10 +124,10 @@ SourceSink = React.createClass
     @setState(@stateFromProps(props))
 
   stateFromProps: (props) ->
-    sourceOptions:  _.difference(props.options, props.value)
+    sourceOptions:  _.difference(props.options, @_options(props.value))
     sourceSelected: []
     sinkSelected:   []
-    sinkOptions:    props.value
+    sinkOptions:    @_options(props.value)
 
   sourceChanged: (options) ->
     @setState
@@ -162,7 +144,7 @@ SourceSink = React.createClass
       sourceOptions:  _.difference(@state.sourceOptions, toMove)
       sinkOptions:    _.union(@state.sinkOptions, toMove)
       sourceSelected: []
-    }, -> @props.onChange(@state.sinkOptions))
+    }, -> @props.onChange(@_ids(@state.sinkOptions)))
 
   moveToSource: ->
     toMove = @state.sinkSelected
@@ -171,7 +153,7 @@ SourceSink = React.createClass
       sourceOptions: _.union(@state.sourceOptions, toMove)
       sinkOptions:   _.difference(@state.sinkOptions, toMove)
       sinkSelected:  []
-    }, -> @props.onChange(@state.sinkOptions))
+    }, -> @props.onChange(@_ids(@state.sinkOptions)))
 
   clearSink: ->
     @setState({
@@ -179,7 +161,7 @@ SourceSink = React.createClass
       sinkOptions:    []
       sourceSelected: []
       sinkSelected:   []
-    }, -> @props.onChange(@state.sinkOptions))
+    }, -> @props.onChange(@_ids(@state.sinkOptions)))
 
   render: ->
     <div className='source-sink'>
@@ -190,7 +172,6 @@ SourceSink = React.createClass
             selected=@state.sourceSelected
             onSelect=@sourceChanged
             filter=@state.filter
-            comparator=@props.comparator
             format=@props.format />
         </div>
 
@@ -206,7 +187,6 @@ SourceSink = React.createClass
             options=@state.sinkOptions
             selected=@state.sinkSelected
             onSelect=@sinkChanged
-            comparator=@props.comparator
             format=@props.format />
 
           <a className='clearall' onClick=@clearSink>Clear all</a>
@@ -214,6 +194,12 @@ SourceSink = React.createClass
 
       </form>
     </div>
+
+  _options: (ids) ->
+    @props.options.filter (o) -> o.id in ids
+
+  _ids: (options) ->
+    options.map (o) -> o.id
 
 
 SourceSink.OptionList = OptionList
