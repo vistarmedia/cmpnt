@@ -94,7 +94,7 @@ describe 'Multiselect', ->
       @simulate.click(apparatAnchor)
 
       expect(select.state.selected).to.have.length 1
-      expect(select.state.selected[0].name).to.equal 'apparat'
+      expect(select.state.selected[0]).to.equal 'id-5'
 
     it 'should focus the input after a selection', ->
       select = @render(<Multiselect options=@items />)
@@ -113,6 +113,12 @@ describe 'Multiselect', ->
       @simulate.click(apparatAnchor)
 
       expect(inputComponent.state.focused).to.be.true
+
+    it 'should preselect items', ->
+      select = @render(<Multiselect options=@items selected={['id-8', 'id-3']} />)
+      expect(select.state.selected).to.have.length 2
+      expect(select.state.selected[0]).to.equal 'id-8'
+      expect(select.state.selected[1]).to.equal 'id-3'
 
     it 'should remove the item on backspace'
 

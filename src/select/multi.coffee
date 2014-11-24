@@ -6,7 +6,7 @@
 #   React.createClass
 #
 #     getInitialState: ->
-#       selected: []
+#       selected: ['id-3']
 #       selectable: [
 #         {name: 'akon',          id: 'id-1'}
 #         {name: 'alizzz',        id: 'id-2'}
@@ -28,10 +28,11 @@
 #           Selected {@state.selected.length} items
 #         </div>
 #         <Multiselect options  = @state.selectable
+#                      selected = @state.selected
 #                      onChange = @onChange />
 #       </div>
 
-
+_     = require 'lodash'
 React = require 'react'
 
 Types = require '../types'
@@ -43,16 +44,18 @@ PillGroup    = require '../ui/pill/group'
 Multiselect = React.createClass
   displayName: 'Multiselect'
 
-  getInitialState: ->
-    selected: []
-
   propTypes:
-    options:   Types.idNameList.isRequired
-    onChange:  React.PropTypes.func
-    filter:    React.PropTypes.func
+    options:  Types.idNameList.isRequired
+    selected: React.PropTypes.array
+    onChange: React.PropTypes.func
+    filter:   React.PropTypes.func
 
   getDefaultProps: ->
     filter: SelectFilter.defaultFilter
+    selected: []
+
+  getInitialState: ->
+    selected: @props.selected
 
   focusInput: ->
     input = @refs.filter.refs.input
@@ -62,21 +65,28 @@ Multiselect = React.createClass
     @refs.filter.setState(filterTerm: '')
 
   onChange: (list) ->
-    @setState selected: list, ->
+    selected = list.map (i) -> i.id
+    @setState selected: selected, ->
       @focusInput()
       @clearInput()
       @props.onChange?(list)
 
   render: ->
     <div className='select-multi'>
-      <PillGroup options  = @state.selected
+      <PillGroup options  = @_pillGroups()
                  onChange = @onChange />
       <SelectFilter ref        = 'filter'
                     options    = @props.options
-                    selections = @state.selected
+                    selections = @_pillGroups()
                     filter     = @props.filter
                     onChange   = @onChange />
     </div>
+
+  _pillGroups: ->
+    _(@state.selected)
+      .map (selected) =>
+        _(@props.options).find (o) -> o.id is selected
+      .value()
 
 
 module.exports = Multiselect
