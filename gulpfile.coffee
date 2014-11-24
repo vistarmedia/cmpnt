@@ -109,7 +109,8 @@ gulp.task 'project:src', ->
     .pipe(cjsx())
     .pipe(gulp.dest(project.dest))
 
-gulp.task 'project:test:watch', ['project:test'], ->
+gulp.task 'project:test:watch', ->
+  runTests(project)
   gulp.watch([project.srcs, project.test], -> runTests(project))
 
 gulp.task 'serve', ['default'], ->
