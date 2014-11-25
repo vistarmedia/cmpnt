@@ -8,7 +8,7 @@ module.exports = (chai, utils) ->
     chai.Assertion.addMethod name, (expected) ->
       value = flag(this, 'object')[name]
       @assert value is expected,
-        "expected \#{this} to have #{name}, but got \#{act}",
+        "expected \#{this} to have #{name} \#{exp}, but got \#{act}",
         "expected \#{this} not have have #{name} \#{exp}",
         expected, value
   _matchProperty(prop) for prop in properties

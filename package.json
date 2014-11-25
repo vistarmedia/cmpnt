@@ -24,7 +24,7 @@
     "gulp-livereload":        "2.1.1",
     "gulp-mocha":             "1.1.0",
     "gulp-util":              "2.2.x",
-    "mocha":                  "^1",
+    "mocha":                  "^2",
     "serve-static":           "1.5.3",
     "sinon":                  "1.10.3",
     "sinon-chai":             "2.5.0",

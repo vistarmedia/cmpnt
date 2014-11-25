@@ -1,5 +1,6 @@
 Backbone  = require 'backbone'
 React     = require 'react'
+_         = require 'lodash'
 
 DownloadLink = require '../../src/download-link'
 
@@ -22,8 +23,10 @@ SelectList   = require '../../src/select/list'
 CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
 RangeSelector         = require '../../src/ui/range-selector'
 
-DataTable = require '../../src/table/data-table'
-Pager     = require '../../src/table/paging'
+DataTable   = require '../../src/table/data-table'
+ObjectTable = require '../../src/table/object-table'
+Pager       = require '../../src/table/paging'
+Table       = require '../../src/table'
 
 SourceSink = require '../../src/views/source_sink'
 

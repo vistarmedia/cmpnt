@@ -128,7 +128,9 @@ module.exports = (filename, opt={}) ->
     for file, i in files
       jsx    = file.contents.toString()
       source = Source.fromJsx(jsx)
-      props        = source.commentProps()
+      props  = source.commentProps()
+      if props.private? then continue
+
       props.path   = file.relative.replace('.coffee', '')
       props.source = source.source
       props.views  = source.viewProps()
