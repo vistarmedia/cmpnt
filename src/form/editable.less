@@ -1,0 +1,19 @@
+.editable {
+  @editable-border-width: 1px;
+
+  position: relative;
+  display:  block;
+  padding:  @editable-border-width + 2px;
+
+  &.active {
+    border-radius: 5px;
+    border:        @editable-border-width solid @gray-lighter;
+    padding:       2px;
+  }
+
+  .edit-icon {
+    position: absolute;
+    top:      1px;
+    right:    1px;
+  }
+}

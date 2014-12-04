@@ -7,6 +7,7 @@ DownloadLink = require '../../src/download-link'
 LineChart = require '../../src/chart/line'
 
 Button     = require '../../src/form/button'
+Editable   = require '../../src/form/editable'
 FilePicker = require '../../src/form/file_picker'
 
 LoginLayout = require '../../src/layout/login'

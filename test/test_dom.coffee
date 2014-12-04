@@ -1,6 +1,15 @@
 _initDocument = ->
   domino = require 'domino'
   Window = require 'domino/lib/Window'
+  Node   = require 'domino/lib/Node'
+  # Mock Node.contains - not implemented in domino
+  Node.prototype.contains = (that) ->
+    return false unless that
+
+    result = @compareDocumentPosition that
+    result is
+      (Node.DOCUMENT_POSITION_FOLLOWING + Node.DOCUMENT_POSITION_CONTAINED_BY)
+
 
   global.document or= domino.createDocument()
   window = new Window(global.document)
