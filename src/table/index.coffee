@@ -1,3 +1,7 @@
+# @name: table
+# @private:
+
+
 React      = require 'react'
 _          = require 'lodash'
 {classSet} = require('react/addons').addons
