@@ -301,23 +301,25 @@ Pager.Item = React.createClass
 ObjectTable = React.createClass
 
   propTypes:
-    columns:  ColumnsType.isRequired
-    rows:     RowsType.isRequired
-    keyField: React.PropTypes.string
+    columns:    ColumnsType.isRequired
+    rows:       RowsType.isRequired
+    keyField:   React.PropTypes.string
 
     # start and end are rows, index 0
-    start:    React.PropTypes.number
-    end:      React.PropTypes.number
+    start:      React.PropTypes.number
+    end:        React.PropTypes.number
 
-    sortKey:  React.PropTypes.string
-    sortAsc:  React.PropTypes.bool
+    sortKey:    React.PropTypes.string
+    sortAsc:    React.PropTypes.bool
 
-    filter:   React.PropTypes.func
+    filter:     React.PropTypes.func
+    className:  React.PropTypes.string
 
   getDefaultProps: ->
-    perPage: 10
-    start:   0
-    sortAsc: true
+    perPage:    10
+    start:      0
+    sortAsc:    true
+    className:  ''
 
   getInitialState: ->
     perPage: @props.perPage
@@ -369,7 +371,7 @@ ObjectTable = React.createClass
       rows:     rows
       onSort:   @handleSortChange
 
-    <span>
+    <span className=@_classes()>
 
       <Header
         perPage         = @state.perPage
@@ -388,6 +390,12 @@ ObjectTable = React.createClass
         total         = @props.rows.length />
 
     </span>
+
+  _classes: ->
+    classes =
+      'object-table':         true
+    classes[@props.className] = true
+    classSet classes
 
 
 ObjectTable.Header = Header

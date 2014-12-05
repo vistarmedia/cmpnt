@@ -70,6 +70,21 @@ describe 'Object Table', ->
 
     @rows = ({id: i, name: "thing #{i + 1}"} for i in [0..299])
 
+  it 'should have object-table class', ->
+    table = @render <ObjectTable columns   = @columns
+                                 rows      = @rows />
+    found = @findByClass(table, 'object-table')
+
+    expect(found).to.exist
+
+  it 'should be able to set class using className prop', ->
+    table = @render <ObjectTable columns   = @columns
+                                 className = 'hawk dawson'
+                                 rows      = @rows />
+    found = @findByClass(table, 'hawk dawson')
+
+    expect(found).to.exist
+
   it 'should default to showing 10 rows', ->
     table = @render <ObjectTable columns = @columns
                                  rows    = @rows />
