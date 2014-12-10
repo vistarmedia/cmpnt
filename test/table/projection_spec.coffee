@@ -12,6 +12,83 @@ rows = _(_.range(26))
   .map (name, id) -> {id: id, name: name}
 
 
+describe '#define', ->
+
+  beforeEach ->
+    @rows = rows.value()
+
+  it 'should return a function that will take list: [rows, metadata]' ,->
+    func = projection.define 'moose', (rows) -> rows
+
+    expect(func).to.have.length 1
+    expect ->
+      func([_([]), {}])
+    .to.not.throw Error
+
+  describe 'the returned function', ->
+
+    it 'should update metadata object with filtered results length', ->
+      ident = (rows) -> rows
+      func = projection.define 'moose', ident
+
+      [result, meta] = func([_(@rows), {}])
+      expect(meta['moose']).to.equal 26
+
+    it 'should return the filtered result', ->
+      rangeOfFive = (rows) -> rows.range(5)
+      func = projection.define 'range_of_five', rangeOfFive
+
+      [result, meta] = func([_(@rows), {}])
+      expect(meta['range_of_five']).to.equal 5
+
+
+describe '#compose', ->
+
+  beforeEach ->
+    @rows = rows.value()
+
+  it 'should take functions made by `projection.define`', ->
+    takeFive  = projection.define 'five', (rows) -> rows.range(5)
+    takeFour  = projection.define 'four', (rows) -> rows.range(4)
+    takeThree = projection.define 'three', (rows) -> rows.range(3)
+
+    expect ->
+      projection.compose(takeFive, takeFour, takeThree)
+    .to.not.throw Error
+
+  it 'should return a function that accepts a lodash-wrapped "rows" arg', ->
+    takeFive  = projection.define 'five', (rows) -> rows.range(5)
+    func = projection.compose(takeFive)
+
+    expect =>
+      func(_(@rows))
+    .not.to.throw Error
+
+    expect =>
+      func(@rows)
+    .to.throw Error
+
+  it 'should accumulate metadata and return it with plain JS list', ->
+    takeFive  = projection.define 'five', (rows) -> rows.range(5)
+    takeFour  = projection.define 'four', (rows) -> rows.range(4)
+    takeThree = projection.define 'three', (rows) -> rows.range(3)
+
+    func = projection.compose(takeFive, takeFour, takeThree)
+    proj = func(_(@rows))
+
+    expect(proj.value().meta.five).to.equal 5
+    expect(proj.value().meta.four).to.equal 4
+    expect(proj.value().meta.three).to.equal 3
+
+  it 'should include original total in metadata', ->
+    ident  = projection.define 'ident', (rows) -> rows
+
+    func = projection.compose(ident)
+    proj = func(_(@rows))
+
+    expect(proj.value().meta.total).to.equal 26
+
+
 describe 'Range Projection', ->
 
   beforeEach ->

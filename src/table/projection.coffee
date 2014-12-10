@@ -3,7 +3,6 @@ _ = require 'lodash'
 
 
 module.exports =
-
   # Gives a "slice" of some rows in the given range. If a "start" value is not
   # given, it will start at the the first value. If an "end" value is not given,
   # it will end at the last value.
@@ -30,3 +29,21 @@ module.exports =
     return rows unless func?
 
     rows.filter(func)
+
+  define: (name, func) ->
+    (r) ->
+      [rows, meta] = r
+      out = func(rows)
+      meta[name] = out.size()
+      [out, meta]
+
+  compose: ->
+    start = (rows) ->
+      [rows, {total: rows.size()}]
+
+    finalize = (r) ->
+      [rows, meta] = r
+      rows.value().meta = meta
+      rows
+
+    _.compose(finalize, arguments..., start)

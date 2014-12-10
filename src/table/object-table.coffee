@@ -52,11 +52,10 @@ RangeInfo = React.createClass
   displayName: 'ObjectTable.RangeInfo'
 
   propTypes:
-    start:          React.PropTypes.number
-    end:            React.PropTypes.number
-    total:          React.PropTypes.number
-    perPage:        React.PropTypes.number
-    filteredCount:  React.PropTypes.number
+    start:          React.PropTypes.number.isRequired
+    end:            React.PropTypes.number.isRequired
+    perPage:        React.PropTypes.number.isRequired
+    total:          React.PropTypes.number.isRequired
 
   render: ->
     <div className=@_rangeClasses()>
@@ -68,8 +67,8 @@ RangeInfo = React.createClass
     </div>
 
   end: ->
-    if @props.end < @props.perPage
-      @props.filteredCount - 1
+    if @props.end < (@props.perPage - 1) or @props.end > @props.total
+      @props.total - 1
     else
       @props.end
 
@@ -79,6 +78,23 @@ RangeInfo = React.createClass
     classSet
       'col-sm-6': true
       'range':    true
+
+
+Footer = React.createClass
+  displayName: 'ObjectTable.Footer'
+
+  propTypes:
+    start:         React.PropTypes.number.isRequired
+    end:           React.PropTypes.number.isRequired
+    perPage:       React.PropTypes.number.isRequired
+    total:         React.PropTypes.number.isRequired
+    onPageChange:  React.PropTypes.func
+
+  render: ->
+    <div className='row'>
+      {RangeInfo(@props)}
+      {Pager(_.assign(_.clone(@props), onChange: @props.onPageChange))}
+    </div>
 
 
 Header = React.createClass
@@ -111,35 +127,17 @@ Header = React.createClass
     </div>
 
 
-Footer = React.createClass
-  displayName: 'ObjectTable.Footer'
-
-  propTypes:
-    start:         React.PropTypes.number
-    end:           React.PropTypes.number
-    perPage:       React.PropTypes.number
-    total:         React.PropTypes.number
-    filteredCount: React.PropTypes.number
-    onPageChange:  React.PropTypes.func
-
-  render: ->
-    <div className='row'>
-      {RangeInfo(@props)}
-      {Pager(_.assign(_.clone(@props), onChange: @props.onPageChange))}
-    </div>
-
-
 Pager = React.createClass
   displayName: 'ObjectTable.Pager'
 
   propTypes:
-    # total is the total number of rows
-    total:          React.PropTypes.number.isRequired
-    # start and end are rows displayed, zero indexed
+    # start is rows displayed, zero indexed
     start:          React.PropTypes.number.isRequired
 
     # number of items to be displayed per page
     perPage:        React.PropTypes.number
+    # total is the total number of rows displayed
+    total:          React.PropTypes.number.isRequired
     # maxVisible is the max number of numbered and/or ellipsis'd elements to
     # display.  so "7" would result in a pager that looked like
     # [1] [...] [8] [9] [10] [...] [30]
@@ -331,7 +329,8 @@ ObjectTable = React.createClass
     @setState(perPage: perPage)
 
   handleTermChange: (term) ->
-    @setState(term: term)
+    start = if @state.start isnt 0 then 0 else @state.start
+    @setState(term: term, start: start)
 
   handleRangeChange: (start, end) ->
     @setState(start: start)
@@ -351,13 +350,16 @@ ObjectTable = React.createClass
       # 0, which _.curry would end up executing instead of currying
       _.curry(@props.filter, 2)(@state.term)
 
-    range  = _.curry(projection.range)(@state.start, @end())
-    order  = _.curry(projection.order)(@state.sortKey, @state.sortAsc)
-    filter = _.curry(projection.filter)(filter)
 
-    project = _.compose(range, order, filter)
-    rows    = _(initial)
+    range  = projection.define 'range',
+      _.curry(projection.range)(@state.start, @end())
+    order  = projection.define 'order',
+      _.curry(projection.order)(@state.sortKey, @state.sortAsc)
+    filter = projection.define 'filter', _.curry(projection.filter)(filter)
 
+    project = projection.compose range, order, filter
+
+    rows = _(initial)
     project(rows).value()
 
   render: ->
@@ -386,8 +388,7 @@ ObjectTable = React.createClass
         perPage       = @state.perPage
         onPageChange  = @handleRangeChange
         perPage       = @state.perPage
-        filteredCount = rows.length
-        total         = @props.rows.length />
+        total         = rows.meta.filter />
 
     </span>
 

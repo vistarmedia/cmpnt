@@ -16,9 +16,10 @@ Pager  = ObjectTable.Pager
 describe 'ObjectTable.Footer', ->
 
   it 'should display range start, end, and total', ->
-    footer = @render <Footer total      = 99
-                             start      = 10
-                             end        = 19 />
+    footer = @render <Footer total         = 99
+                             start         = 10
+                             perPage       = 10
+                             end           = 19 />
 
     element = @findByClass(footer, 'range').getDOMNode()
 
@@ -28,9 +29,10 @@ describe 'ObjectTable.Footer', ->
     expect(element.querySelector('.range .total')).to.have.textContent ' 99 '
 
   it 'should have a pager', ->
-    footer = @render <Footer total      = 99
-                             start      = 10
-                             end        = 19 />
+    footer = @render <Footer total         = 99
+                             start         = 10
+                             perPage       = 10
+                             end           = 19 />
 
     pager = @findByClass(footer, 'pager')
 
@@ -38,26 +40,46 @@ describe 'ObjectTable.Footer', ->
 
   it 'should pass the onPageChange function to Pager onChange', ->
     f = ->
-    footer = @render <Footer total        = 99
-                             start        = 10
-                             end          = 19
+    footer = @render <Footer total         = 99
+                             start         = 10
+                             end           = 19
+                             perPage       = 10
                              onPageChange = f
                              />
     pager = @findByType(footer, Pager)
     expect(pager.props.onChange).to.equal f
 
   it 'should pass start, perPage, and total to Pager', ->
-    f = ->
-    footer = @render <Footer total        = 99
-                             start        = 10
-                             perPage      = 7
-                             end          = 19
+    footer = @render <Footer total         = 99
+                             start         = 10
+                             perPage       = 7
+                             end           = 19
                              />
 
     pager = @findByType(footer, Pager)
     expect(pager.props.start).to.equal 10
     expect(pager.props.perPage).to.equal 7
     expect(pager.props.total).to.equal 99
+
+  it 'should use total as end if end > total', ->
+    footer = @render <Footer total         = 17
+                             start         = 10
+                             perPage       = 7
+                             end           = 19
+                             />
+
+    element = @findByClass(footer, 'range').getDOMNode()
+    expect(element.querySelector('.range .end')).to.have.textContent ' 17 '
+
+  it 'should use total as end if end < perPage - 1', ->
+    footer = @render <Footer total         = 6
+                             start         = 0
+                             perPage       = 7
+                             end           = 5
+                             />
+
+    element = @findByClass(footer, 'range').getDOMNode()
+    expect(element.querySelector('.range .end')).to.have.textContent ' 6 '
 
 
 describe 'Object Table', ->
@@ -181,7 +203,7 @@ describe 'Object Table', ->
 
     beforeEach ->
       filter = (term, row) ->
-        row.name == term
+        row.name.match(///#{term}///i)
 
       @filteredTable = @render <ObjectTable filter  = filter
                                             columns = @columns
@@ -200,17 +222,38 @@ describe 'Object Table', ->
 
     it 'should update the row count in the footer', ->
       @searchFor('thing 21')
-      element = @findByClass(@filteredTable, 'range').getDOMNode()
+      element = => @findByClass(@filteredTable, 'range').getDOMNode()
 
-      expect(element).to.have.textContent 'Showing 1 to 1 of 300 entries'
+      expect(element()).to.have.textContent 'Showing 1 to 10 of 11 entries'
+
+      @searchFor('thing 2')
+
+      expect(element()).to.have.textContent 'Showing 1 to 10 of 111 entries'
 
     it 'should only display matching rows', ->
       @searchFor('thing 21')
 
       rows = @filteredTable.getDOMNode().querySelectorAll('tbody tr')
-      expect(rows).to.have.length 1
+      expect(rows).to.have.length 10
       expect(rows[0].querySelector('[data-reactid$=".$name"]'))
         .to.have.textContent 'THING 21'
+
+    it 'should update the pager', ->
+      @searchFor('thing 21')
+      pager = @findByClass(@filteredTable, 'pager').getDOMNode()
+
+      buttons =  pager.querySelectorAll('button')
+      # at 10 per page, we should only have two pages worth of results,
+      # so pager should be [Previous] [1] [2] [Next]
+      expect(buttons).to.have.length 4
+
+    context 'and on a page that isnt the first page', ->
+      beforeEach ->
+        @filteredTable.setState(start: 11)
+
+      it 'should navigate back to the first page', ->
+        @searchFor('thing 21')
+        expect(@filteredTable.state.start).to.equal 0
 
     context 'and using a filter function defined as a react method', ->
 
