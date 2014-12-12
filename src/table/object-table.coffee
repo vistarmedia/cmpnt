@@ -60,11 +60,14 @@ RangeInfo = React.createClass
   render: ->
     <div className=@_rangeClasses()>
       Showing
-        <span className='start'> {@_indexToFriendly(@props.start)} </span>
+        <span className='start'> {@_indexToFriendly(@start())} </span>
         to<span className='end'> {@_indexToFriendly(@end())} </span>
         of<span className='total'> {@props.total} </span>
       entries
     </div>
+
+  start: ->
+    if @props.total is 0 then -1 else @props.start
 
   end: ->
     if @props.end < (@props.perPage - 1) or @props.end > @props.total
@@ -170,7 +173,8 @@ Pager = React.createClass
     @props.start + (@props.perPage - 1)
 
   currentPage: ->
-    @pageNumberFromRange(@props.start, @end())
+    end = Math.min(@end(), @props.total - 1)
+    @pageNumberFromRange(@props.start, end)
 
   totalPageCount: ->
     Math.ceil(@props.total / @props.perPage)
@@ -351,7 +355,6 @@ ObjectTable = React.createClass
       # 0, which _.curry would end up executing instead of currying
       _.curry(@props.filter, 2)(@state.term)
 
-    # If a comparator is specified, sort by it. Otherwise, use the sortKey.
     comparator = @state.comparator or @state.sortKey
 
     range  = projection.define 'range',

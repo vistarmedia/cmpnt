@@ -81,6 +81,16 @@ describe 'ObjectTable.Footer', ->
     element = @findByClass(footer, 'range').getDOMNode()
     expect(element.querySelector('.range .end')).to.have.textContent ' 6 '
 
+  it 'should display 0 as start if total is 0', ->
+    footer = @render <Footer total         = 0
+                             start         = 0
+                             perPage       = 10
+                             end           = 5
+                             />
+
+    element = @findByClass(footer, 'range').getDOMNode()
+    expect(element.querySelector('.range .start')).to.have.textContent ' 0 '
+
 
 describe 'Object Table', ->
 
@@ -473,13 +483,21 @@ describe 'Object Table', ->
 
         expect(pager.currentPage()).to.equal 2
 
-      it 'should not be undefined', ->
+      it 'should not be undefined on first page', ->
         pager = @render <Pager start   = 0
                                perPage = 1
                                total   = 100 />
 
         expect(pager.currentPage()).not.to.be.undefined
         expect(pager.currentPage()).to.equal 0
+
+      it 'should not be undefined if logical end exceeds total', ->
+        pager = @render <Pager start   = 55
+                               perPage = 10
+                               total   = 57 />
+
+        expect(pager.currentPage()).not.to.be.undefined
+        expect(pager.currentPage()).to.equal 5
 
     it 'should accept a total count for all items', ->
       pager = @render <Pager total=666 />
@@ -528,6 +546,11 @@ describe 'Object Table', ->
       el = @render(<Pager total=9 />).getDOMNode()
       next = el.querySelector('[data-reactid$=".$next"]')
       expect(next).to.haveClass 'disabled'
+
+    it 'should not disable the "previous" button on the last page', ->
+      el = @render(<Pager perPage=5 total=57 start=55 />).getDOMNode()
+      previous = el.querySelector('[data-reactid$=".$prev"]')
+      expect(previous).not.to.haveClass 'disabled'
 
     it 'should not call onChange on click if at last page', ->
       spy     = sinon.spy()
