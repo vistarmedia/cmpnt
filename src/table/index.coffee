@@ -124,7 +124,7 @@ Table = React.createClass
 
   handleClickHeader: (col) ->
     asc = not (@props.sortKey is col.field and @props.sortAsc)
-    @props.onSort?(col.field, asc)
+    @props.onSort?(col.field, asc, col.comparator)
 
   render: ->
     <table className='table data-table'>

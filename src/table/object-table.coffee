@@ -335,10 +335,11 @@ ObjectTable = React.createClass
   handleRangeChange: (start, end) ->
     @setState(start: start)
 
-  handleSortChange: (field, isSortAsc) ->
+  handleSortChange: (field, isSortAsc, comparator) ->
     @setState
-      sortKey: field
-      sortAsc: isSortAsc
+      comparator: comparator
+      sortKey:    field
+      sortAsc:    isSortAsc
 
   end: ->
     @state.start + (@state.perPage - 1)
@@ -350,11 +351,13 @@ ObjectTable = React.createClass
       # 0, which _.curry would end up executing instead of currying
       _.curry(@props.filter, 2)(@state.term)
 
+    # If a comparator is specified, sort by it. Otherwise, use the sortKey.
+    comparator = @state.comparator or @state.sortKey
 
     range  = projection.define 'range',
       _.curry(projection.range)(@state.start, @end())
     order  = projection.define 'order',
-      _.curry(projection.order)(@state.sortKey, @state.sortAsc)
+      _.curry(projection.order)(comparator, @state.sortAsc)
     filter = projection.define 'filter', _.curry(projection.filter)(filter)
 
     project = projection.compose range, order, filter

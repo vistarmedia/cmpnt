@@ -22,8 +22,9 @@ describe 'A Table', ->
       .value()
 
     @columns = [
-      {field: 'id',   label: 'ID', comparator: null},
-      {field: 'name', label: 'Name'},
+      {field: 'id',     label: 'ID', comparator: null},
+      {field: 'name',   label: 'Name'},
+      {field: 'other',  label: 'Other', comparator: 'passthis' }
     ]
 
     @table = @render <Table columns=@columns rows=@rows />
@@ -35,5 +36,14 @@ describe 'A Table', ->
     headerItems = @allByType @table, Header.Item
     @simulate.click(@findByTag headerItems[1], 'th')
 
-    expect(spy).to.have.been.called
-    expect(spy).to.have.been.calledWith 'name', true
+    expect(spy).to.have.been.calledWith 'name', true, undefined
+
+  it 'should pass the comparator if specified', ->
+    spy = sinon.spy()
+    @table.setProps(onSort: spy)
+
+    headerItems = @allByType @table, Header.Item
+    @simulate.click(@findByTag headerItems[2], 'th')
+
+    expect(spy).to.have.been.calledWith 'other', true, 'passthis'
+

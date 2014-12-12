@@ -88,9 +88,10 @@ describe 'Object Table', ->
     @columns = [
       {field: 'id', label: 'ID'}
       {field: 'name', label: 'Name', format: (name) -> name.toUpperCase()}
+      {field: 'other', label: 'Other', comparator: (v) -> v[1] }
     ]
 
-    @rows = ({id: i, name: "thing #{i + 1}"} for i in [0..299])
+    @rows = ({id: i, name: "thing #{i + 1}", other: ['a', i]} for i in [0..299])
 
   it 'should have object-table class', ->
     table = @render <ObjectTable columns   = @columns
@@ -193,11 +194,19 @@ describe 'Object Table', ->
 
       expect(@sortingTable.state.sortKey).to.equal 'name'
       expect(@sortingTable.state.sortAsc).to.be.true
+      expect(@sortingTable.state.comparator).to.be.undefined
 
       @simulate.click(@columnHeaders[1].getDOMNode())
 
       expect(@sortingTable.state.sortKey).to.equal 'name'
       expect(@sortingTable.state.sortAsc).to.be.false
+      expect(@sortingTable.state.comparator).to.be.undefined
+
+      @simulate.click(@columnHeaders[2].getDOMNode())
+
+      expect(@sortingTable.state.sortKey).to.equal 'other'
+      expect(@sortingTable.state.sortAsc).to.be.true
+      expect(@sortingTable.state.comparator).to.be.defined
 
   context 'when filtering', ->
 
@@ -287,7 +296,7 @@ describe 'Object Table', ->
         .shuffle()
         .map (i) -> String.fromCharCode(i + 65)
         .map (c) -> c + c + c
-        .map (name, id) -> {id: id, name: name}
+        .map (name, id) -> {id: id, name: name, other: ['a', id]}
         .value()
 
       @columns = [
@@ -344,6 +353,18 @@ describe 'Object Table', ->
         expect(@proj).to.have.length 2
         expect(@proj[0].name).to.equal 'AAA'
         expect(@proj[1].name).to.equal 'BBB'
+
+    context 'with a comparator', ->
+      beforeEach ->
+        @table.setState
+          sortAsc:    false
+          sortKey:    'other'
+          comparator: (v) -> v[1]
+        @proj = @table.rows(@rows)
+
+      it 'should project rows sorted by the comparator', ->
+        expect(@proj[0].other).to.have.members ['a', 25]
+        expect(@proj[25].other).to.have.members ['a', 0]
 
     context 'with a filter', ->
 
