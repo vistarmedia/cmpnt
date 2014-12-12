@@ -5,11 +5,14 @@ _initDocument = ->
   # Mock Node.contains - not implemented in domino
   Node.prototype.contains = (that) ->
     return false unless that
+    that.parentNode = null unless that.parentNode?
 
     result = @compareDocumentPosition that
     result is
       (Node.DOCUMENT_POSITION_FOLLOWING + Node.DOCUMENT_POSITION_CONTAINED_BY)
 
+  # Mock Node.focus - not implemented in domino
+  Node.prototype.focus = ->
 
   global.document or= domino.createDocument()
   window = new Window(global.document)

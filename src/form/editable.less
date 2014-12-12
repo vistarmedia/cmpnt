@@ -1,19 +1,54 @@
 .editable {
   @editable-border-width: 1px;
+  margin: 2px;
 
-  position: relative;
-  display:  block;
-  padding:  @editable-border-width + 2px;
+  .editable-element {
 
-  &.active {
-    border-radius: 5px;
-    border:        @editable-border-width solid @gray-lighter;
-    padding:       2px;
+    position: relative;
+    display:  block;
+    padding:  @editable-border-width + 2px;
+
+    &.active {
+      border-radius: 5px;
+      border:        @editable-border-width solid @gray-lighter;
+      padding:       2px;
+    }
+
+    .edit-icon {
+      position: absolute;
+      top:      1px;
+      right:    1px;
+    }
   }
 
-  .edit-icon {
-    position: absolute;
-    top:      1px;
-    right:    1px;
+  input {
+    outline: 0;
+    border:  0;
+    padding: 0;
+    margin:  0;
+  }
+
+  &.editing {
+    .input {
+      display: inline-block;
+    }
+
+    .value {
+      display: none;
+    }
+
+    .editable-element.active {
+      border-color: darken(@gray-lighter, 20%);
+    }
+  }
+
+  &.viewing {
+    .input {
+      display: none;
+    }
+
+    .value {
+      display: inline-block;
+    }
   }
 }
