@@ -8,7 +8,7 @@
 # up, arrow down, and enter key for navigating, selecting, and deselecting
 # items.
 #
-# The 'selected' prop can be used to allow a parent component to set selections.
+# The 'value' prop can be used to allow a parent component to set selections.
 #
 # The function given to the "onChange" prop will be called with a list of
 # selected items when one is added or removed.
@@ -55,7 +55,7 @@
 #               {@_showOrHideText()} Luda's questions.  Are you?:
 #             </a>
 #             <SelectList options = @props.items
-#               selections        = @state.items
+#               value             = @state.items
 #               visible           = @state.showSelect
 #               onChange          = @onChange
 #               />
@@ -89,7 +89,7 @@ SelectList = React.createClass
 
   propTypes:
     options:      Types.idNameList.isRequired
-    selections:   Types.idNameList
+    value:        Types.idNameList
     onChange:     React.PropTypes.func
     visible:      React.PropTypes.bool
     shouldFocus:  React.PropTypes.bool
@@ -100,7 +100,7 @@ SelectList = React.createClass
   getDefaultProps: ->
     visible:      false
     shouldFocus:  false
-    selections:   []
+    value:        []
 
   getInitialState: ->
     selected:  []
@@ -126,7 +126,7 @@ SelectList = React.createClass
       @props.onBlur?(e)
 
   onSelect: (name, id) ->
-    selections = _(_.clone(@props.selections))
+    selections = _(_.clone(@props.value))
       .push(name: name, id: id).value()
     @setState
       selected: selections
@@ -134,7 +134,7 @@ SelectList = React.createClass
         @props.onChange?(selections)
 
   onDeselect: (name, id) ->
-    selections = (_(@props.selections).filter((e) ->
+    selections = (_(@props.value).filter((e) ->
       e.id != id)).value()
     @setState
       selected: selections
@@ -142,7 +142,7 @@ SelectList = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     @setState
-      selected: nextProps.selections
+      selected: nextProps.value
 
     if @_shouldSetDefaultFocusedState(nextProps)
       @setState(focused: @_firstNotSelectedItem(nextProps))
@@ -196,9 +196,9 @@ SelectList = React.createClass
     props.shouldFocus and @_selectedNotInList(props.options)
 
   _firstNotSelectedItem: (props) ->
-    selectedIds = _(props.selections).pluck('id').value()
+    selectedIds = _(props.value).pluck('id').value()
     item = _.find props.options, (e) => e.id not in selectedIds
-    item?.id or props.selections[0]?.id
+    item?.id or props.value[0]?.id
 
   _indexForId: (id) ->
     _.findIndex @props.options, (e) ->

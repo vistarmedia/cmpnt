@@ -36,9 +36,9 @@
 #       <div className='container'>
 #         <div className='row'>
 #           <div className='col-xs-2'>
-#             <SelectFilter options    = @state.items
-#                           onChange   = @handleSelections
-#                           selections = @state.selected />
+#             <SelectFilter options  = @state.items
+#                           onChange = @handleSelections
+#                           value    = @state.selected />
 #           </div>
 #           <div className='col-xs-2'>
 #             <ul>
@@ -75,14 +75,14 @@ SelectFilter = React.createClass
 
   propTypes:
     options:      Types.idNameList.isRequired
-    selections:   Types.idNameList
+    value:        Types.idNameList
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func
 
   getDefaultProps: ->
-    filter:      defaultFilter
-    selections:  []
+    filter: defaultFilter
+    value:  []
 
   getInitialState: ->
     opened:        false
@@ -115,7 +115,7 @@ SelectFilter = React.createClass
 
   handleInputCommit: (inputValue) ->
     if @state.filtered.length is 1
-      results = _.union @props.selections, @state.filtered
+      results = _.union @props.value, @state.filtered
       @props.onChange?(results)
       @setState focusList: false
     else
@@ -139,7 +139,7 @@ SelectFilter = React.createClass
              />
       <SelectList options     = @state.filtered
                   visible     = @state.opened
-                  selections  = @props.selections
+                  value       = @props.value
                   shouldFocus = @state.focusList
                   onChange    = @setSelected
                   onBlur      = @onBlurList

@@ -6,7 +6,7 @@
 #   React.createClass
 #
 #     getInitialState: ->
-#       selected: ['id-3']
+#       value: ['id-3']
 #       selectable: [
 #         {name: 'akon',          id: 'id-1'}
 #         {name: 'alizzz',        id: 'id-2'}
@@ -20,15 +20,15 @@
 #       ]
 #
 #     onChange: (list) ->
-#       @setState(selected: list)
+#       @setState(value: list)
 #
 #     render: ->
 #       <div>
 #         <div>
-#           Selected {@state.selected.length} items
+#           Selected {@state.value.length} items
 #         </div>
 #         <Multiselect options  = @state.selectable
-#                      selected = @state.selected
+#                      value    = @state.value
 #                      onChange = @onChange />
 #       </div>
 
@@ -46,16 +46,16 @@ Multiselect = React.createClass
 
   propTypes:
     options:  Types.idNameList.isRequired
-    selected: React.PropTypes.array
+    value:    React.PropTypes.array
     onChange: React.PropTypes.func
     filter:   React.PropTypes.func
 
   getDefaultProps: ->
     filter: SelectFilter.defaultFilter
-    selected: []
+    value: []
 
   getInitialState: ->
-    selected: @props.selected
+    value: @props.value
 
   focusInput: ->
     input = @refs.filter.refs.input
@@ -65,8 +65,8 @@ Multiselect = React.createClass
     @refs.filter.setState(filterTerm: '')
 
   onChange: (list) ->
-    selected = list.map (i) -> i.id
-    @setState selected: selected, ->
+    value = list.map (i) -> i.id
+    @setState value: value, ->
       @focusInput()
       @clearInput()
       @props.onChange?(list)
@@ -77,15 +77,15 @@ Multiselect = React.createClass
                  onChange = @onChange />
       <SelectFilter ref        = 'filter'
                     options    = @props.options
-                    selections = @_pillGroups()
+                    value      = @_pillGroups()
                     filter     = @props.filter
                     onChange   = @onChange />
     </div>
 
   _pillGroups: ->
-    _(@state.selected)
-      .map (selected) =>
-        _(@props.options).find (o) -> o.id is selected
+    _(@state.value)
+      .map (v) =>
+        _(@props.options).find (o) -> o.id is v
       .value()
 
 

@@ -80,7 +80,7 @@ describe 'Multiselect', ->
       expect(pills()).to.have.length 1
       expect(pills()[0].getDOMNode().textContent).to.have.string 'apparat'
 
-    it 'should be in state.selected', ->
+    it 'should be in state.value', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
@@ -93,8 +93,8 @@ describe 'Multiselect', ->
       @simulate.focus(input)
       @simulate.click(apparatAnchor)
 
-      expect(select.state.selected).to.have.length 1
-      expect(select.state.selected[0]).to.equal 'id-5'
+      expect(select.state.value).to.have.length 1
+      expect(select.state.value[0]).to.equal 'id-5'
 
     it 'should focus the input after a selection', ->
       select = @render(<Multiselect options=@items />)
@@ -115,16 +115,16 @@ describe 'Multiselect', ->
       expect(inputComponent.state.focused).to.be.true
 
     it 'should preselect items', ->
-      select = @render(<Multiselect options=@items selected={['id-8', 'id-3']} />)
-      expect(select.state.selected).to.have.length 2
-      expect(select.state.selected[0]).to.equal 'id-8'
-      expect(select.state.selected[1]).to.equal 'id-3'
+      select = @render(<Multiselect options=@items value={['id-8', 'id-3']} />)
+      expect(select.state.value).to.have.length 2
+      expect(select.state.value[0]).to.equal 'id-8'
+      expect(select.state.value[1]).to.equal 'id-3'
 
     it 'should remove the item on backspace'
 
   context 'when selecting multiple items from the list', ->
 
-    it 'should add them to state.selected', ->
+    it 'should add them to state.value', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
@@ -140,7 +140,7 @@ describe 'Multiselect', ->
       @simulate.click(apparatAnchor)
       @simulate.click(bathsAnchor)
 
-      expect(select.state.selected).to.have.length 2
+      expect(select.state.value).to.have.length 2
 
     it 'should add a pill for each', ->
       select = @render(<Multiselect options=@items />)
@@ -187,7 +187,7 @@ describe 'Multiselect', ->
 
       expect(selectedListElements).to.have.length 1
 
-    it 'should not be in state.selected', ->
+    it 'should not be in state.value', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
@@ -206,7 +206,7 @@ describe 'Multiselect', ->
       # deselect
       @simulate.click(bathsAnchor)
 
-      expect(select.state.selected).to.have.length 1
+      expect(select.state.value).to.have.length 1
 
     it 'should re-focus the input', ->
       select = @render(<Multiselect options=@items />)
@@ -226,7 +226,7 @@ describe 'Multiselect', ->
 
   context 'when deselecting a pill', ->
 
-    it 'should not be selected in the list', ->
+    it 'should not be value in the list', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
@@ -549,14 +549,14 @@ describe 'SelectFilter', ->
 
     context 'and length of results is 1', ->
 
-      it 'should call onChange with the item and props.selections', (done) ->
-        selections = [{name: 'dogs', value: 'id-6'}]
+      it 'should call onChange with the item and props.value', (done) ->
+        values = [{name: 'dogs', value: 'id-6'}]
         onChange = (list) ->
           expect(list).to.have.length 2
           done()
 
         select = @render(<SelectFilter options=@items
-          selections = selections
+          value = values
           onChange=onChange />
         )
         input  = @inputElement(select)
@@ -739,13 +739,13 @@ describe 'SelectList', ->
 
     expect(item).to.exist
 
-  it 'should use the "selections" prop as the source of selections state', ->
+  it 'should use the "value" prop as the source of value state', ->
     select  = @render(<SelectList options=@items />)
     expect(select.state.selected).to.have.length 0
 
     select.setState(selected: [{name: 'horses', id: 'id-77'}])
 
-    select.setProps(selections: [
+    select.setProps(value: [
       {name: 'a', id: '1'}
       {name: 'b', id: '2'}
     ])
@@ -968,7 +968,7 @@ describe 'SelectList', ->
       expect(select.state.focused).to.equal 'ani-1'
 
       # set list to open and focus item automatically
-      select.setProps shouldFocus: true, selections: [
+      select.setProps shouldFocus: true, value: [
         {name: 'custom made', id: 'ani-1'}
       ]
 
@@ -977,7 +977,7 @@ describe 'SelectList', ->
 
   context 'when an item is selected', ->
 
-    it 'should call onChange with props.selections + selected item', (done) ->
+    it 'should call onChange with props.value + selected item', (done) ->
       onChange = (nameValueList) ->
         expect(nameValueList).to.have.length 1
         expect(nameValueList[0].name).to.equal 'custom paid'
@@ -998,7 +998,7 @@ describe 'SelectList', ->
       @simulate.click(middleItem)
       expect(select).to.haveElement 'li.selected'
 
-    it 'should call the onChange prop with current state of selections', (done) ->
+    it 'should call the onChange prop with current state of value', (done) ->
       onChange = (list) ->
         expect(list).to.have.length 1
         expect(list[0].name).to.equal 'custom paid'
@@ -1021,8 +1021,8 @@ describe 'SelectList', ->
       expect(select.state.selected).to.have.length 1
       expect(select.state.selected[0].id).to.equal 'ani-2'
 
-    it 'should pick the first item on shouldFocus if no match in selections', ->
-      selections = [
+    it 'should pick the first item on shouldFocus if no match in value', ->
+      value = [
         {name: 'kaw', id: 'kw-1'}
       ]
       items = [
@@ -1030,7 +1030,7 @@ describe 'SelectList', ->
         {name: 'haw', id: 'hw-2'}
         {name: 'haw', id: 'hw-3'}
       ]
-      select = @render(<SelectList options=items selections=selections />)
+      select = @render(<SelectList options=items value=value />)
 
       select.setProps shouldFocus: true
 
@@ -1038,7 +1038,7 @@ describe 'SelectList', ->
 
     context 'and then deselected', ->
 
-      it 'should call onChange with value of props.selections - item', (done)->
+      it 'should call onChange with value of props.value - item', (done)->
         callCount = 1
         change = (selections) ->
           if callCount is 1
@@ -1048,11 +1048,11 @@ describe 'SelectList', ->
             done()
           callCount++
 
-        selections = [
+        value = [
           {name: 'Ghost', id: 'wallabees'}
         ]
         select = @render(
-          <SelectList options=@items selections=selections onChange=change />
+          <SelectList options=@items value=value onChange=change />
         )
         middleItem = select.getDOMNode().querySelector('li:nth-child(2) > a')
 
