@@ -1,11 +1,13 @@
 GULP=./node_modules/.bin/gulp
 VERSION?=$(shell git rev-parse --verify HEAD --short=6)
-DOCSITE=cmpnt.vistarmedia.com
 BUILD_DIR=./build
 DOCSITE_DIR=./demo/build
 
 ifeq "$(ENVIRONMENT)" "production"
 AUTOVERSION:=$(shell $(GULP) autoversion --silent)
+DOCSITE:=cmpnt.vistarmedia.com/
+else
+DOCSITE:=cmpnt.vistarmedia.com/gerrit_change/$(GERRIT_CHANGE_ID)/
 endif
 
 
@@ -25,6 +27,11 @@ clean: clean_build_package_json
 test:
 	@$(GULP) test
 
+ci_test:
+	@$(GULP) project:test:xunit
+
+ci: update ci_test publish_docs
+
 build: clean update
 	@$(GULP) project
 	@$(GULP) default
@@ -41,7 +48,7 @@ tag:
 	@git tag $(AUTOVERSION) HEAD
 	@git push origin --tags
 
-release: build tag publish publish_docs
+release: build tag publish
 
 link: build
 	cd $(BUILD_DIR) && npm link .
