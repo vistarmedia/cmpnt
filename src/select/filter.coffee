@@ -160,6 +160,7 @@ Input = React.createClass
     onChange:       React.PropTypes.func
     onCommit:       React.PropTypes.func
     onFocus:        React.PropTypes.func
+    onPaste:        React.PropTypes.func
     value:          React.PropTypes.string
     commitKeys:     React.PropTypes.array
     commitKeyCodes: React.PropTypes.array
@@ -211,6 +212,7 @@ Input = React.createClass
              onKeyDown    = @onKeyDown
              onBlur       = @onBlur
              onChange     = @onChange
+             onPaste      = @props.onPaste
              value        = @props.value
              ref          = 'input'
              />
