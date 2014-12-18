@@ -161,12 +161,10 @@ Input = React.createClass
     onCommit:       React.PropTypes.func
     onFocus:        React.PropTypes.func
     value:          React.PropTypes.string
-    hint:           React.PropTypes.string
     commitKeys:     React.PropTypes.array
     commitKeyCodes: React.PropTypes.array
 
   getDefaultProps: ->
-    hint:           'Select an item...'
     value:          ''
     commitKeys:     ['Enter', 'ArrowDown']
     commitKeyCodes: []
