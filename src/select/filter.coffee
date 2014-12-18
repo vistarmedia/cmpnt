@@ -155,17 +155,21 @@ Input = React.createClass
   displayName: 'SelectFilter.Input'
 
   propTypes:
-    className:  React.PropTypes.string
-    onBlur:     React.PropTypes.func
-    onChange:   React.PropTypes.func
-    onCommit:   React.PropTypes.func
-    onFocus:    React.PropTypes.func
-    value:      React.PropTypes.string
+    className:      React.PropTypes.string
+    onBlur:         React.PropTypes.func
+    onChange:       React.PropTypes.func
+    onCommit:       React.PropTypes.func
+    onFocus:        React.PropTypes.func
+    value:          React.PropTypes.string
+    hint:           React.PropTypes.string
+    commitKeys:     React.PropTypes.array
+    commitKeyCodes: React.PropTypes.array
 
   getDefaultProps: ->
-    hint:       'Select an item...'
-    value:      ''
-    commitKeys: ['Enter', 'ArrowDown']
+    hint:           'Select an item...'
+    value:          ''
+    commitKeys:     ['Enter', 'ArrowDown']
+    commitKeyCodes: []
 
   getInitialState: ->
     focused: false
@@ -174,7 +178,7 @@ Input = React.createClass
     @props.onChange?(e.target.value)
 
   onKeyDown: (e) ->
-    if e.key in @props.commitKeys
+    if e.key in @props.commitKeys or e.keyCode in @props.commitKeyCodes
       e.preventDefault()
       e.stopPropagation()
       @props.onCommit?(e.target.value)

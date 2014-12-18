@@ -673,6 +673,16 @@ describe 'SelectList.Input', ->
       @inputValue(input, 'food')
       @simulate.keyDown(@inputElement(input), key: 'ArrowDown')
 
+    it 'should call the onCommit prop on the correct keyCode', (done) ->
+      onCommit = (val) ->
+        expect(val).to.equal 'food'
+        done()
+
+      input = @render(<Input onCommit=onCommit commitKeyCodes=[188] />)
+
+      @inputValue(input, 'food')
+      @simulate.keyDown(@inputElement(input), keyCode: 188)
+
   context 'on focus', ->
 
     it 'should call the onFocus prop', (done) ->
