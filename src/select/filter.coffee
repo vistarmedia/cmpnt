@@ -18,15 +18,15 @@
 #     getInitialState: ->
 #       selected: []
 #       items: [
-#         {node: 'item 1', id: 'id-1'}
-#         {node: 'item 2', id: 'id-2'}
-#         {node: 'item 3', id: 'id-3'}
-#         {node: 'item 4', id: 'id-4'}
-#         {node: 'item 5', id: 'id-5'}
-#         {node: 'item 6', id: 'id-6'}
-#         {node: 'item 7', id: 'id-7'}
-#         {node: 'item 8', id: 'id-8'}
-#         {node: 'item 9', id: 'id-9'}
+#         {content: 'item 1', id: 'id-1'}
+#         {content: 'item 2', id: 'id-2'}
+#         {content: 'item 3', id: 'id-3'}
+#         {content: 'item 4', id: 'id-4'}
+#         {content: 'item 5', id: 'id-5'}
+#         {content: 'item 6', id: 'id-6'}
+#         {content: 'item 7', id: 'id-7'}
+#         {content: 'item 8', id: 'id-8'}
+#         {content: 'item 9', id: 'id-9'}
 #       ]
 #
 #     handleSelections: (list) ->
@@ -51,7 +51,7 @@
 #     _selectedItems: ->
 #       for item in @state.selected
 #         <li data-value=item.id key=item.id>
-#           {item.node}
+#           {item.content}
 #         </li>
 
 
@@ -65,21 +65,21 @@ SelectList = require './list'
 
 
 defaultFilter = (options, term) ->
-  nodeAsString = (node) ->
-    if typeof node isnt 'string'
+  contentAsString = (content) ->
+    if typeof content isnt 'string'
       throw Error('SelectFilter does not filter non-strings by default')
-    node
+    content
 
   if not term or term.length is 0
     return options
-  o for o in options when nodeAsString(o.node)?.match(///#{term}///i)
+  o for o in options when contentAsString(o.content)?.match(///#{term}///i)
 
 SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
   propTypes:
-    options:      Types.idNodeList.isRequired
-    value:        Types.idNodeList
+    options:      Types.idContentList.isRequired
+    value:        Types.idContentList
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func

@@ -39,14 +39,15 @@ _       = require 'lodash'
 React   = require 'react'
 
 Button  = require '../form/button'
+Types   = require '../types'
 
 
 OptionList = React.createClass
   propTypes:
     format:   React.PropTypes.func.isRequired
     onSelect: React.PropTypes.func.isRequired
-    options:  React.PropTypes.array.isRequired
-    selected: React.PropTypes.array.isRequired
+    options:  Types.idNameList.isRequired
+    selected: Types.idNameList.isRequired
 
   selectChanged: (e) ->
     opts = e.currentTarget.querySelectorAll('option')
@@ -61,7 +62,7 @@ OptionList = React.createClass
 
     options = for model in @props.options
       <option key=model.id value=model.id>
-          {@props.format(model)}
+        {@props.format(model)}
       </option>
 
     <select className='form-control'
@@ -75,9 +76,9 @@ OptionList = React.createClass
 FilteredOptionList = React.createClass
   propTypes:
     format:   React.PropTypes.func.isRequired
-    options:  React.PropTypes.array.isRequired
+    options:  Types.idNameList.isRequired
     onSelect: React.PropTypes.func.isRequired
-    selected: React.PropTypes.array.isRequired
+    selected: Types.idNameList.isRequired
 
   getInitialState: ->
     filter: ''
@@ -87,8 +88,8 @@ FilteredOptionList = React.createClass
       filter: e.currentTarget.value
 
   render: ->
-    filtered = (opt for opt in @props.options when\
-      opt.name.toLowerCase().indexOf(@state.filter) isnt -1)
+    filtered = (opt for opt in @props.options when \
+      opt.id.indexOf(@state.filter) isnt -1)
 
     <div className='filter-container'>
       <input className='form-control'
@@ -105,9 +106,11 @@ FilteredOptionList = React.createClass
 
 
 SourceSink = React.createClass
+  displayName: 'SourceSink'
+
   propTypes:
     format:   React.PropTypes.func
-    options:  React.PropTypes.array
+    options:  Types.idNameList
     onChange: React.PropTypes.func
     value:    React.PropTypes.array
 

@@ -20,13 +20,14 @@ React       = require 'react'
 
 Button  = require '../form/button'
 Icon    = require './icon'
+Types   = require '../types'
 
 
 RangeSelector = React.createClass
   displayName: 'RangeSelector'
 
   propTypes:
-    options:  React.PropTypes.array
+    options:  Types.idNameList
     value:    React.PropTypes.array
     onChange: React.PropTypes.func
 
@@ -162,7 +163,7 @@ RangeSelector.Section = React.createClass
     mouseUp:    React.PropTypes.func
     mouseDown:  React.PropTypes.func
     selected:   React.PropTypes.bool
-    options:    React.PropTypes.array
+    options:    Types.idNameList
 
   getDefaultProps: ->
     selected: false

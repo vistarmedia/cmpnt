@@ -6,12 +6,18 @@
 React      = require 'react'
 
 
-idNode = React.PropTypes.shape
+idName = React.PropTypes.shape
   id:   React.PropTypes.any
+  name: React.PropTypes.string
+
+idContent = React.PropTypes.shape
+  id:      React.PropTypes.any
   # With react 0.12, renderable will be renamed to "node"
-  node: React.PropTypes.renderable
+  content: React.PropTypes.renderable
 
 
 module.exports =
-  idNode:     idNode
-  idNodeList: React.PropTypes.arrayOf(idNode.isRequired)
+  idName:        idName
+  idNameList:    React.PropTypes.arrayOf(idName.isRequired)
+  idContent:     idContent
+  idContentList: React.PropTypes.arrayOf(idContent.isRequired)
