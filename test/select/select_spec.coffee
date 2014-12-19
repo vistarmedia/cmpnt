@@ -1,5 +1,6 @@
 require '../test_case'
 
+React    = require 'react'
 {expect} = require 'chai'
 sinon    = require 'sinon'
 
@@ -30,15 +31,15 @@ describe 'Multiselect', ->
 
   beforeEach ->
     @items = [
-      {name: 'akon',          id: 'id-1'}
-      {name: 'alizzz',        id: 'id-2'}
-      {name: 'aesop rock',    id: 'id-3'}
-      {name: 'adebisi shank', id: 'id-4'}
-      {name: 'apparat',       id: 'id-5'}
-      {name: 'armand hammer', id: 'id-6'}
-      {name: 'baby huey',     id: 'id-7'}
-      {name: 'baths',         id: 'id-8'}
-      {name: 'billy paul',    id: 'id-9'}
+      {node: 'akon',          id: 'id-1'}
+      {node: 'alizzz',        id: 'id-2'}
+      {node: 'aesop rock',    id: 'id-3'}
+      {node: 'adebisi shank', id: 'id-4'}
+      {node: 'apparat',       id: 'id-5'}
+      {node: 'armand hammer', id: 'id-6'}
+      {node: 'baby huey',     id: 'id-7'}
+      {node: 'baths',         id: 'id-8'}
+      {node: 'billy paul',    id: 'id-9'}
     ]
 
   it 'should have an input', ->
@@ -340,15 +341,15 @@ describe 'SelectFilter', ->
 
   beforeEach ->
     @items = [
-      {name: 'grass',         id: 'id-1'}
-      {name: 'grassy',        id: 'id-2'}
-      {name: 'sun',           id: 'id-3'}
-      {name: 'sky',           id: 'id-4'}
-      {name: 'kenny dennis',  id: 'id-5'}
-      {name: 'dogs',          id: 'id-6'}
-      {name: 'meat',          id: 'id-7'}
-      {name: 'meaty',         id: 'id-8'}
-      {name: 'horses',        id: 'id-9'}
+      {node: 'grass',         id: 'id-1'}
+      {node: 'grassy',        id: 'id-2'}
+      {node: 'sun',           id: 'id-3'}
+      {node: 'sky',           id: 'id-4'}
+      {node: 'kenny dennis',  id: 'id-5'}
+      {node: 'dogs',          id: 'id-6'}
+      {node: 'meat',          id: 'id-7'}
+      {node: 'meaty',         id: 'id-8'}
+      {node: 'horses',        id: 'id-9'}
     ]
 
   it 'should open the list when input receives focus', ->
@@ -550,7 +551,7 @@ describe 'SelectFilter', ->
     context 'and length of results is 1', ->
 
       it 'should call onChange with the item and props.value', (done) ->
-        values = [{name: 'dogs', value: 'id-6'}]
+        values = [{node: 'dogs', value: 'id-6'}]
         onChange = (list) ->
           expect(list).to.have.length 2
           done()
@@ -625,6 +626,44 @@ describe 'SelectFilter', ->
 
       expect(listElements()).to.have.length 9
 
+  context 'using default filter function', ->
+
+    it 'should throw when node is not string', ->
+      items = [{node: <span><h1>one</h1><h2>two</h2></span>, id: 'id-111'}]
+      select = @render(<SelectFilter options=items />)
+      input  = @inputElement(select)
+
+      inputComponent = @findByType select, Input
+      stubDOMFocus inputComponent, '_inputElement'
+      listComponent  = @findByType select, SelectFilter
+      itemComponents = => @allByType listComponent, SelectItem
+
+      @inputValue(input, 'one')
+      keyUpCall = => @simulate.keyUp(input, key: 'Enter')
+      expect(keyUpCall).to.throw(/SelectFilter does not filter non-strings by default/)
+
+  context 'given a filter function', ->
+    it 'should call filter function with no term on render', ->
+      items = [{node: <span><h1>one</h1><h2>two</h2></span>, id: 'id-111'}]
+      filter = sinon.spy()
+
+      select = @render(<SelectFilter options=items filter=filter />)
+      expect(filter).to.have.been.calledWith items, undefined
+
+    it 'should call filter function on keyUp', ->
+      items = [{node: <span><h1>one</h1><h2>two</h2></span>, id: 'id-111'}]
+      filter = sinon.spy()
+
+      select = @render(<SelectFilter options=items filter=filter />)
+      input  = @inputElement(select)
+      inputComponent = @findByType select, Input
+      stubDOMFocus inputComponent, '_inputElement'
+      listComponent  = @findByType select, SelectFilter
+      itemComponents = => @allByType listComponent, SelectItem
+
+      @inputValue(input, 'one')
+      @simulate.keyUp(input, key: 'Enter')
+      expect(filter).to.have.been.calledWith items, 'one'
 
 describe 'SelectList.Input', ->
 
@@ -706,9 +745,9 @@ describe 'SelectList', ->
 
   beforeEach ->
     @items = [
-      {name: 'custom made',        id: 'ani-1'}
-      {name: 'custom paid',        id: 'ani-2'}
-      {name: 'just custom fitted', id: 'ani-3'}
+      {node: 'custom made',        id: 'ani-1'}
+      {node: 'custom paid',        id: 'ani-2'}
+      {node: 'just custom fitted', id: 'ani-3'}
     ]
 
   it 'should be a ul element', ->
@@ -753,16 +792,28 @@ describe 'SelectList', ->
     select  = @render(<SelectList options=@items />)
     expect(select.state.selected).to.have.length 0
 
-    select.setState(selected: [{name: 'horses', id: 'id-77'}])
+    select.setState(selected: [{node: 'horses', id: 'id-77'}])
 
     select.setProps(value: [
-      {name: 'a', id: '1'}
-      {name: 'b', id: '2'}
+      {node: 'a', id: '1'}
+      {node: 'b', id: '2'}
     ])
 
     expect(select.state.selected).to.have.length 2
-    expect(select.state.selected[0].name).to.equal 'a'
-    expect(select.state.selected[1].name).to.equal 'b'
+    expect(select.state.selected[0].node).to.equal 'a'
+    expect(select.state.selected[1].node).to.equal 'b'
+
+  it 'should render node containing renderable markup', ->
+    items = [
+      node: <span><h1>one</h1><h2>two</h2></span>, id: 'id-111'
+    ]
+
+    select = @render(<SelectList options=items />)
+
+    span = @allByTag(select, 'span')
+    expect(span).to.have.length 1
+    expect(span[0].getDOMNode().textContent).to.contain 'one'
+    expect(span[0].getDOMNode().textContent).to.contain 'two'
 
   it 'should call the onBlur prop if e.relatedTarget not a list item', ->
     onBlur = sinon.spy()
@@ -979,7 +1030,7 @@ describe 'SelectList', ->
 
       # set list to open and focus item automatically
       select.setProps shouldFocus: true, value: [
-        {name: 'custom made', id: 'ani-1'}
+        {node: 'custom made', id: 'ani-1'}
       ]
 
       expect(select.state.focused).to.equal 'ani-2'
@@ -988,10 +1039,10 @@ describe 'SelectList', ->
   context 'when an item is selected', ->
 
     it 'should call onChange with props.value + selected item', (done) ->
-      onChange = (nameValueList) ->
-        expect(nameValueList).to.have.length 1
-        expect(nameValueList[0].name).to.equal 'custom paid'
-        expect(nameValueList[0].id).to.equal 'ani-2'
+      onChange = (nodeValueList) ->
+        expect(nodeValueList).to.have.length 1
+        expect(nodeValueList[0].node).to.equal 'custom paid'
+        expect(nodeValueList[0].id).to.equal 'ani-2'
         done()
 
       select = @render(
@@ -1011,7 +1062,7 @@ describe 'SelectList', ->
     it 'should call the onChange prop with current state of value', (done) ->
       onChange = (list) ->
         expect(list).to.have.length 1
-        expect(list[0].name).to.equal 'custom paid'
+        expect(list[0].node).to.equal 'custom paid'
         expect(list[0].id).to.equal 'ani-2'
         done()
 
@@ -1033,12 +1084,12 @@ describe 'SelectList', ->
 
     it 'should pick the first item on shouldFocus if no match in value', ->
       value = [
-        {name: 'kaw', id: 'kw-1'}
+        {node: 'kaw', id: 'kw-1'}
       ]
       items = [
-        {name: 'haw', id: 'hw-1'}
-        {name: 'haw', id: 'hw-2'}
-        {name: 'haw', id: 'hw-3'}
+        {node: 'haw', id: 'hw-1'}
+        {node: 'haw', id: 'hw-2'}
+        {node: 'haw', id: 'hw-3'}
       ]
       select = @render(<SelectList options=items value=value />)
 
@@ -1059,7 +1110,7 @@ describe 'SelectList', ->
           callCount++
 
         value = [
-          {name: 'Ghost', id: 'wallabees'}
+          {node: 'Ghost', id: 'wallabees'}
         ]
         select = @render(
           <SelectList options=@items value=value onChange=change />
@@ -1097,7 +1148,7 @@ describe 'SelectList', ->
 
     it 'should set focused to first available option', ->
       otherItems = [
-        {name: 'chester watson', id: 'rb-1'}
+        {node: 'chester watson', id: 'rb-1'}
       ]
       select = @render(<SelectList options=@items />)
       firstItem = select.getDOMNode().querySelector('li:nth-child(1) > a')
@@ -1114,36 +1165,36 @@ describe 'SelectList', ->
 describe 'SelectItem', ->
 
   it 'should be an li element', ->
-    item    = @render(<SelectItem name='Dog #1' id='dog-1' />)
+    item    = @render(<SelectItem node='Dog #1' id='dog-1' />)
     element = item.getDOMNode()
     expect(element).to.have.tagName 'LI'
 
   it 'should have the "item" class', ->
-    item    = @render(<SelectItem name='Dog #1' id='dog-1' />)
+    item    = @render(<SelectItem node='Dog #1' id='dog-1' />)
     element = item.getDOMNode()
     expect(element).to.haveClass 'item'
 
   it 'should have selected class if selected prop is true', ->
-    item    = @render(<SelectItem name='Dog #1' id='dog-1' selected=true />)
+    item    = @render(<SelectItem node='Dog #1' id='dog-1' selected=true />)
     element = item.getDOMNode()
     anchor  = element.querySelector('a')
 
     expect(element).to.haveClass 'selected'
 
   it 'should set href if given', ->
-    item   = @render(<SelectItem name='Dog #1' id='dog-1' href='#example'/>)
+    item   = @render(<SelectItem node='Dog #1' id='dog-1' href='#example'/>)
     anchor = item.getDOMNode().querySelector('a')
 
     expect(anchor.getAttribute('href')).to.equal '#example'
 
   it 'should set "#" href by default', ->
-    item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+    item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
     anchor = item.getDOMNode().querySelector('a')
 
     expect(anchor.getAttribute('href')).to.equal '#'
 
   it 'should set tabIndex to -1 by default', ->
-    item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+    item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
     anchor = item.getDOMNode().querySelector('a')
 
     expect(anchor.getAttribute('tabindex')).to.equal '-1'
@@ -1155,7 +1206,7 @@ describe 'SelectItem', ->
       # `document.activeElement` remains undefined
 
     it 'should have hover class if setFocus(true)', ->
-      item    = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item    = @render(<SelectItem node='Dog #1' id='dog-1' />)
       element = item.getDOMNode()
 
       expect(element).not.to.haveClass 'hover'
@@ -1165,21 +1216,21 @@ describe 'SelectItem', ->
 
   context 'when not selected', ->
 
-    it 'should call the onSelect function with name, id', (done) ->
-      verify = (name, id) ->
-        expect(name).to.equal 'Dog #1'
+    it 'should call the onSelect function with node, id', (done) ->
+      verify = (node, id) ->
+        expect(node).to.equal 'Dog #1'
         expect(id).to.equal 'dog-1'
         done()
 
       item = @render(
-        <SelectItem name='Dog #1' id='dog-1' onSelect={verify}/>
+        <SelectItem node='Dog #1' id='dog-1' onSelect={verify}/>
       )
       anchor = item.getDOMNode().querySelector('a')
 
       @simulate.click(anchor)
 
     it 'should set state to selected', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = item.getDOMNode().querySelector('a')
 
       expect(item.state.selected).to.be.false
@@ -1190,8 +1241,8 @@ describe 'SelectItem', ->
 
   context 'when previously selected', ->
 
-    it 'should call the onDeselect function with name, id', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+    it 'should call the onDeselect function with node, id', ->
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = item.getDOMNode().querySelector('a')
 
       @simulate.click(anchor)
@@ -1200,7 +1251,7 @@ describe 'SelectItem', ->
       expect(item.state.selected).to.be.false
 
     it 'should set selected state to false', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = item.getDOMNode().querySelector('a')
 
       @simulate.click(anchor)
@@ -1211,7 +1262,7 @@ describe 'SelectItem', ->
   context 'when selected', ->
 
     it 'should toggle selected when Enter is pressed', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = @findByTag(item, 'a')
 
       expect(item.state.selected).to.be.false
@@ -1224,7 +1275,7 @@ describe 'SelectItem', ->
       expect(item.state.selected).to.be.false
 
     it 'should not toggle selected on ArrowDown press', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = @findByTag(item, 'a')
 
       expect(item.state.selected).to.be.false
@@ -1239,7 +1290,7 @@ describe 'SelectItem', ->
       expect(item.state.hovered).to.be.true
 
     it 'should not toggle selected on ArrowUp press', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = @findByTag(item, 'a')
 
       expect(item.state.selected).to.be.false
@@ -1256,7 +1307,7 @@ describe 'SelectItem', ->
   context 'when focused', ->
 
     it 'should become selected when Enter is pressed', ->
-      item   = @render(<SelectItem name='Dog #1' id='dog-1' />)
+      item   = @render(<SelectItem node='Dog #1' id='dog-1' />)
       anchor = @findByTag(item, 'a')
       item.setHover(true)
 

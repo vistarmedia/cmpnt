@@ -8,15 +8,15 @@
 #     getInitialState: ->
 #       value: ['id-3']
 #       selectable: [
-#         {name: 'akon',          id: 'id-1'}
-#         {name: 'alizzz',        id: 'id-2'}
-#         {name: 'aesop rock',    id: 'id-3'}
-#         {name: 'adebisi shank', id: 'id-4'}
-#         {name: 'apparat',       id: 'id-5'}
-#         {name: 'armand hammer', id: 'id-6'}
-#         {name: 'baby huey',     id: 'id-7'}
-#         {name: 'baths',         id: 'id-8'}
-#         {name: 'billy paul',    id: 'id-9'}
+#         {node: 'akon',          id: 'id-1'}
+#         {node: 'alizzz',        id: 'id-2'}
+#         {node: 'aesop rock',    id: 'id-3'}
+#         {node: 'adebisi shank', id: 'id-4'}
+#         {node: 'apparat',       id: 'id-5'}
+#         {node: 'armand hammer', id: 'id-6'}
+#         {node: 'baby huey',     id: 'id-7'}
+#         {node: 'baths',         id: 'id-8'}
+#         {node: 'billy paul',    id: 'id-9'}
 #       ]
 #
 #     onChange: (list) ->
@@ -45,7 +45,7 @@ Multiselect = React.createClass
   displayName: 'Multiselect'
 
   propTypes:
-    options:  Types.idNameList.isRequired
+    options:  Types.idNodeList.isRequired
     value:    React.PropTypes.array
     onChange: React.PropTypes.func
     filter:   React.PropTypes.func
@@ -87,6 +87,5 @@ Multiselect = React.createClass
       .map (v) =>
         _(@props.options).find (o) -> o.id is v
       .value()
-
 
 module.exports = Multiselect

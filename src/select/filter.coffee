@@ -18,15 +18,15 @@
 #     getInitialState: ->
 #       selected: []
 #       items: [
-#         {name: 'item 1', id: 'id-1'}
-#         {name: 'item 2', id: 'id-2'}
-#         {name: 'item 3', id: 'id-3'}
-#         {name: 'item 4', id: 'id-4'}
-#         {name: 'item 5', id: 'id-5'}
-#         {name: 'item 6', id: 'id-6'}
-#         {name: 'item 7', id: 'id-7'}
-#         {name: 'item 8', id: 'id-8'}
-#         {name: 'item 9', id: 'id-9'}
+#         {node: 'item 1', id: 'id-1'}
+#         {node: 'item 2', id: 'id-2'}
+#         {node: 'item 3', id: 'id-3'}
+#         {node: 'item 4', id: 'id-4'}
+#         {node: 'item 5', id: 'id-5'}
+#         {node: 'item 6', id: 'id-6'}
+#         {node: 'item 7', id: 'id-7'}
+#         {node: 'item 8', id: 'id-8'}
+#         {node: 'item 9', id: 'id-9'}
 #       ]
 #
 #     handleSelections: (list) ->
@@ -51,7 +51,7 @@
 #     _selectedItems: ->
 #       for item in @state.selected
 #         <li data-value=item.id key=item.id>
-#           {item.name}
+#           {item.node}
 #         </li>
 
 
@@ -65,17 +65,21 @@ SelectList = require './list'
 
 
 defaultFilter = (options, term) ->
+  nodeAsString = (node) ->
+    if typeof node isnt 'string'
+      throw Error('SelectFilter does not filter non-strings by default')
+    node
+
   if not term or term.length is 0
     return options
-  o for o in options when o.name?.match(///#{term}///i)
-
+  o for o in options when nodeAsString(o.node)?.match(///#{term}///i)
 
 SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
   propTypes:
-    options:      Types.idNameList.isRequired
-    value:        Types.idNameList
+    options:      Types.idNodeList.isRequired
+    value:        Types.idNodeList
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func
@@ -87,7 +91,7 @@ SelectFilter = React.createClass
   getInitialState: ->
     opened:        false
     filterTerm:    undefined
-    filtered:      @props.options
+    filtered:      @filterResults()
 
   filterResults: (term) ->
     @props.filter?(@props.options, term) or @props.options

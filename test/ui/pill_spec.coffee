@@ -1,5 +1,6 @@
 require '../test_case'
 
+React    = require 'react'
 {expect} = require 'chai'
 
 Pill      = require '../../src/ui/pill'
@@ -73,8 +74,8 @@ describe 'Pill.Group', ->
 
   it 'should render all items in props.options', ->
     items = [
-      {name: 'Shawon Dunston', id: 'SS'}
-      {name: 'Hawk Dawson',    id: 'RF'}
+      {node: 'Shawon Dunston', id: 'SS'}
+      {node: 'Hawk Dawson',    id: 'RF'}
     ]
 
     group   = @render(<PillGroup options=items />)
@@ -88,13 +89,13 @@ describe 'Pill.Group', ->
 
   it 'should call onChange with props.options minus what was closed', (done) ->
     items = [
-      {name: 'Shawon Dunston', id: 'SS'}
-      {name: 'Hawk Dawson',    id: 'RF'}
+      {node: 'Shawon Dunston', id: 'SS'}
+      {node: 'Hawk Dawson',    id: 'RF'}
     ]
 
     onChange = (list) ->
       expect(list).to.have.length 1
-      expect(list[0].name).to.equal  'Hawk Dawson'
+      expect(list[0].node).to.equal  'Hawk Dawson'
       expect(list[0].id).to.equal 'RF'
       done()
 
@@ -105,3 +106,18 @@ describe 'Pill.Group', ->
 
     expect(anchor).to.exist
     @simulate.click(anchor)
+
+  it 'should render node containing renderable markup', ->
+    items = [
+      {node: <h3>Fergie Jenkins</h3>, id: 'SP'}
+    ]
+
+    group   = @render(<PillGroup options=items />)
+
+    pills = @allByType(group, Pill)
+    expect(pills).to.have.length 1
+
+    h3 = @allByTag(pills[0], 'h3')
+    expect(h3).to.have.length 1
+
+    expect(h3[0].getDOMNode().textContent).to.equal 'Fergie Jenkins'

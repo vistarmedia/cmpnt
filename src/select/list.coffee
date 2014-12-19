@@ -21,8 +21,8 @@
 # item element, allowing for custom close behavior for instance.
 #
 # It expects an array of things to render in the "options" prop.  It requires
-# objects with a key "name" (for the display name) and "id" (for an
-# identifier).
+# objects with a key "node" (for the display content, which can be a string,
+# number, or any renderable component) and "id" (for an identifier).
 #
 #
 # @example: ->
@@ -34,9 +34,9 @@
 #
 #     getDefaultProps: ->
 #       items: [
-#         {name: 'custom made',        id: 'ani-1'}
-#         {name: 'custom paid',        id: 'ani-2'}
-#         {name: 'just custom fitted', id: 'ani-3'}
+#         {node: 'custom made',        id: 'ani-1'}
+#         {node: 'custom paid',        id: 'ani-2'}
+#         {node: 'just custom fitted', id: 'ani-3'}
 #       ]
 #
 #     toggleSelect: (e) ->
@@ -74,7 +74,7 @@
 #
 #     _selectedItems: ->
 #       for item in @state.items
-#         <li key=item.id className='list-group-item'>{item.name}</li>
+#         <li key=item.id className='list-group-item'>{item.node}</li>
 
 
 _          = require 'lodash'
@@ -88,8 +88,8 @@ SelectList = React.createClass
   displayName: 'SelectList'
 
   propTypes:
-    options:      Types.idNameList.isRequired
-    value:        Types.idNameList
+    options:      Types.idNodeList.isRequired
+    value:        Types.idNodeList
     onChange:     React.PropTypes.func
     visible:      React.PropTypes.bool
     shouldFocus:  React.PropTypes.bool
@@ -125,15 +125,15 @@ SelectList = React.createClass
     if not e.relatedTarget?.className.match(/list-item/)
       @props.onBlur?(e)
 
-  onSelect: (name, id) ->
+  onSelect: (node, id) ->
     selections = _(_.clone(@props.value))
-      .push(name: name, id: id).value()
+      .push(node: node, id: id).value()
     @setState
       selected: selections
       focused: id, ->
         @props.onChange?(selections)
 
-  onDeselect: (name, id) ->
+  onDeselect: (node, id) ->
     selections = (_(@props.value).filter((e) ->
       e.id != id)).value()
     @setState
@@ -167,7 +167,7 @@ SelectList = React.createClass
   _items: ->
     for item in @props.options
       <SelectItem key        = item.id
-                  name       = item.name
+                  node       = item.node
                   ref        = item.id
                   id         = item.id
                   selected   = @_isItemSelected(item)
@@ -214,8 +214,8 @@ SelectList = React.createClass
     if index isnt 0
       @select(@props.options[index - 1])
 
-  _setFocusedItem: (name, id) ->
-    @select(name: name, id: id)
+  _setFocusedItem: (node, id) ->
+    @select(node: node, id: id)
 
   _isItemSelected: (item) ->
     (_(@state.selected).find id: item.id)?
@@ -234,7 +234,8 @@ SelectItem = React.createClass
   displayName: 'SelectItem'
 
   propTypes:
-    name:       React.PropTypes.string.isRequired
+    # With react 0.12, renderable will be renamed to "node"
+    node:       React.PropTypes.renderable.isRequired
     id:         React.PropTypes.string.isRequired
     href:       React.PropTypes.string
     tabIndex:   React.PropTypes.string
@@ -268,7 +269,7 @@ SelectItem = React.createClass
 
   setHover: (bool) ->
     @setState hovered: bool
-    @props.onHover?(@props.name, @props.id)
+    @props.onHover?(@props.node, @props.id)
 
   onSelect: (e) ->
     e.preventDefault()
@@ -276,9 +277,9 @@ SelectItem = React.createClass
     toggleValue = not @state.selected
     @selected(toggleValue)
     if toggleValue
-      @props.onSelect?(@props.name, @props.id)
+      @props.onSelect?(@props.node, @props.id)
     else
-      @props.onDeselect?(@props.name, @props.id)
+      @props.onDeselect?(@props.node, @props.id)
 
   hasFocus: ->
     @props.isActive or @state.hovered or @props.selected
@@ -296,7 +297,7 @@ SelectItem = React.createClass
          onBlur      = @_onBlur
          onFocus     = @_onFocus>
 
-        {@props.name}
+        {@props.node}
       </a>
     </li>
 
