@@ -89,7 +89,7 @@ FilteredOptionList = React.createClass
 
   render: ->
     filtered = (opt for opt in @props.options when \
-      opt.id.indexOf(@state.filter) isnt -1)
+      opt.name.toLowerCase().indexOf(@state.filter) isnt -1)
 
     <div className='filter-container'>
       <input className='form-control'

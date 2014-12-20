@@ -174,3 +174,11 @@ describe 'Source Sink View', ->
       expect(@onChange).to.have.been.calledWith []
       expect(sourceSink.state.sourceOptions).to.have.length 5
       expect(sourceSink.state.sinkOptions).to.have.length 0
+
+    it 'should render with non-string ids', ->
+      options = for i in [1..5]
+        name: "Option #{i}"
+        id: i
+      selected = [options[4].id]
+      sourceSink = @render <SourceSink options=options value=selected
+        format=@format />
