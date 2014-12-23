@@ -3,11 +3,13 @@ VERSION?=$(shell git rev-parse --verify HEAD --short=6)
 BUILD_DIR=./build
 DOCSITE_DIR=./demo/build
 
+ifdef GERRIT_CHANGE_ID
+DOCSITE:=cmpnt.vistarmedia.com/gerrit/change/$(GERRIT_CHANGE_ID)/
+endif
+
 ifeq "$(ENVIRONMENT)" "production"
 AUTOVERSION:=$(shell $(GULP) autoversion --silent)
 DOCSITE:=cmpnt.vistarmedia.com/
-else
-DOCSITE:=cmpnt.vistarmedia.com/gerrit_change/$(GERRIT_CHANGE_ID)/
 endif
 
 
@@ -48,7 +50,7 @@ tag:
 	@git tag $(AUTOVERSION) HEAD
 	@git push origin --tags
 
-release: build tag publish
+release: build tag publish publish_docs
 
 link: build
 	cd $(BUILD_DIR) && npm link .
