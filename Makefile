@@ -2,6 +2,7 @@ GULP=./node_modules/.bin/gulp
 VERSION?=$(shell git rev-parse --verify HEAD --short=6)
 BUILD_DIR=./build
 DOCSITE_DIR=./demo/build
+DOCSITE:=cmpnt.vistarmedia.com/
 
 ifdef GERRIT_CHANGE_ID
 DOCSITE:=cmpnt.vistarmedia.com/gerrit/change/$(GERRIT_CHANGE_ID)/
@@ -9,7 +10,6 @@ endif
 
 ifeq "$(ENVIRONMENT)" "production"
 AUTOVERSION:=$(shell $(GULP) autoversion --silent)
-DOCSITE:=cmpnt.vistarmedia.com/
 endif
 
 
@@ -50,7 +50,7 @@ tag:
 	@git tag $(AUTOVERSION) HEAD
 	@git push origin --tags
 
-release: build tag publish publish_docs
+release: build tag publish
 
 link: build
 	cd $(BUILD_DIR) && npm link .
