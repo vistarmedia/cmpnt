@@ -667,6 +667,17 @@ describe 'SelectFilter', ->
 
 describe 'SelectList.Input', ->
 
+  it 'should pass defaultValue on down to the input', ->
+    input = @render(<Input defaultValue='a real dark horse' />)
+    inputElement = @findByTag input, 'input'
+    expect(inputElement.getDOMNode()).to.have.value 'a real dark horse'
+
+  it 'should use value as the value if defined', ->
+    input = @render <Input value        = 'a real, real dark horse'
+                           defaultValue = 'a kind of non threatening horse'/>
+    inputElement = @findByTag input, 'input'
+    expect(inputElement.getDOMNode()).to.have.value 'a real, real dark horse'
+
   it 'should set focus state on focus', ->
     input = @render(<Input />)
 

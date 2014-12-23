@@ -80,6 +80,7 @@ SelectFilter = React.createClass
   propTypes:
     options:      Types.idContentList.isRequired
     value:        Types.idContentList
+    defaultValue: React.PropTypes.string
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func
@@ -133,13 +134,14 @@ SelectFilter = React.createClass
 
   render: ->
     <div className='btn-group select-filter'>
-      <Input onFocus    = @onInputFocus
-             onBlur     = @onInputBlur
-             onChange   = @onUpdateFilter
-             onCommit   = @handleInputCommit
-             value      = @state.filterTerm
-             ref        = 'input'
-             className  = @props.inputClass
+      <Input onFocus      = @onInputFocus
+             onBlur       = @onInputBlur
+             onChange     = @onUpdateFilter
+             onCommit     = @handleInputCommit
+             defaultValue = @props.defaultValue
+             value        = @state.filterTerm
+             ref          = 'input'
+             className    = @props.inputClass
              />
       <SelectList options     = @state.filtered
                   visible     = @state.opened
@@ -170,7 +172,7 @@ Input = React.createClass
     commitKeyCodes: React.PropTypes.array
 
   getDefaultProps: ->
-    value:          ''
+    value:          undefined
     commitKeys:     ['Enter', 'ArrowDown']
     commitKeyCodes: []
 
@@ -199,6 +201,12 @@ Input = React.createClass
     @setState focused: false
     @props.onBlur?(e)
 
+  value: ->
+    if @props.value?
+      @props.value
+    else
+      @props.defaultValue
+
   componentDidUpdate: ->
     if @state.focused
       @_inputElement().focus()
@@ -217,7 +225,7 @@ Input = React.createClass
              onBlur       = @onBlur
              onChange     = @onChange
              onPaste      = @props.onPaste
-             value        = @props.value
+             value        = @value()
              ref          = 'input'
              />
     </span>

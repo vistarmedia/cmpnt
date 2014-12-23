@@ -1,4 +1,4 @@
-properties = ['innerHTML', 'textContent', 'tagName', 'className']
+properties = ['innerHTML', 'textContent', 'tagName', 'className', 'value']
 
 module.exports = (chai, utils) ->
   inspect = utils.inspect
