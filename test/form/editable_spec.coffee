@@ -114,45 +114,87 @@ describe 'Editable', ->
     expect(element.state.editing).to.be.false
     expect(@findByClass(element, 'viewing')).to.exist
 
+  it 'should activate/deactivate when using a "select" element', ->
+    element = @render(<Editable>
+      <select defaultValue='Dennehy'>
+        <option value='Dennehy'>Dennehy</option>
+        <option value='Butkus'>Butkus</option>
+        <option value='Berenger'>Berenger</option>
+      </select>
+    </Editable>)
+
+    @simulate.click(@findByClass(element, 'editable-element'))
+
+    expect(element.state.editing).to.be.true
+    expect(@findByClass(element, 'editing')).to.exist
+
+    @simulate.blur(@findByTag(element, 'select'))
+
+    expect(element.state.editing).to.be.false
+    expect(@findByClass(element, 'viewing')).to.exist
+
   context 'when focused', ->
 
-    beforeEach ->
-      @onChange = sinon.spy()
-      @input = @render(<Editable onChange = @onChange>
-        <input defaultValue='Dennehy' />
-      </Editable>)
-      element = @findByTag @input, 'input'
-      @simulate.focus(element)
+    context 'wrapping input element', ->
 
-    it 'should call onChange w/input value on "enter" press', ->
-      element = @findByTag @input, 'input'
-      @inputValue @input, 'Physically a horse.'
-      @simulate.keyPress element, key: 'Enter'
+      beforeEach ->
+        @onChange = sinon.spy()
+        @input = @render(<Editable onChange = @onChange>
+          <input defaultValue='Dennehy' />
+        </Editable>)
+        element = @findByTag @input, 'input'
+        @simulate.focus(element)
 
-      expect(@onChange).to.have.been.calledWith 'Physically a horse.'
+      it 'should call onChange w/input value on "enter" press', ->
+        element = @findByTag @input, 'input'
+        @inputValue @input, 'Physically a horse.'
+        @simulate.keyPress element, key: 'Enter'
 
-    it 'should preventDefault and stopPropagation on enter', ->
-      # doing this incase we're using this in a form
-      event =
-        stopPropagation:  sinon.spy()
-        preventDefault:   sinon.spy()
-        key:              'Enter'
+        expect(@onChange).to.have.been.calledWith 'Physically a horse.'
 
-      element = @findByTag @input, 'input'
-      @simulate.keyPress element, event
+      it 'should preventDefault and stopPropagation on enter', ->
+        # doing this incase we're using this in a form
+        event =
+          stopPropagation:  sinon.spy()
+          preventDefault:   sinon.spy()
+          key:              'Enter'
 
-      expect(event.stopPropagation).to.have.been.called
-      expect(event.preventDefault).to.have.been.called
+        element = @findByTag @input, 'input'
+        @simulate.keyPress element, event
 
-    it 'should no call onChange if not enter key', ->
-      element = @findByTag @input, 'input'
-      @simulate.keyPress element, key: 'Unidentified'
+        expect(event.stopPropagation).to.have.been.called
+        expect(event.preventDefault).to.have.been.called
 
-      expect(@onChange).not.to.have.been.called
+      it 'should no call onChange if not enter key', ->
+        element = @findByTag @input, 'input'
+        @simulate.keyPress element, key: 'Unidentified'
 
-    it 'should call onChange w/input value on blur', ->
-      element = @findByTag @input, 'input'
-      @inputValue @input, 'Physically a horse.'
-      @simulate.blur element, target: element.getDOMNode()
+        expect(@onChange).not.to.have.been.called
 
-      expect(@onChange).to.have.been.calledWith 'Physically a horse.'
+      it 'should call onChange w/input value on blur', ->
+        element = @findByTag @input, 'input'
+        @inputValue @input, 'Physically a horse.'
+        @simulate.blur element, target: element.getDOMNode()
+
+        expect(@onChange).to.have.been.calledWith 'Physically a horse.'
+
+    context 'wrapping select element', ->
+
+      beforeEach ->
+        @onChange = sinon.spy()
+        @input = @render(<Editable onChange = @onChange>
+          <select value='Dennehy'>
+            <option value='Dennehy'>Dennehy</option>
+            <option value='Butkus'>Butkus</option>
+            <option value='Berenger'>Berenger</option>
+          </select>
+        </Editable>)
+        element = @findByTag @input, 'select'
+        @simulate.focus(element)
+
+      it 'should call onChange w/select value on blur', ->
+        element = @findByTag @input, 'select'
+        element.getDOMNode().value = 'Butkus'
+        @simulate.blur element, target: element.getDOMNode()
+
+        expect(@onChange).to.have.been.calledWith 'Butkus'
