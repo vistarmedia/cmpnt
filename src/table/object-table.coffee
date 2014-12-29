@@ -95,8 +95,9 @@ Footer = React.createClass
 
   render: ->
     <div className='row'>
-      {RangeInfo(@props)}
-      {Pager(_.assign(_.clone(@props), onChange: @props.onPageChange))}
+      {React.createElement(RangeInfo,  @props)}
+      {React.createElement(
+        Pager, _.assign(_.clone(@props), onChange: @props.onPageChange))}
     </div>
 
 
@@ -386,7 +387,7 @@ ObjectTable = React.createClass
         onPerPageChange = @handlePerPageChange
         onTermChange    = @handleTermChange />
 
-      {Table(_.assign(_.clone(@props), tableProps))}
+      {React.createElement(Table, _.assign(_.clone(@props), tableProps))}
 
       <Footer
         start         = @state.start

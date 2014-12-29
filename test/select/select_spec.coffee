@@ -13,19 +13,6 @@ Input      = SelectFilter.Input
 
 Pill       = require '../../src/ui/pill'
 
-stubDOMFocus = (component, methodName) ->
-  domElementFocus = sinon.spy()
-  #
-  # doing this whole rigamarole since dominos HTMLInputElement
-  # doesn't seem to implement focus()
-  #
-  # expects the method on the component to return a DOM element
-  #
-  sinon.stub component, methodName, ->
-    focus: domElementFocus
-
-  domElementFocus
-
 
 describe 'Multiselect', ->
 
@@ -66,7 +53,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       listComponent = @findByType select, SelectFilter
       itemComponents = @allByType listComponent, SelectItem
@@ -85,7 +71,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       listComponent = @findByType select, SelectFilter
       itemComponents = @allByType listComponent, SelectItem
@@ -101,7 +86,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -129,7 +113,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -147,7 +130,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -169,7 +151,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -192,7 +173,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -213,7 +193,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -231,7 +210,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -254,7 +232,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -276,7 +253,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -296,7 +272,6 @@ describe 'Multiselect', ->
       select = @render(<Multiselect options=@items />)
       input  = @findByTag select, 'input'
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
 
       inputComponent = @findByType select, Input
       listComponent  = @findByType select, SelectFilter
@@ -321,7 +296,6 @@ describe 'Multiselect', ->
       input  = @inputElement(select)
 
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
       listComponent  = @findByType select, SelectFilter
       itemComponents = => @allByType listComponent, SelectItem
 
@@ -634,7 +608,6 @@ describe 'SelectFilter', ->
       input  = @inputElement(select)
 
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
       listComponent  = @findByType select, SelectFilter
       itemComponents = => @allByType listComponent, SelectItem
 
@@ -657,7 +630,6 @@ describe 'SelectFilter', ->
       select = @render(<SelectFilter options=items filter=filter />)
       input  = @inputElement(select)
       inputComponent = @findByType select, Input
-      stubDOMFocus inputComponent, '_inputElement'
       listComponent  = @findByType select, SelectFilter
       itemComponents = => @allByType listComponent, SelectItem
 
@@ -681,7 +653,8 @@ describe 'SelectList.Input', ->
   it 'should set focus state on focus', ->
     input = @render(<Input />)
 
-    domElementFocus = stubDOMFocus input, '_inputElement'
+    domElementFocus = sinon.spy()
+    input._inputElement = -> { focus: domElementFocus }
     expect(input.state.focused).to.be.false
 
     input.focus()

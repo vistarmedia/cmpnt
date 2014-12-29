@@ -47,7 +47,7 @@ _sourceTask = (name, proj, deps=[]) ->
   gulp.task name, deps, ->
     gulp.src(proj.src, read: false)
       .pipe(browserify({
-        transform:  ['coffeeify']
+        transform:  ['coffee-reactify']
         extensions: ['.coffee']
       }))
       .pipe(concat('app.js'))
@@ -140,6 +140,7 @@ _staticTask('project:static', project)
 _testTask('demo:test', demo)
 _testTask('project:test', project)
 _testTask('project:test:xunit', project, reporter='xunit-file', bail=false)
+_testTask('test:spec', project, reporter='spec')
 
 gulp.task 'project', ['project:src', 'project:style']
 

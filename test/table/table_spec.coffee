@@ -1,8 +1,9 @@
 require '../test_case'
-sinon = require 'sinon'
 
-_        = require 'lodash'
-{expect} = require 'chai'
+React     = require 'react'
+_         = require 'lodash'
+sinon     = require 'sinon'
+{expect}  = require 'chai'
 
 Table  = require '../../src/table'
 Header = Table.Header

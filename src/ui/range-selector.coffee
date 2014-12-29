@@ -132,15 +132,18 @@ RangeSelector = React.createClass
 
   render: ->
     sections = for opt, i in @props.options
-      @transferPropsTo(
-        <RangeSelector.Section ordinal=i
-                               id=opt.id
-                               label=opt.name
-                               key="section-#{i}"
-                               selected=@isSelected(i)
-                               mouseOver=@mouseOver
-                               mouseUp=@mouseUp
-                               mouseDown=@mouseDown />)
+      sectionProps = _.extend(
+        @props,
+        {
+          ordinal: i
+          id: opt.id
+          label: opt.name
+          key: "section-#{i}"
+          selected: @isSelected(i)
+          mouseOver: @mouseOver
+          mouseUp: @mouseUp
+          mouseDown: @mouseDown })
+      React.createElement(RangeSelector.Section, sectionProps)
 
     <div className="range-selector">
       <div className="range-sections">

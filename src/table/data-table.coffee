@@ -213,7 +213,12 @@ DataTable = React.createClass
     </thead>
 
   _row: (model) ->
-    @props.row key: "row-#{model.cid}", model: model, columns: @props.columns
+    React.createElement(
+      @props.row,
+      {
+        key: "row-#{model.cid}"
+        model: model
+        columns: @props.columns })
 
 
 DataTable.Row = Row

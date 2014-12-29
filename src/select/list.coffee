@@ -234,8 +234,7 @@ SelectItem = React.createClass
   displayName: 'SelectItem'
 
   propTypes:
-    # With react 0.12, renderable will be renamed to "node"
-    content:       React.PropTypes.renderable.isRequired
+    content:    React.PropTypes.node.isRequired
     id:         React.PropTypes.string.isRequired
     href:       React.PropTypes.string
     tabIndex:   React.PropTypes.string

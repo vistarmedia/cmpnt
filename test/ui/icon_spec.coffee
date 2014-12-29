@@ -1,6 +1,7 @@
 require '../test_case'
 
-{expect} = require 'chai'
+React     = require 'react'
+{expect}  = require 'chai'
 
 Icon = require '../../src/ui/icon'
 

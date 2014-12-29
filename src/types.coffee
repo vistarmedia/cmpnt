@@ -12,8 +12,7 @@ idName = React.PropTypes.shape
 
 idContent = React.PropTypes.shape
   id:      React.PropTypes.any
-  # With react 0.12, renderable will be renamed to "node"
-  content: React.PropTypes.renderable
+  content: React.PropTypes.node
 
 
 module.exports =

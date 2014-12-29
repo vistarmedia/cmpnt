@@ -1,7 +1,8 @@
 require '../test_case'
 
-{expect} = require 'chai'
-sinon    = require 'sinon'
+React     = require 'react'
+sinon     = require 'sinon'
+{expect}  = require 'chai'
 
 Button = require '../../src/form/button'
 

@@ -42,10 +42,12 @@ RunExample = React.createClass
     func: React.PropTypes.string
 
   getInitialState: ->
-    factory = eval(@props.func)()
-    unless factory? then return {}
+    # The function that we are eval-ing here defines an anonymous react class
+    # that renders a particular demo component.
+    reactClass = eval(@props.func)()
+    unless reactClass? then return {}
 
-    component: factory()
+    component: React.createElement(reactClass)
 
   render: ->
     <div className='row'>

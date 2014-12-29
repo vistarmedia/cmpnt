@@ -9,7 +9,7 @@ console.warn = (msg) ->
 
 init = () ->
   window.React = React
-  React.renderComponent(<Dashboard />, document.body)
+  React.render(<Dashboard />, document.body)
 
 
 module.exports = init()

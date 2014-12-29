@@ -130,12 +130,11 @@ describe 'Data Table', ->
           </td>
         </tr>
 
-    table = @render DataTable
-      columns:       @columns
-      filter:        @filter
-      models:        @models
-      itemsPerPage:  10
-      row:           CustomTestRow
+    table = @render <DataTable columns = @columns
+                               filter = @filter
+                               models = @models
+                               itemsPerPage = 10
+                               row = CustomTestRow />
     tableEl  = table.getDOMNode()
     firstRow = tableEl.querySelector('tr:nth-child(1) > td:nth-child(2)')
 
@@ -150,11 +149,10 @@ describe 'Data Table', ->
   context 'using items per page select', ->
 
     beforeEach ->
-      @table = @render DataTable
-        columns:       @columns
-        filter:        @filter
-        models:        @models
-        itemsPerPage:  10
+      @table = @render(<DataTable columns = @columns
+                                  filter = @filter
+                                  models = @models
+                                  itemsPerPage = 10 />)
       @tableEl = @table.getDOMNode()
       @rows    = -> @tableEl.querySelectorAll('tbody > tr')
 

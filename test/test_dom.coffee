@@ -40,7 +40,7 @@ beforeEach ->
   @render = (cls) ->
     el = document.createElement('div')
     @_nodes.push(el)
-    React.renderComponent(cls, el)
+    React.render(cls, el)
 
   @simulate        = TestUtils.Simulate
   @findByClass     = TestUtils.findRenderedDOMComponentWithClass

@@ -1,7 +1,8 @@
 require '../test_case'
 
-sinon    = require 'sinon'
-{expect} = require 'chai'
+React     = require 'react'
+sinon     = require 'sinon'
+{expect}  = require 'chai'
 
 Login = require '../../src/login'
 

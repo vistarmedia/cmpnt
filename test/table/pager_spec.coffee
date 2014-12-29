@@ -42,7 +42,8 @@ describe 'Pager.ItemsPerPageSelect', ->
     expect(select.props.perPage).to.equal 25
 
   it 'should accept a perPageOptions', ->
-    select = @render Pager.ItemsPerPageSelect(perPageOptions: [25, 50, 100])
+    select = @render(
+      <Pager.ItemsPerPageSelect perPageOptions={[25, 50, 100]} />)
     expect(select.props.perPageOptions).to.eql [25, 50, 100]
 
   it 'should update perPage on select', ->

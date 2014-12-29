@@ -1,6 +1,7 @@
 require '../test_case'
 
-{expect} = require 'chai'
+React     = require 'react'
+{expect}  = require 'chai'
 
 CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
 RangeSelector         = require '../../src/ui/range-selector'
