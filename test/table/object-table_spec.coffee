@@ -135,6 +135,24 @@ describe 'Object Table', ->
 
     expect(rows).to.have.length 20
 
+  it 'should accept a rowClass prop for customizing row appearance', ->
+    CustomRow = React.createClass
+      render: ->
+        row = @props.row
+
+        cells = for col in @props.columns
+          value = row[col.field]
+          <td key=col.field className='custom-row'>{value}</td>
+
+        <tr>{cells}</tr>
+
+    table = @render <ObjectTable columns  = @columns
+                                 rows     = @rows
+                                 rowClass = CustomRow />
+
+    expect(@allByClass(table, 'custom-row')).not.to.be.empty
+
+
   context 'when changing perPage selector', ->
 
     it 'should update the number of rows displayed', ->

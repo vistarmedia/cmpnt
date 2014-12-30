@@ -89,13 +89,20 @@ Body = React.createClass
     columns:  ColumnsType.isRequired
     rows:     RowsType.isRequired
     keyField: React.PropTypes.string.isRequired
+    rowClass: React.PropTypes.func
+
+  getDefaultProps: ->
+    rowClass: Row
 
   render: ->
     key     = @props.keyField
     columns = @props.columns
 
     rows = for row in @props.rows
-      <Row key=row[key] columns=columns row=row />
+      React.createElement @props.rowClass,
+        key:      row[key],
+        columns:  columns,
+        row:      row
 
     <tbody>{rows}</tbody>
 
@@ -107,6 +114,7 @@ Table = React.createClass
     columns:  ColumnsType.isRequired
     rows:     RowsType.isRequired
     keyField: React.PropTypes.string
+    rowClass: React.PropTypes.func
 
     start:    React.PropTypes.number
     end:      React.PropTypes.number
@@ -136,7 +144,8 @@ Table = React.createClass
       <Body
         columns  = @props.columns
         rows     = @props.rows
-        keyField = @props.keyField />
+        keyField = @props.keyField
+        rowClass = @props.rowClass />
     </table>
 
 

@@ -28,6 +28,29 @@ describe 'Table Body', ->
       expect(rows).to.have.length 1
       expect(@view).to.haveElement 'td:contains(Billy)'
 
+  context 'with a custom row component class', ->
+
+    it 'should use that component to render the row', ->
+      CustomRow = React.createClass
+        render: ->
+          row = @props.row
+
+          cells = for col in @props.columns
+            value = row[col.field]
+            <td key=col.field className='custom-row'>{value}</td>
+
+          <tr>{cells}</tr>
+
+      columns = [
+        {field: 'name'},
+        {field: 'age'},
+      ]
+      rows = [{name: 'Billy', age: 66, id: 1}]
+      body = <Body keyField='id' columns=columns rows=rows rowClass=CustomRow />
+      view = @render <table>{body}</table>
+
+      expect(@allByClass(view, 'custom-row')).not.to.be.empty
+
   context 'with a formatter', ->
 
     beforeEach ->

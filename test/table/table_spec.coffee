@@ -47,4 +47,3 @@ describe 'A Table', ->
     @simulate.click(@findByTag headerItems[2], 'th')
 
     expect(spy).to.have.been.calledWith 'other', true, 'passthis'
-

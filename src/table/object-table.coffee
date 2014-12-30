@@ -317,6 +317,7 @@ ObjectTable = React.createClass
 
     filter:     React.PropTypes.func
     className:  React.PropTypes.string
+    rowClass:   React.PropTypes.func
 
   getDefaultProps: ->
     perPage:    10
