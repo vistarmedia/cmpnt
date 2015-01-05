@@ -37,9 +37,10 @@ beforeEach ->
   TestUtils = require('react/addons').addons.TestUtils
 
   @_nodes = []
-  @render = (cls) ->
-    el = document.createElement('div')
-    @_nodes.push(el)
+  @render = (cls, el) ->
+    if not el?
+      el = document.createElement('div')
+      @_nodes.push(el)
     React.render(cls, el)
 
   @simulate        = TestUtils.Simulate

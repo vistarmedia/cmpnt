@@ -57,6 +57,12 @@ Multiselect = React.createClass
   getInitialState: ->
     value: @props.value
 
+  componentWillReceiveProps: (nextProps) ->
+    # TODO: We shouldn't always setState here; only if a prop that is kept
+    # in state is changing. Better yet, rework the component so that it
+    # doesn't keep any props in state.
+    @setState(value: nextProps.value)
+
   focusInput: ->
     input = @refs.filter.refs.input
     input.focus()

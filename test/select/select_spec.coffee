@@ -325,6 +325,16 @@ describe 'Multiselect', ->
 
       expect(inputElement.getDOMNode().value).to.equal ''
 
+  context 'when receiving props', ->
+
+    it 'should update state values', ->
+      select = @render(<Multiselect options=@items value={['id-7']} />)
+      expect(select.state.value).to.deep.equal ['id-7']
+
+      p = select.getDOMNode().parentNode
+      @render(<Multiselect options=@items value={['id-3']} />, p)
+      expect(select.state.value).to.deep.equal ['id-3']
+
 
 describe 'SelectFilter', ->
 
