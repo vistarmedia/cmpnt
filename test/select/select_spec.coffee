@@ -17,6 +17,7 @@ Pill       = require '../../src/ui/pill'
 describe 'Multiselect', ->
 
   beforeEach ->
+    @onChange = sinon.spy()
     @items = [
       {name: 'akon',          id: 'id-1'}
       {name: 'alizzz',        id: 'id-2'}
@@ -81,6 +82,20 @@ describe 'Multiselect', ->
 
       expect(select.state.value).to.have.length 1
       expect(select.state.value[0]).to.equal 'id-5'
+
+    it 'should call onChange with selected item id', ->
+      select = @render(<Multiselect options=@items onChange=@onChange />)
+      input  = @findByTag select, 'input'
+      inputComponent = @findByType select, Input
+
+      listComponent = @findByType select, SelectFilter
+      itemComponents = @allByType listComponent, SelectItem
+      apparatAnchor = @findByTag itemComponents[4], 'a'
+
+      @simulate.focus(input)
+      @simulate.click(apparatAnchor)
+
+      expect(@onChange).to.have.been.calledWith(['id-5'])
 
     it 'should focus the input after a selection', ->
       select = @render(<Multiselect options=@items />)

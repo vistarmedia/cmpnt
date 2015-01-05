@@ -69,7 +69,7 @@ Multiselect = React.createClass
     @setState value: value, ->
       @focusInput()
       @clearInput()
-      @props.onChange?(list)
+      @props.onChange?(value)
 
   render: ->
     <div className='select-multi'>
