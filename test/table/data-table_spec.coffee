@@ -19,7 +19,7 @@ describe 'Data Table', ->
 
     @columns = [
       {field: 'id',   label: 'ID'},
-      {field: 'name', label: 'Name'},
+      {field: 'name', label: 'Name', width: '100%'},
     ]
 
     @_filterImpl = (models, term) -> models
@@ -39,6 +39,8 @@ describe 'Data Table', ->
 
     expect(headers[0].textContent).to.include 'ID'
     expect(headers[1].textContent).to.include 'Name'
+    expect(headers[1].style.width).to.equal '100%'
+    expect(headers[1].style.maxWidth).to.equal '100%'
 
   # Right now, this defaults to whatever the page defaults to, which is 10
   it 'should limit the number of rendered rows', ->

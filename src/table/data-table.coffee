@@ -30,7 +30,12 @@
 #       models:   (new Model(id: i, name: "Model #{i+1}") for i in [0..299])
 #       columns:  [
 #         {field: 'id',   label: 'ID'},
-#         {field: 'name', label: 'Name', format: (name) -> "#{name}!"}
+#         {
+#           field: 'name',
+#           label: 'Name',
+#           format: ((name) -> "#{name}!"),
+#           width: '90%'
+#         }
 #       ]
 #
 #     filterByName: (models, term) ->
@@ -201,9 +206,15 @@ DataTable = React.createClass
           when 1 then <Icon name='sort-desc' />
           else <Icon name='sort-asc' />
 
+      style = if column.width?
+        {width: column.width, maxWidth: column.width}
+      else
+        null
+
       <th onClick   = @onToggleSort
           name      = {column.field}
           key       = {column.field}
+          style     = style
           className = 'sortable'>
         {column.label or column.field} {sortIcon}
       </th>
