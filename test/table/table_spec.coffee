@@ -24,7 +24,7 @@ describe 'A Table', ->
 
     @columns = [
       {field: 'id',     label: 'ID', comparator: null},
-      {field: 'name',   label: 'Name'},
+      {field: 'name',   label: 'Name', width: '100%'},
       {field: 'other',  label: 'Other', comparator: 'passthis' }
     ]
 
@@ -47,3 +47,9 @@ describe 'A Table', ->
     @simulate.click(@findByTag headerItems[2], 'th')
 
     expect(spy).to.have.been.calledWith 'other', true, 'passthis'
+
+  it 'should set width if specified', ->
+    headerItems = @allByType @table, Header.Item
+    el = headerItems[1].getDOMNode()
+    expect(el.style.width).to.equal '100%'
+    expect(el.style.maxWidth).to.equal '100%'

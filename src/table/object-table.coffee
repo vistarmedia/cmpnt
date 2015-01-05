@@ -19,7 +19,12 @@
 #       rows:     ({id: i, name: "Model #{i+1}"} for i in [0..299])
 #       columns:  [
 #         {field: 'id',   label: 'ID'},
-#         {field: 'name', label: 'Name', format: (name) -> "#{name}!"}
+#         {
+#           field: 'name'
+#           label: 'Name'
+#           width: '100%'
+#           format: ((name) -> "#{name}!")
+#         }
 #       ]
 #
 #     filterByName: (term, row) ->

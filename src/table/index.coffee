@@ -32,12 +32,14 @@ HeaderItem = React.createClass
     label       = @props.column.label or @props.column.field
     className   = classSet(sortable: sortable)
     handleClick = if sortable then @handleClick
+    style = if @props.column.width?
+      {width: @props.column.width, maxWidth: @props.column.width}
 
     icon = if @props.sortAsc?
       name = if @props.sortAsc then 'sort-asc' else 'sort-desc'
       <div className='pull-right'><Icon name=name /></div>
 
-    <th className=className onClick=handleClick>
+    <th className=className onClick=handleClick style=style>
       {label}{icon}
     </th>
 
