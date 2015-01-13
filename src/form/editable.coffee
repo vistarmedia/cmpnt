@@ -32,9 +32,10 @@
 #       @setState selectValue: value
 #
 #     render: ->
+#       inputView = <h2>{@state.inputValue}</h2>
 #       <div>
 #         <label htmlFor='input-example'>input example</label>
-#         <Editable onChange=@onChangeInput value=@state.inputValue>
+#         <Editable onChange=@onChangeInput value=inputView>
 #           <input id='input-example' defaultValue=@state.value />
 #         </Editable>
 #         <label htmlFor='select-example'>select example</label>
@@ -68,7 +69,7 @@ Editable = React.createClass
 
   propTypes:
     onChange:  React.PropTypes.func
-    value:     React.PropTypes.string
+    value:     React.PropTypes.node
 
   getInitialState: ->
     editing: false
