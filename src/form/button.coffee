@@ -29,7 +29,8 @@ Button = React.createClass
         'success',
         'info',
         'warning',
-        'danger'
+        'danger',
+        'submit'
       ]
 
   getDefaultProps: ->
@@ -40,16 +41,19 @@ Button = React.createClass
     @props.onClick?()
 
   render: ->
+    btnClass = if @props.type is 'submit' then 'primary' else @props.type
+    type     = if @props.type is 'submit' then 'submit' else ''
+
     classes =
       btn:      true
       disabled: @props.disabled
     classes['btn-large'] = true
-    classes["btn-#{@props.type}"] = true
+    classes["btn-#{btnClass}"] = true
 
     if @props.className?
       classes[@props.className] = true
 
-    <button className=classSet(classes) onClick=@onClick>
+    <button type={type} className=classSet(classes) onClick=@onClick>
       {@props.children}
     </button>
 

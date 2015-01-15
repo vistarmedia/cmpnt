@@ -34,3 +34,8 @@ describe 'Button', ->
 
     expect(cls[0]).to.not.equal ' '
     expect(cls[cls.length-1]).to.not.equal ' '
+
+  it 'should set type=submit with submit type', ->
+    el = @render(<Button type='submit' />).getDOMNode()
+
+    expect(el.attributes.type.data).to.equal 'submit'
