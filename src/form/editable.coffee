@@ -10,6 +10,8 @@
 # The input and textarea elements share a state value; update one and the other
 # will update as well.
 #
+# The `value` prop can be anything renderable.
+#
 # @example: ->
 #   React.createClass
 #
@@ -32,7 +34,7 @@
 #       @setState selectValue: value
 #
 #     render: ->
-#       inputView = <h2>{@state.inputValue}</h2>
+#       inputView = <i>{@state.inputValue}</i>
 #       <div>
 #         <label htmlFor='input-example'>input example</label>
 #         <Editable onChange=@onChangeInput value=inputView>
@@ -63,6 +65,8 @@ React      = require 'react'
 
 Icon = require '../ui/icon'
 
+now = -> (new Date).getTime()
+
 
 Editable = React.createClass
   displayName: 'Editable'
@@ -82,7 +86,11 @@ Editable = React.createClass
     @handleChange(e)
 
   onClick: (e) ->
-    @setState editing: true
+    if not @state.editing
+      @setState
+        lastOpenedAt: now()
+    @setState
+      editing: true
 
   onKeyDown: (e) ->
     if e.key is 'Enter'
@@ -91,12 +99,8 @@ Editable = React.createClass
       @handleChange(e)
 
   componentDidUpdate: ->
-    if @state.editing
-      input = @_childInputElement()
-      input.focus()
-      # setting value from value here is just to move the cursor to the end of
-      # whatever content might exist in the input element
-      input.value = input.value
+    if @state.editing and @_openedRecently()
+      @_moveToEndOfInput()
 
   render: ->
     <span className=@_className()>
@@ -111,6 +115,16 @@ Editable = React.createClass
       </Element>
     </span>
 
+  _moveToEndOfInput: ->
+    input = @_childInputElement()
+    input.focus()
+    # setting value from value here is just to move the cursor to the end of
+    # whatever content might exist in the input element
+    input.value = input.value
+
+  _openedRecently: ->
+    now() - (@state.lastOpenedAt or now()) < 10
+
   _className: ->
     classSet
       editable:  true
@@ -119,6 +133,7 @@ Editable = React.createClass
 
   _childInputElement: ->
     @getDOMNode().querySelector('input, textarea, select')
+
 
 Element = React.createClass
   displayName: 'Editable.Element'

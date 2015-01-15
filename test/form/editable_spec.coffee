@@ -1,5 +1,6 @@
 require '../test_case'
 
+_        = require 'lodash'
 React    = require 'react'
 {expect} = require 'chai'
 sinon    = require 'sinon'
@@ -98,6 +99,37 @@ describe 'Editable', ->
     @simulate.click(@findByClass(element, 'editable-element'))
 
     expect(@findByClass(element, 'editing')).to.exist
+
+  it 'should set state.lastOpenedAt when transitioning to state.editing', ->
+    now   = 1421360442500
+    clock = sinon.useFakeTimers(now)
+
+    element = @render(<Editable>
+      <input defaultValue='Dennehy' />
+    </Editable>)
+
+    @simulate.click(@findByClass(element, 'editable-element'))
+
+    expect(element.state.lastOpenedAt).to.equal now
+    clock.restore()
+
+  it 'should not set state.lastOpenedAt when currently editing', ->
+    now   = 1421360442500
+    clock = sinon.useFakeTimers(now)
+
+    element = @render(<Editable>
+      <input defaultValue='Dennehy' />
+    </Editable>)
+
+    @simulate.click(@findByClass(element, 'editable-element'))
+
+    expect(element.state.editing).to.be.true
+    clock.tick(500)
+
+    @simulate.click(@findByClass(element, 'editable-element'))
+
+    expect(element.state.lastOpenedAt).to.equal now
+    clock.restore()
 
   it 'should have "viewing" class when blurred after editing', ->
     element = @render(<Editable>
