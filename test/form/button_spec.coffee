@@ -39,3 +39,8 @@ describe 'Button', ->
     el = @render(<Button type='submit' />).getDOMNode()
 
     expect(el.attributes.type.data).to.equal 'submit'
+
+  it 'should set type=button with other types', ->
+    el = @render(<Button type='primary' />).getDOMNode()
+
+    expect(el.attributes.type.data).to.equal 'button'

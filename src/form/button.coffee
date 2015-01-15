@@ -42,7 +42,7 @@ Button = React.createClass
 
   render: ->
     btnClass = if @props.type is 'submit' then 'primary' else @props.type
-    type     = if @props.type is 'submit' then 'submit' else ''
+    type     = if @props.type is 'submit' then 'submit' else 'button'
 
     classes =
       btn:      true
