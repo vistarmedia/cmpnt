@@ -22,7 +22,7 @@ Icon = React.createClass
   propTypes:
     name:       React.PropTypes.string
     className:  React.PropTypes.string
-    status:     React.PropTypes.oneOf ['success']
+    status:     React.PropTypes.oneOf ['success', 'danger']
     size:       React.PropTypes.oneOf ['large', '5x']
     align:      React.PropTypes.oneOf ['center']
 
