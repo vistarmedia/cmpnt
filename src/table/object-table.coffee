@@ -165,7 +165,7 @@ Pager = React.createClass
     # return the range covered by the given pageNum.  begins at zero
     start      = pageNum * @props.perPage
     logicalEnd = start + (@props.perPage - 1)
-    end        = Math.min(logicalEnd, @props.total - 1)
+    end        = Math.min(logicalEnd, Math.max(1, @props.total) - 1)
 
     [start, end]
 
@@ -183,9 +183,9 @@ Pager = React.createClass
     @pageNumberFromRange(@props.start, end)
 
   totalPageCount: ->
-    Math.ceil(@props.total / @props.perPage)
+    Math.max(1, Math.ceil(@props.total / @props.perPage))
 
-  lastPageIndex: -> @totalPageCount() - 1
+  lastPageIndex: -> Math.max(0, @totalPageCount() - 1)
 
   handlePageChange: (page) ->
     @props.onChange?(@pageNumberToRange(page)...)
@@ -335,6 +335,11 @@ ObjectTable = React.createClass
     start:   @props.start
     sortKey: @props.sortKey
     sortAsc: @props.sortAsc
+
+  componentWillReceiveProps: (nextProps) ->
+    @setState(
+      perPage: nextProps.perPage
+      start:   nextProps.start)
 
   handlePerPageChange: (perPage) ->
     @setState(perPage: perPage)
