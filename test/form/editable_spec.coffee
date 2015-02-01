@@ -160,10 +160,41 @@ describe 'Editable', ->
     expect(element.state.editing).to.be.true
     expect(@findByClass(element, 'editing')).to.exist
 
-    @simulate.blur(@findByTag(element, 'select'))
+    select = @findByTag element, 'select'
+    @simulate.blur(select)
 
     expect(element.state.editing).to.be.false
     expect(@findByClass(element, 'viewing')).to.exist
+
+  describe '#handleChange', ->
+
+    beforeEach ->
+      now   = 1421360000000
+      @clock = sinon.useFakeTimers(now)
+      @onChange = sinon.spy()
+      @element = @render(<Editable onChange=@onChange>
+        <input defaultValue='Dennehy' />
+      </Editable>)
+
+    afterEach ->
+      @clock.restore()
+
+    it 'should only call props.onChange once per 250ms', ->
+      input = @findByTag @element, 'input'
+      @simulate.keyDown input, key: 'Enter'
+      @clock.tick(10)
+      @simulate.blur input
+      @clock.tick(25)
+
+      expect(@onChange).to.have.been.calledOnce
+
+    it 'should call props.onChange again after 250ms have passed', ->
+      input = @findByTag @element, 'input'
+      @simulate.keyDown input, key: 'Enter'
+      @clock.tick(250)
+      @simulate.blur input
+
+      expect(@onChange).to.have.been.calledTwice
 
   context 'when focused', ->
 
@@ -173,16 +204,19 @@ describe 'Editable', ->
         @onChange = sinon.spy()
         @input = @render(<Editable onChange = @onChange>
           <input defaultValue='Dennehy' />
+          <button>Yo Kenny</button>
         </Editable>)
         element = @findByTag @input, 'input'
         @simulate.focus(element)
 
-      it 'should call onChange w/input value on "enter" press', ->
+      it 'should call onChange w/event on "enter" press', ->
         element = @findByTag @input, 'input'
         @inputValue @input, 'Physically a horse.'
         @simulate.keyPress element, key: 'Enter'
 
-        expect(@onChange).to.have.been.calledWith 'Physically a horse.'
+        calledWith = @onChange.lastCall.args
+        event = calledWith[0]
+        expect(event.key).to.equal 'Enter'
 
       it 'should preventDefault and stopPropagation on enter', ->
         # doing this incase we're using this in a form
@@ -203,30 +237,19 @@ describe 'Editable', ->
 
         expect(@onChange).not.to.have.been.called
 
-      it 'should call onChange w/input value on blur', ->
+      it 'should call onChange on blur if e.relatedTarget is a not child', ->
         element = @findByTag @input, 'input'
         @inputValue @input, 'Physically a horse.'
-        @simulate.blur element, target: element.getDOMNode()
+        @simulate.blur element,
+          target: element.getDOMNode()
 
-        expect(@onChange).to.have.been.calledWith 'Physically a horse.'
+        expect(@onChange).to.have.been.called
 
-    context 'wrapping select element', ->
+      it 'should call onChange on blur if e.relatedTarget is null', ->
+        element = @findByTag @input, 'input'
+        @inputValue @input, 'Physically a horse.'
+        @simulate.blur element,
+          target: element.getDOMNode()
+          relatedTarget: null
 
-      beforeEach ->
-        @onChange = sinon.spy()
-        @input = @render(<Editable onChange = @onChange>
-          <select value='Dennehy'>
-            <option value='Dennehy'>Dennehy</option>
-            <option value='Butkus'>Butkus</option>
-            <option value='Berenger'>Berenger</option>
-          </select>
-        </Editable>)
-        element = @findByTag @input, 'select'
-        @simulate.focus(element)
-
-      it 'should call onChange w/select value on blur', ->
-        element = @findByTag @input, 'select'
-        element.getDOMNode().value = 'Butkus'
-        @simulate.blur element, target: element.getDOMNode()
-
-        expect(@onChange).to.have.been.calledWith 'Butkus'
+        expect(@onChange).to.have.been.called

@@ -1,23 +1,24 @@
 {
   "dependencies": {
     "chart.js":             "1.0.1-beta.2",
-    "react":                "0.12.x",
+    "react":                "0.12.1",
     "lodash":               "2.4.1"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "build": "gulp project && gulp default"
   },
   "devDependencies": {
     "backbone":               "1.1.2",
     "chai":                   "1.9.x",
-    "coffee-react-transform": "2.1.x",
-    "coffee-react":           "2.1.x",
-    "coffee-reactify":        "2.x",
+    "coffee-react-transform": "2.0.0",
+    "coffee-react":           "2.0.0",
+    "coffee-reactify":        "0.4.0",
     "coffee-script":          "1.7.x",
     "connect":                "2.25.7",
     "connect-livereload":     "0.5.0",
     "domino":                 "1.0.17",
-    "gulp":                   "3.8.x",
+    "gulp":                   "3.8.8",
     "gulp-browserify":        "0.5.x",
     "gulp-cjsx":              "2.0.x",
     "gulp-concat":            "2.2.x",

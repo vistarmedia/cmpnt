@@ -1,16 +1,20 @@
 # @name: Editable
 #
 # @description: Wraps an input element so it displays as a regular element
-# that is then editable when clicked.
+# that is then editable when clicked.  If a blur or keyDown where the key is
+# "Enter" is triggered on the wrapped element, the @onChange prop will be called
+# with that event object.
 #
-# The `onChange` prop will be called with the value of the input when blurred or
-# when the user hits the enter key in the input.
+# The example shows usage with input and select elements.  We're maintaining the
+# current state of the input and select element using an `onChange` prop given
+# to each of those elements.  The Editable component's `onChange` prop will be
+# called when the "Enter" key is pressed in the input or when blurred, only if
+# the relatedTarget is null or not contained by the Editable element.  This
+# allows us to have additional, more complicated input elements wrapped by
+# Editable without the `onChange` getting called unecessarily.  The `button`
+# element next to the input is an example of this.
 #
-# The example shows usage with input, select, and textarea elements wrapped.
-# The input and textarea elements share a state value; update one and the other
-# will update as well.
-#
-# The `value` prop can be anything renderable.
+# The `value` prop given to Editable can be anything renderable.
 #
 # @example: ->
 #   React.createClass
@@ -23,37 +27,76 @@
 #         {id: 'id-4', content: 'Pears'}
 #       ]
 #
+#     now: -> (new Date).getTime()
+#
 #     getInitialState: ->
 #       inputValue:   'Edit me!'
 #       selectValue:  'id-1'
+#       committedAt:  null
+#       savedInput:   'Edit me!'
+#       savedSelect:  'id-1'
+#       commitCount:  0
 #
-#     onChangeInput: (value) ->
-#       @setState inputValue: value
+#     handleCommit: ->
+#       @setState
+#         committedAt:  @now()
+#         lastCommitAt: @lastCommitAt()
+#         savedInput:   @state.inputValue
+#         savedSelect:  @state.selectValue
+#         commitCount:  @state.commitCount + 1
 #
-#     onChangeSelect: (value) ->
-#       @setState selectValue: value
+#     onCommitInput: (e) ->
+#       @handleCommit()
+#
+#     onCommitSelect: (e) ->
+#       @handleCommit()
+#
+#     onChangeInput: (e) ->
+#       @setState
+#         inputValue: e.target.value
+#
+#     onChangeSelect: (e) ->
+#       @setState
+#         selectValue: e.target.value
+#
+#     lastCommitAt: ->
+#       at = Math.floor((@now() - (@state.committedAt or @now())) / 1000)
+#       "#{at} seconds ago"
 #
 #     render: ->
-#       inputView = <i>{@state.inputValue}</i>
+#       inputView = <i>{@state.savedInput}</i>
+#
 #       <div>
 #         <label htmlFor='input-example'>input example</label>
-#         <Editable onChange=@onChangeInput value=inputView>
-#           <input id='input-example' defaultValue=@state.value />
+#         <Editable onChange=@onCommitInput value=inputView>
+#           <input id           = 'input-example'
+#                  defaultValue = @state.savedInput
+#                  onChange     = @onChangeInput />
+#           <button>Hi!</button>
 #         </Editable>
 #         <label htmlFor='select-example'>select example</label>
-#         <Editable onChange=@onChangeSelect value=@_selected().content>
-#           <select id='select-example'>
+#         <Editable onChange = @onCommitSelect
+#                      value = @_selected().content>
+#           <select id='select-example' onChange=@onChangeSelect>
 #             {@_options()}
 #           </select>
 #         </Editable>
-#         <label htmlFor='textarea-example'>textarea example</label>
-#         <Editable onChange=@onChangeInput value=@state.inputValue>
-#           <textarea defaultValue=@state.inputValue />
-#         </Editable>
+#
+#         <div className = 'committed'>
+#           <h5>committed {@state.commitCount} times.  latest commit {@state.lastCommitAt}</h5>
+#           <ul>
+#             <li>
+#               <b>input</b> {@state.savedInput}
+#             </li>
+#             <li>
+#               <b>select</b> {@_selected().content}
+#             </li>
+#           </ul>
+#         </div>
 #       </div>
 #
 #     _selected: ->
-#       _.find @props.items, (e) => e.id == @state.selectValue
+#       _.find @props.items, (e) => e.id == @state.savedSelect
 #
 #     _options: ->
 #       for item in @props.items
@@ -61,6 +104,7 @@
 
 
 React      = require 'react'
+_          = require 'lodash'
 {classSet} = require('react/addons').addons
 
 Icon = require '../ui/icon'
@@ -68,8 +112,22 @@ Icon = require '../ui/icon'
 now = -> (new Date).getTime()
 
 
+DebouncedChange =
+  # sets a @debouncedChange var that is the debounced version of props.onChange
+
+  componentDidMount: ->
+    # we're using lodash's `runInContext` here so our tests using sinon's fake
+    # timers work correctly
+    _ = _.runInContext 'Date': Date
+    if @props.onChange
+      @debouncedChange = _.debounce @props.onChange, 250,
+        leading: true, trailing: false
+
+
 Editable = React.createClass
   displayName: 'Editable'
+
+  mixins: [DebouncedChange]
 
   propTypes:
     onChange:  React.PropTypes.func
@@ -79,8 +137,9 @@ Editable = React.createClass
     editing: false
 
   handleChange: (e) ->
-    @props.onChange?(e.target.value)
-    @setState editing: false
+    @debouncedChange?(e)
+    @setState
+      editing: false
 
   onBlur: (e) ->
     @handleChange(e)
@@ -166,8 +225,7 @@ Element = React.createClass
       className   = @_classes()
       onMouseOver = @handleMouseOver
       onMouseOut  = @handleMouseOut
-      onClick     = @onClick
-      >
+      onClick     = @onClick>
       {@props.children}
       {@_icon()}
     </span>
