@@ -307,15 +307,11 @@ Pager.Item = React.createClass
 
 
 ObjectTable = React.createClass
+  displayName: 'ObjectTable'
 
   propTypes:
     columns:    ColumnsType.isRequired
     rows:       RowsType.isRequired
-    keyField:   React.PropTypes.string
-
-    # start and end are rows, index 0
-    start:      React.PropTypes.number
-    end:        React.PropTypes.number
 
     sortKey:    React.PropTypes.string
     sortAsc:    React.PropTypes.bool
@@ -326,20 +322,14 @@ ObjectTable = React.createClass
 
   getDefaultProps: ->
     perPage:    10
-    start:      0
     sortAsc:    true
     className:  ''
 
   getInitialState: ->
     perPage: @props.perPage
-    start:   @props.start
+    start:   0
     sortKey: @props.sortKey
     sortAsc: @props.sortAsc
-
-  componentWillReceiveProps: (nextProps) ->
-    @setState(
-      perPage: nextProps.perPage
-      start:   nextProps.start)
 
   handlePerPageChange: (perPage) ->
     @setState(perPage: perPage)

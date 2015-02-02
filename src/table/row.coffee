@@ -47,7 +47,7 @@ React = require 'react'
 
 
 Row = React.createClass
-  displayName: 'DataTable::Row'
+  displayName: 'DataTable.Row'
 
   propTypes:
     columns:  React.PropTypes.array.isRequired

@@ -43,6 +43,8 @@ Types   = require '../types'
 
 
 OptionList = React.createClass
+  displayName: 'SourceSink.OptionList'
+
   propTypes:
     format:   React.PropTypes.func.isRequired
     onSelect: React.PropTypes.func.isRequired
@@ -74,6 +76,8 @@ OptionList = React.createClass
 
 
 FilteredOptionList = React.createClass
+  displayName: 'SourceSink.FilteredOptionList'
+
   propTypes:
     format:   React.PropTypes.func.isRequired
     options:  Types.idNameList.isRequired

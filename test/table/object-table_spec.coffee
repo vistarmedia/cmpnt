@@ -178,29 +178,6 @@ describe 'Object Table', ->
       expect(footer.getDOMNode())
         .to.have.textContent 'Showing 1 to 5 of 300 entries'
 
-    it 'should handle recieving new rows', ->
-      rows = @rows
-      cols = @columns
-      Parent = React.createClass
-        getInitialState: ->
-          columns: cols
-          rows:    rows
-
-        render: ->
-          <ObjectTable columns = @state.columns
-                       rows    = @state.rows />
-
-      parent = @render <Parent />
-      table = @findByType parent, ObjectTable
-      table.setState(start: 20)
-      footer = @findByClass table, 'range'
-      expect(footer.getDOMNode())
-        .to.have.textContent 'Showing 21 to 30 of 300 entries'
-
-      parent.setState(rows: [@rows[0]])
-      expect(footer.getDOMNode())
-        .to.have.textContent 'Showing 1 to 1 of 1 entries'
-
   context 'when paging', ->
 
     beforeEach ->

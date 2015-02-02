@@ -16,6 +16,7 @@ React = require 'react'
 
 
 DownloadLink = React.createClass
+  displayName: 'DownloadLink'
 
   propTypes:
     blob:     React.PropTypes.object.isRequired

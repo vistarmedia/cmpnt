@@ -158,6 +158,8 @@ RangeSelector = React.createClass
 
 
 RangeSelector.Section = React.createClass
+  displayName: 'RangeSelector.Section'
+
   propTypes:
     ordinal:    React.PropTypes.number.isRequired
     id:         React.PropTypes.any.isRequired
