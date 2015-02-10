@@ -128,12 +128,16 @@ Header = React.createClass
           onChange = @handlePerPageChange />
       </div>
       <div className='col-sm-6 pull-right'>
-        <input
-          type        = 'text'
-          placeholder = 'Filter'
-          onChange    = @handleTermChange />
+        {@_renderFilter()}
       </div>
     </div>
+
+  _renderFilter: ->
+    return <span /> unless @props.onTermChange?
+    <input
+      type        = 'text'
+      placeholder = 'Filter'
+      onChange    = @handleTermChange />
 
 
 Pager = React.createClass
@@ -386,7 +390,7 @@ ObjectTable = React.createClass
       <Header
         perPage         = @state.perPage
         onPerPageChange = @handlePerPageChange
-        onTermChange    = @handleTermChange />
+        onTermChange    = {@handleTermChange if @props.filter} />
 
       {React.createElement(Table, _.assign(_.clone(@props), tableProps))}
 

@@ -152,6 +152,15 @@ describe 'Object Table', ->
 
     expect(@allByClass(table, 'custom-row')).not.to.be.empty
 
+  context 'without a filter', ->
+
+    beforeEach ->
+      @table = @render <ObjectTable columns=@columns rows=@rows />
+
+    it 'should not render input in header', ->
+      header = @findByType @table, Header
+      input = header.getDOMNode().querySelector('input[placeholder="Filter"]')
+      expect(input).to.not.exist
 
   context 'when changing perPage selector', ->
 

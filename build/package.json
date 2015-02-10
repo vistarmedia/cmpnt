@@ -3,7 +3,7 @@
   "version":  "CMPNT_VERSION",
 
   "dependencies": {
-    "chart.js":             "1.0.1-beta.2",
+    "chart.js":             "1.0.1",
     "react":                "0.12.x",
     "lodash":               "2.4.1"
   },
