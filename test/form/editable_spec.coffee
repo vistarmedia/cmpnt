@@ -253,3 +253,19 @@ describe 'Editable', ->
           relatedTarget: null
 
         expect(@onChange).to.have.been.called
+
+      it '''
+      should not call handleChange if currentTarget contains relatedTarget
+      ''', ->
+        currentTarget = @input.getDOMNode().querySelector('span.input')
+        handleChange = sinon.spy(@input, 'handleChange')
+        element = @findByTag @input, 'input'
+        button  = @findByTag @input, 'button'
+        @inputValue @input, 'Physically a horse.'
+        @simulate.blur element,
+          currentTarget: currentTarget
+          relatedTarget: button.getDOMNode()
+
+        expect(handleChange).not.to.have.been.called
+        expect(@onChange).not.to.have.been.called
+        handleChange.restore()

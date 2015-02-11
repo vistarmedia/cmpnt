@@ -142,7 +142,8 @@ Editable = React.createClass
       editing: false
 
   onBlur: (e) ->
-    @handleChange(e)
+    if not e.currentTarget.contains(e.relatedTarget)
+      @handleChange(e)
 
   onClick: (e) ->
     if not @state.editing
