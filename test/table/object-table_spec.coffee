@@ -135,6 +135,31 @@ describe 'Object Table', ->
 
     expect(rows).to.have.length 20
 
+  it 'should properly render if 9 items with perPage of 10', ->
+    rows = ({id: i, name: "thing #{i + 1}", other: ['a', i]} for i in [0..8])
+
+    table = @render <ObjectTable columns = @columns
+                                 rows    = rows />
+    footer = @findByClass table, 'range'
+
+    expect(footer.getDOMNode())
+      .to.have.textContent 'Showing 1 to 9 of 9 entries'
+
+  it 'should properly render if 19 items with perPage of 10', ->
+    rows = ({id: i, name: "thing #{i + 1}", other: ['a', i]} for i in [0..18])
+
+    table = @render <ObjectTable columns = @columns
+                                 rows    = rows />
+
+    pagerItems = @allByType(table, Pager.Item)
+    next = pagerItems[pagerItems.length-1]
+    @simulate.click next.getDOMNode()
+
+    footer = @findByClass table, 'range'
+
+    expect(footer.getDOMNode())
+      .to.have.textContent 'Showing 11 to 19 of 19 entries'
+
   it 'should accept a rowClass prop for customizing row appearance', ->
     CustomRow = React.createClass
       render: ->

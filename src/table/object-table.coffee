@@ -71,14 +71,9 @@ RangeInfo = React.createClass
       entries
     </div>
 
-  start: ->
-    if @props.total is 0 then -1 else @props.start
+  start: -> if @props.total is 0 then -1 else @props.start
 
-  end: ->
-    if @props.end < (@props.perPage - 1) or @props.end > @props.total
-      @props.total - 1
-    else
-      @props.end
+  end: -> Math.min(@props.end, @props.total - 1)
 
   _indexToFriendly: (index) -> index + 1
 
