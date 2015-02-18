@@ -28,6 +28,9 @@ FilePicker = React.createClass
   onChange: (e) ->
     e?.preventDefault()
     @props.onChange?(e.currentTarget.files)
+    # Chrome doesn't trigger an onChange event for uploading the same file.
+    # We clear out the value of the DOM node in between uploads to trick it.
+    @refs.fileInput.getDOMNode().value = ''
 
   render: ->
     <div>
