@@ -334,8 +334,7 @@ ObjectTable = React.createClass
     @setState(perPage: perPage)
 
   handleTermChange: (term) ->
-    start = if @state.start isnt 0 then 0 else @state.start
-    @setState(term: term, start: start)
+    @setState(term: term, start: 0)
 
   handleRangeChange: (start, end) ->
     @setState(start: start)
@@ -349,28 +348,25 @@ ObjectTable = React.createClass
   end: ->
     @state.start + (@state.perPage - 1)
 
-  rows: (initial) ->
-    filter = if @state.term and @props.filter?
-      # have to specify the arity here incase we're passing in a function
-      # defined on a React class, which as a value will be a function with arity
-      # 0, which _.curry would end up executing instead of currying
-      _.curry(@props.filter, 2)(@state.term)
-
+  visibleRows: (initial) ->
     comparator = @state.comparator or @state.sortKey
 
     range  = projection.define 'range',
       _.curry(projection.range)(@state.start, @end())
     order  = projection.define 'order',
       _.curry(projection.order)(comparator, @state.sortAsc)
-    filter = projection.define 'filter', _.curry(projection.filter)(filter)
+    filter = projection.define 'filter', @_filterFunc()
 
     project = projection.compose range, order, filter
 
     rows = _(initial)
     project(rows).value()
 
+  filteredRows: ->
+    @_filterFunc()(@props.rows)
+
   render: ->
-    rows = @rows(@props.rows)
+    rows = @visibleRows(@props.rows)
     tableProps =
       start:    @state.start
       perPage:  @state.perPage
@@ -404,6 +400,17 @@ ObjectTable = React.createClass
       'object-table':         true
     classes[@props.className] = true
     classSet classes
+
+  # Combines @state.term and @props.filter into a 1-arg function
+  # which takes a list of rows and returns the filtered list
+  _filterFunc: ->
+    filter = if @state.term and @props.filter?
+      # have to specify the arity here incase we're passing in a function
+      # defined on a React class, which as a value will be a function with arity
+      # 0, which _.curry would end up executing instead of currying
+      _.curry(@props.filter, 2)(@state.term)
+
+    _.curry(projection.filter)(filter)
 
 
 ObjectTable.Header = Header

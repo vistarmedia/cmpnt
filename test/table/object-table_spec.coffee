@@ -309,6 +309,16 @@ describe 'Object Table', ->
       expect(rows[0].querySelector('[data-reactid$=".$name"]'))
         .to.have.textContent 'THING 21'
 
+    it 'should return all filtered rows', ->
+      filteredRows = @filteredTable.filteredRows()
+      expect(filteredRows).to.have.length @rows.length
+
+      @searchFor('thing 1')
+
+      filteredRows = @filteredTable.filteredRows()
+      # rows 1 + 10-19 + 100-199 = 111 total
+      expect(filteredRows).to.have.length 111
+
     it 'should update the pager', ->
       @searchFor('thing 21')
       pager = @findByClass(@filteredTable, 'pager').getDOMNode()
@@ -376,7 +386,7 @@ describe 'Object Table', ->
         @table.setState
           start:    10
           perPage:  3
-        @proj = @table.rows(@rows)
+        @proj = @table.visibleRows(@rows)
 
       it 'should project project a slice of the rows', ->
         expect(@proj).to.have.length 3
@@ -391,7 +401,7 @@ describe 'Object Table', ->
         @table.setState
           sortAsc:  true
           sortKey:  'name'
-        @proj = @table.rows(@rows)
+        @proj = @table.visibleRows(@rows)
 
       it 'should project the same number of rows', ->
         expect(@proj).to.have.length 26
@@ -407,7 +417,7 @@ describe 'Object Table', ->
         @table.state.perPage = 2
         @table.state.sortKey = 'name'
         @table.state.sortAsc = true
-        @proj = @table.rows(@rows)
+        @proj = @table.visibleRows(@rows)
 
       # If these operations are done in the wrong order, you'll get very strange
       # results -- like, the first row may not be name: AAA
@@ -422,7 +432,7 @@ describe 'Object Table', ->
           sortAsc:    false
           sortKey:    'other'
           comparator: (v) -> v[1]
-        @proj = @table.rows(@rows)
+        @proj = @table.visibleRows(@rows)
 
       it 'should project rows sorted by the comparator', ->
         expect(@proj[0].other).to.have.members ['a', 25]
@@ -442,7 +452,7 @@ describe 'Object Table', ->
           row.name is term
         @table.setProps filter: filter
         @table.setState term:   'NBC'
-        proj = @table.rows(@filterRows)
+        proj = @table.visibleRows(@filterRows)
 
         expect(proj).to.have.length 1
         expect(proj[0].name).to.equal 'NBC'
@@ -459,7 +469,7 @@ describe 'Object Table', ->
             row.name.match(/BC/)
           @table.setProps filter: filter
           @table.setState term:   'BC'
-          proj = @table.rows(@filterRows)
+          proj = @table.visibleRows(@filterRows)
 
           expect(proj[0].name).to.equal 'ABC'
           expect(proj[1].name).to.equal 'BBC'
