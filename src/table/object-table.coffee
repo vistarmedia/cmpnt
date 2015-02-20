@@ -11,6 +11,9 @@
 # arguments:  "term", which will be the value of the search input element, and
 # "row" which will be the row.
 #
+# The onFilterChange property will be called with a list of rows which pass the
+# filter.
+#
 # @example: ->
 #
 #   React.createClass
@@ -309,20 +312,22 @@ ObjectTable = React.createClass
   displayName: 'ObjectTable'
 
   propTypes:
-    columns:    ColumnsType.isRequired
-    rows:       RowsType.isRequired
+    columns:        ColumnsType.isRequired
+    rows:           RowsType.isRequired
 
-    sortKey:    React.PropTypes.string
-    sortAsc:    React.PropTypes.bool
+    sortKey:        React.PropTypes.string
+    sortAsc:        React.PropTypes.bool
 
-    filter:     React.PropTypes.func
-    className:  React.PropTypes.string
-    rowClass:   React.PropTypes.func
+    filter:         React.PropTypes.func
+    className:      React.PropTypes.string
+    rowClass:       React.PropTypes.func
+
+    onFilterChange: React.PropTypes.func
 
   getDefaultProps: ->
-    perPage:    10
-    sortAsc:    true
-    className:  ''
+    perPage:        10
+    sortAsc:        true
+    className:      ''
 
   getInitialState: ->
     perPage: @props.perPage
@@ -334,7 +339,9 @@ ObjectTable = React.createClass
     @setState(perPage: perPage)
 
   handleTermChange: (term) ->
-    @setState(term: term, start: 0)
+    @setState(term: term, start: 0, ->
+      if @props.onFilterChange?
+        @props.onFilterChange(@_filteredRows()))
 
   handleRangeChange: (start, end) ->
     @setState(start: start)
@@ -361,9 +368,6 @@ ObjectTable = React.createClass
 
     rows = _(initial)
     project(rows).value()
-
-  filteredRows: ->
-    @_filterFunc()(@props.rows)
 
   render: ->
     rows = @visibleRows(@props.rows)
@@ -411,6 +415,9 @@ ObjectTable = React.createClass
       _.curry(@props.filter, 2)(@state.term)
 
     _.curry(projection.filter)(filter)
+
+  _filteredRows: ->
+    @_filterFunc()(@props.rows)
 
 
 ObjectTable.Header = Header

@@ -273,12 +273,15 @@ describe 'Object Table', ->
   context 'when filtering', ->
 
     beforeEach ->
-      filter = (term, row) ->
+      @filter = (term, row) ->
         row.name.match(///#{term}///i)
+      @onFilterChange = sinon.spy()
 
-      @filteredTable = @render <ObjectTable filter  = filter
-                                            columns = @columns
-                                            rows    = @rows />
+
+      @filteredTable = @render <ObjectTable filter         = @filter
+                                            columns        = @columns
+                                            rows           = @rows
+                                            onFilterChange = @onFilterChange />
 
       header       = @findByType @filteredTable, Header
       @searchInput = @findByTag header, 'input'
@@ -310,14 +313,10 @@ describe 'Object Table', ->
         .to.have.textContent 'THING 21'
 
     it 'should return all filtered rows', ->
-      filteredRows = @filteredTable.filteredRows()
-      expect(filteredRows).to.have.length @rows.length
-
       @searchFor('thing 1')
 
-      filteredRows = @filteredTable.filteredRows()
-      # rows 1 + 10-19 + 100-199 = 111 total
-      expect(filteredRows).to.have.length 111
+      expect(@onFilterChange).to.have.been.calledOnce
+      expect(@onFilterChange.getCall(0).args[0]).to.have.length 111
 
     it 'should update the pager', ->
       @searchFor('thing 21')
