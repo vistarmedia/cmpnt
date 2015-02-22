@@ -104,30 +104,22 @@
 
 
 React      = require 'react'
-_          = require 'lodash'
 {classSet} = require('react/addons').addons
 
-Icon = require '../ui/icon'
+Icon              = require '../ui/icon'
+{DebouncedChange} = require '../mixins'
+{OnOutsideBlur}   = require '../mixins'
 
 now = -> (new Date).getTime()
-
-
-DebouncedChange =
-  # sets a @debouncedChange var that is the debounced version of props.onChange
-
-  componentDidMount: ->
-    # we're using lodash's `runInContext` here so our tests using sinon's fake
-    # timers work correctly
-    _ = _.runInContext 'Date': Date
-    if @props.onChange
-      @debouncedChange = _.debounce @props.onChange, 250,
-        leading: true, trailing: false
 
 
 Editable = React.createClass
   displayName: 'Editable'
 
-  mixins: [DebouncedChange]
+  mixins: [
+    DebouncedChange
+    OnOutsideBlur
+  ]
 
   propTypes:
     onChange:  React.PropTypes.func
@@ -140,10 +132,6 @@ Editable = React.createClass
     @debouncedChange?(e)
     @setState
       editing: false
-
-  onBlur: (e) ->
-    if not e.currentTarget.contains(e.relatedTarget)
-      @handleChange(e)
 
   onClick: (e) ->
     if not @state.editing
@@ -169,7 +157,7 @@ Editable = React.createClass
           {@props.value}
         </span>
 
-        <span className='input' onBlur=@onBlur onKeyDown=@onKeyDown>
+        <span className='input' onBlur=@handleOutsideBlur onKeyDown=@onKeyDown>
           {@props.children}
         </span>
       </Element>
@@ -193,6 +181,9 @@ Editable = React.createClass
 
   _childInputElement: ->
     @getDOMNode().querySelector('input, textarea, select')
+
+  _onOutsideBlur: (e) ->
+    @handleChange(e)
 
 
 Element = React.createClass

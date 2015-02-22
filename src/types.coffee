@@ -3,7 +3,8 @@
 # @description:  A collection of custom prop types.
 
 
-React      = require 'react'
+React  = require 'react'
+moment = require 'moment'
 
 
 idName = React.PropTypes.shape
@@ -14,9 +15,12 @@ idContent = React.PropTypes.shape
   id:      React.PropTypes.any
   content: React.PropTypes.node
 
+MomentType = React.PropTypes.instanceOf moment().constructor
+
 
 module.exports =
-  idName:        idName
-  idNameList:    React.PropTypes.arrayOf(idName.isRequired)
-  idContent:     idContent
-  idContentList: React.PropTypes.arrayOf(idContent.isRequired)
+  MomentType:        MomentType
+  idContent:         idContent
+  idContentList:     React.PropTypes.arrayOf(idContent.isRequired)
+  idName:            idName
+  idNameList:        React.PropTypes.arrayOf(idName.isRequired)

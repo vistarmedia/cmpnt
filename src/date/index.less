@@ -1,0 +1,87 @@
+.month {
+  display: inline-table;
+
+  .day-names {
+    font-weight: bold;
+    display: table-row;
+    .day-of-week {
+      text-align: center;
+      display: table-cell;
+      padding: 2px;
+    }
+  }
+
+  .week {
+    display: table-row;
+
+    .day {
+      text-align: center;
+      display: table-cell;
+      padding: 2px;
+    }
+
+    .day:hover {
+      cursor: pointer;
+      color:  @gray;
+    }
+
+    .day.selected {
+      font-weight: bold;
+    }
+  }
+}
+
+.calendar {
+  display: inline-block;
+
+  .header {
+    display: table;
+    font-weight:  bold;
+    min-width:  100%;
+
+    .nav {
+      font-size:            20px;
+      cursor:               pointer;
+      user-select:          none;
+      -moz-user-select:     none;
+      -webkit-user-select:  none;
+
+      .left {
+      }
+
+      .right {
+        float: right;
+      }
+
+    }
+
+    .nav:hover {
+      color:  @gray-light;
+    }
+
+    & > * {
+      display: table-cell;
+      text-align: center;
+    }
+  }
+}
+
+.time-input {
+  width: 10em;
+}
+
+.date-input {
+  width:     16em;
+  position:  relative;
+
+  .popover {
+    position:  absolute;
+    display:   none;
+    top:       36px;
+    left:      0px;
+  }
+
+  .popover.open {
+    display:  block;
+  }
+}

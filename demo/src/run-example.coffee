@@ -1,6 +1,7 @@
 Backbone  = require 'backbone'
 React     = require 'react'
 _         = require 'lodash'
+moment    = require 'moment'
 
 DownloadLink = require '../../src/download-link'
 
@@ -20,6 +21,12 @@ TabGroup  = require '../../src/ui/tab-group'
 Multiselect  = require '../../src/select/multi'
 SelectFilter = require '../../src/select/filter'
 SelectList   = require '../../src/select/list'
+
+Calendar  = require '../../src/date/calendar'
+DateInput = require '../../src/date/input'
+DateTime  = require '../../src/date/date_time'
+Month     = require '../../src/date/month'
+TimeInput = require '../../src/date/time'
 
 CollapsibleListPanel  = require '../../src/ui/collapsible-list-panel'
 RangeSelector         = require '../../src/ui/range-selector'
