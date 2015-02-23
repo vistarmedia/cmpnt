@@ -212,6 +212,19 @@ describe 'Object Table', ->
       expect(footer.getDOMNode())
         .to.have.textContent 'Showing 1 to 5 of 300 entries'
 
+    it 'should call the onPerPageChange handler', ->
+      onPerPageChange = sinon.spy()
+      table = @render <ObjectTable columns         = @columns
+                                   rows            = @rows
+                                   onPerPageChange = onPerPageChange />
+
+      itemsPerPage  = @findByType table, ItemsPerPageSelect
+      select = itemsPerPage.getDOMNode().querySelector('select')
+
+      @simulate.change select, target: {value: 666}
+
+      expect(onPerPageChange).to.have.been.calledWith(666)
+
   context 'when paging', ->
 
     beforeEach ->

@@ -322,12 +322,15 @@ ObjectTable = React.createClass
     className:      React.PropTypes.string
     rowClass:       React.PropTypes.func
 
-    onFilterChange: React.PropTypes.func
+    onFilterChange:   React.PropTypes.func
+    onPerPageChange:  React.PropTypes.func
 
   getDefaultProps: ->
-    perPage:        10
-    sortAsc:        true
-    className:      ''
+    perPage:          10
+    sortAsc:          true
+    className:        ''
+    onFilterChange:   ->
+    onPerPageChange:  ->
 
   getInitialState: ->
     perPage: @props.perPage
@@ -336,12 +339,12 @@ ObjectTable = React.createClass
     sortAsc: @props.sortAsc
 
   handlePerPageChange: (perPage) ->
-    @setState(perPage: perPage)
+    @setState {perPage: perPage}
+    @props.onPerPageChange(perPage)
 
   handleTermChange: (term) ->
-    @setState(term: term, start: 0, ->
-      if @props.onFilterChange?
-        @props.onFilterChange(@_filteredRows()))
+    @setState {term: term, start: 0}, ->
+      @props.onFilterChange(@_filteredRows())
 
   handleRangeChange: (start, end) ->
     @setState(start: start)
