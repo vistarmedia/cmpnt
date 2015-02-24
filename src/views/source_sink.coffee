@@ -79,10 +79,7 @@ FilteredOptionList = React.createClass
   displayName: 'SourceSink.FilteredOptionList'
 
   propTypes:
-    format:   React.PropTypes.func.isRequired
-    options:  Types.idNameList.isRequired
-    onSelect: React.PropTypes.func.isRequired
-    selected: Types.idNameList.isRequired
+    options: Types.idNameList.isRequired
 
   getInitialState: ->
     filter: ''
@@ -95,17 +92,17 @@ FilteredOptionList = React.createClass
     filtered = (opt for opt in @props.options when \
       opt.name.toLowerCase().indexOf(@state.filter) isnt -1)
 
+    optionListProps = _.defaults({
+      options: filtered
+    }, @props)
+
     <div className='filter-container'>
       <input className='form-control'
         type='text'
         onChange=@filterChanged
         placeholder='Filter'
         value=@state.filter />
-      <OptionList
-        options=filtered
-        onSelect=@props.onSelect
-        selected=@props.selected
-        format=@props.format />
+      {React.createElement(OptionList, optionListProps)}
     </div>
 
 
@@ -131,10 +128,19 @@ SourceSink = React.createClass
     @setState(@stateFromProps(props))
 
   stateFromProps: (props) ->
-    sourceOptions:  _.difference(props.options, @_options(props.value))
+    # Lodash set operations do a === comparison, and we don't want to force
+    # users of this component to use the same option instances. Go through
+    # the given options and decide which side based on an id comparison.
+    sourceOptions = []
+    sinkOptions = []
+    _.forEach props.options, (o) ->
+      container = if o.id in props.value then sinkOptions else sourceOptions
+      container.push(o)
+
+    sourceOptions:  sourceOptions
     sourceSelected: []
     sinkSelected:   []
-    sinkOptions:    @_options(props.value)
+    sinkOptions:    sinkOptions
 
   sourceChanged: (options) ->
     @setState
@@ -178,7 +184,6 @@ SourceSink = React.createClass
             options=@state.sourceOptions
             selected=@state.sourceSelected
             onSelect=@sourceChanged
-            filter=@state.filter
             format=@props.format />
         </div>
 
@@ -201,9 +206,6 @@ SourceSink = React.createClass
 
       </form>
     </div>
-
-  _options: (ids) ->
-    @props.options.filter (o) -> o.id in ids
 
   _ids: (options) ->
     options.map (o) -> o.id

@@ -1,6 +1,7 @@
 require '../test_case'
 
 React     = require 'react'
+_         = require 'lodash'
 sinon     = require 'sinon'
 {expect}  = require 'chai'
 
@@ -40,16 +41,10 @@ describe 'Source Sink View', ->
 
   describe 'Filtered Option List', ->
     it 'should only include filtered values', ->
-      comparator = (a, b) ->
-        if a.id < b.id then -1
-        else if a.id > b.id then 1
-        else 0
-
       list = @render <FilteredOptionList
         options=@options
         format=@format
         selected=[]
-        comparator=comparator
         onSelect={->} />
       list.getDOMNode().querySelector('input[type="text"]').value = '2'
       @simulate.change(list.getDOMNode().querySelector('input[type="text"]'))
@@ -106,7 +101,10 @@ describe 'Source Sink View', ->
         id: '5'
         name: 'Option 5'
 
-      sourceSink.setProps options: @options, value: [@options[2].id]
+      # re-render with equal-but-different option instances
+      sourceSink.setProps
+        options: @options.map (o) -> _.clone(o)
+        value: [@options[2].id]
       expect(sourceSink.state.sourceOptions).to.have.length 4
       expect(sourceSink.state.sinkOptions).to.have.length 1
       expect(sourceSink.state.sinkOptions).to.contain
