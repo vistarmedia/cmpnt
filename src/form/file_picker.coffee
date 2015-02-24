@@ -21,6 +21,10 @@ FilePicker = React.createClass
   propTypes:
     onChange:   React.PropTypes.func
     className:  React.PropTypes.string
+    btnType:    React.PropTypes.string
+
+  getDefaultProps: ->
+    btnType: 'default'
 
   onClick: ->
     @refs.fileInput.getDOMNode().click()
@@ -34,7 +38,7 @@ FilePicker = React.createClass
 
   render: ->
     <div>
-      <Button className=@props.className onClick=@onClick>
+      <Button type=@props.btnType className=@props.className onClick=@onClick>
         {@props.children}
       </Button>
       <input type="file" ref="fileInput" style={display: 'none'}
