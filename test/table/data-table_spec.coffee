@@ -86,6 +86,32 @@ describe 'Data Table', ->
     rows = el.querySelectorAll('tbody > tr')
     expect(rows[0].innerHTML).to.contain 'Model 400'
 
+  it 'should not have a default sort field', ->
+    expect(@table.state.sort).to.be.null
+
+  it 'should have a default sort order if initialSort is set', ->
+    sort =
+      field: 'name'
+    table = @render <DataTable columns = @columns
+                                models  = @models
+                                filter  = @filter
+                                initialSort = sort
+                                itemsPerPage = 10 />
+    expect(table.state.sort[0]).to.equal 'name'
+    expect(table.state.sort[1]).to.equal -1
+
+  it 'should set the initial sort field', ->
+    sort =
+      field: 'name'
+      dir: 1
+    table = @render <DataTable columns = @columns
+                                models  = @models
+                                filter  = @filter
+                                initialSort = sort
+                                itemsPerPage = 10 />
+    expect(table.state.sort[0]).to.equal 'name'
+    expect(table.state.sort[1]).to.equal 1
+
   it 'should initially have undefined filter', ->
     expect(@table.state.filter).to.be.undefined
 

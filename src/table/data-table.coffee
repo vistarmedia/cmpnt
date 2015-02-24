@@ -68,18 +68,27 @@ DataTable = React.createClass
     models:          React.PropTypes.arrayOf(React.PropTypes.object)
     row:             React.PropTypes.func
     striped:         React.PropTypes.bool
+    initialSort:     React.PropTypes.shape
+      dir:           React.PropTypes.number
+      field:         React.PropTypes.string
 
   getDefaultProps: ->
-    striped:  false
-    hover:    true
-    compact:  false
-    models:   []
-    row:      Row
+    striped:      false
+    hover:        true
+    compact:      false
+    models:       []
+    initialSort:  {}
+    row:          Row
 
   getInitialState: ->
+    sort = null
+    if @props.initialSort.field?
+      dir = @props.initialSort.dir ? -1
+      sort = [@props.initialSort.field, dir]
+
     pageStart:       0
     itemsPerPage:    @props.itemsPerPage
-    sort:            null
+    sort:            sort
 
   # Sorts by a field name on model and a direction (1 - asc, -1 - desc)
   setSort: (field, dir) ->
