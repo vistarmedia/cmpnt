@@ -23,7 +23,7 @@ Icon = React.createClass
     name:       React.PropTypes.string
     className:  React.PropTypes.string
     status:     React.PropTypes.oneOf ['success', 'danger', 'muted']
-    size:       React.PropTypes.oneOf ['large', '5x']
+    size:       React.PropTypes.oneOf ['large', '2x', '3x', '4x', '5x']
     align:      React.PropTypes.oneOf ['center']
 
   render: ->
@@ -43,6 +43,9 @@ Icon = React.createClass
 
     switch @props.size
       when 'large' then classes.push('fa-lg')
+      when '2x'    then classes.push('fa-2x')
+      when '3x'    then classes.push('fa-3x')
+      when '4x'    then classes.push('fa-4x')
       when '5x'    then classes.push('fa-5x')
 
     <i className={classes.join(' ')} />
