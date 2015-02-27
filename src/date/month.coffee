@@ -82,7 +82,7 @@ Day = React.createClass
     @props.onChange?(@props.value, e)
 
   render: ->
-    <span className=@_className() onClick=@handleClick>
+    <span tabIndex='1' className=@_className() onClick=@handleClick>
       {@props.value?.date() or ''}
     </span>
 

@@ -34,7 +34,9 @@ OnOutsideBlur =
   handleOutsideBlur: (e) ->
     if not @_onOutsideBlur
       throw new Error('expected _onOutsideBlur to be implemented')
-    if not e.currentTarget.contains(e.relatedTarget)
+    # explicitOriginalTarget is Firefox only
+    target = e.relatedTarget or e.nativeEvent?.explicitOriginalTarget
+    if not e.currentTarget.contains(target)
       @_onOutsideBlur(e)
 
 module.exports = {

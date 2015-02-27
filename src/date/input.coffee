@@ -41,7 +41,7 @@ OnClickOutside  = require 'react-onclickoutside'
 DateInput = React.createClass
   displayName: 'DateInput'
 
-  mixins: [OnOutsideBlur, OnClickOutside]
+  mixins: [OnOutsideBlur]
 
   propTypes:
     format:   React.PropTypes.func
@@ -95,9 +95,9 @@ DateInput = React.createClass
       open:     @state.opened
 
   _onOutsideBlur: (e) ->
-    # handle tabbing to anthor input
-    if e.relatedTarget?
-      @setState opened: false
+    # handle tabbing to another input, or since we've got tabIndex specified on
+    # each Day, handle when clicking outside the calendar
+    @setState opened: false
 
   _handleFocus: (e) ->
     @setState opened: true
