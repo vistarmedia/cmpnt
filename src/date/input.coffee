@@ -35,7 +35,6 @@ DateTime        = require './date_time'
 Icon            = require '../ui/icon'
 {MomentType}    = require '../types'
 {OnOutsideBlur} = require '../mixins'
-OnClickOutside  = require 'react-onclickoutside'
 
 
 DateInput = React.createClass
