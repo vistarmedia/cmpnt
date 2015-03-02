@@ -69,7 +69,7 @@ DateInput = React.createClass
     # of the input
     value = [@props.value]
 
-    <div className='date-input' onBlur=@handleOutsideBlur>
+    <div className=@_containerClassName() onBlur=@handleOutsideBlur>
       <div className='input-group date-input'>
         <input className = 'form-control for-date'
                name      = @props.name
@@ -88,6 +88,12 @@ DateInput = React.createClass
         </div>
       </div>
     </div>
+
+  _containerClassName: ->
+    classes =
+      'date-input': true
+    classes[@props.name] = true
+    classSet classes
 
   _calendarClassName: ->
     classSet

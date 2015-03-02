@@ -51,6 +51,13 @@ describe 'DateInput', ->
     input = view.getDOMNode().querySelector('.date-input input')
     expect(input.value).to.equal '2012-06-22 00:00:00'
 
+  it 'should add props.name to .date-input container classes', ->
+    date = moment([2012, 5, 22])
+    view = @render <DateInput name='start_date' value=date />
+
+    input = view.getDOMNode().parentNode.querySelector('.date-input.start_date')
+    expect(input).to.exist
+
   describe 'when input is focused', ->
 
     it 'should open Calendar', ->
