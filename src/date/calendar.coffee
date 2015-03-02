@@ -99,9 +99,14 @@ Calendar = React.createClass
   render: ->
     <span className='calendar'>
       <span className='header'>
-        <span className='nav left previous' onClick=@_previousMonth>«</span>
+        <span className = 'nav left previous'
+              onClick   = @_previousMonth
+              tabIndex  = '0'
+              >«</span>
         <span className='month-name'>{@_title()}</span>
-        <span className='nav right next' onClick=@_nextMonth>»</span>
+        <span className  = 'nav right next'
+                onClick  = @_nextMonth
+                tabIndex = '0'>»</span>
       </span>
       <Month value    = @state.month
              onChange = @handleSelect
