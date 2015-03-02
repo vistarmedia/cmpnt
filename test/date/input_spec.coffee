@@ -20,7 +20,21 @@ describe 'DateInput', ->
 
     expect(input.value).to.equal '06/22/2012 12:00 am'
 
+  it 'should give the "name" prop to the input.for-date element', ->
+    date = moment([2012, 5, 22])
+    view = @render <DateInput name='start_date' value=date />
+
+    input = view.getDOMNode().querySelector('input.for-date[name=start_date]')
+    expect(input).to.exist
+
   it 'should open the DateTime component on input focus', ->
+    date = moment([2012, 5, 22])
+    view = @render <DateInput value=date />
+
+    input = view.getDOMNode().querySelector('.date-input input')
+    @simulate.focus input
+    openCalendars = view.getDOMNode().querySelectorAll('.popover.open')
+    expect(openCalendars).to.have.length 1
 
   it 'should display the formatted input in the input element', ->
     date = moment([2012, 5, 22])

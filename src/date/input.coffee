@@ -43,14 +43,16 @@ DateInput = React.createClass
   mixins: [OnOutsideBlur]
 
   propTypes:
-    format:   React.PropTypes.func
-    onChange: React.PropTypes.func
-    value:    MomentType
+    format:    React.PropTypes.func
+    name:      React.PropTypes.string
+    onChange:  React.PropTypes.func
+    value:     MomentType
 
   getInitialState: ->
     opened: false
 
   getDefaultProps: ->
+    name:    'date'
     value:   moment()
     format:  (date) ->
       date.format('MM/DD/YYYY h:mm a')
@@ -69,11 +71,12 @@ DateInput = React.createClass
 
     <div className='date-input' onBlur=@handleOutsideBlur>
       <div className='input-group date-input'>
-        <input className    = 'form-control for-date'
-               onChange     = {->}
-               onFocus      = @_handleFocus
-               type         = 'text'
-               value        = @props.format(@props.value) />
+        <input className = 'form-control for-date'
+               name      = @props.name
+               onChange  = {->}
+               onFocus   = @_handleFocus
+               type      = 'text'
+               value     = @props.format(@props.value) />
         <span className='input-group-addon'>
           <Icon name='calendar' />
         </span>
