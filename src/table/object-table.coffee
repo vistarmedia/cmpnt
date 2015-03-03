@@ -40,15 +40,16 @@
 #
 
 
-React      = require 'react'
-{classSet} = require('react/addons').addons
-_          = require 'lodash'
+React              = require 'react'
+{classSet}         = require('react/addons').addons
+{cloneWithProps}   = require('react/addons').addons
+_                  = require 'lodash'
 
 projection         = require './projection'
 Table              = require './index'
 ItemsPerPageSelect = require './paging/items-per-page-select'
 
-Button = require '../form/button'
+Button             = require '../form/button'
 
 ColumnType  = React.PropTypes.object
 ColumnsType = React.PropTypes.arrayOf(ColumnType)
@@ -60,10 +61,10 @@ RangeInfo = React.createClass
   displayName: 'ObjectTable.RangeInfo'
 
   propTypes:
-    start:          React.PropTypes.number.isRequired
-    end:            React.PropTypes.number.isRequired
-    perPage:        React.PropTypes.number.isRequired
-    total:          React.PropTypes.number.isRequired
+    start:   React.PropTypes.number.isRequired
+    end:     React.PropTypes.number.isRequired
+    perPage: React.PropTypes.number.isRequired
+    total:   React.PropTypes.number.isRequired
 
   render: ->
     <div className=@_rangeClasses()>
@@ -85,30 +86,15 @@ RangeInfo = React.createClass
       'col-sm-6': true
       'range':    true
 
-
-Footer = React.createClass
-  displayName: 'ObjectTable.Footer'
-
-  propTypes:
-    start:         React.PropTypes.number.isRequired
-    end:           React.PropTypes.number.isRequired
-    perPage:       React.PropTypes.number.isRequired
-    total:         React.PropTypes.number.isRequired
-    onPageChange:  React.PropTypes.func
-
-  render: ->
-    <div className='row'>
-      {React.createElement(RangeInfo,  @props)}
-      {React.createElement(
-        Pager, _.assign(_.clone(@props), onChange: @props.onPageChange))}
-    </div>
-
-
 Header = React.createClass
   displayName: 'ObjectTable.Header'
 
   propTypes:
+    start:           React.PropTypes.number.isRequired
+    end:             React.PropTypes.number.isRequired
     perPage:         React.PropTypes.number.isRequired
+    total:           React.PropTypes.number.isRequired
+    onPageChange:    React.PropTypes.func
     onPerPageChange: React.PropTypes.func
     onTermChange:    React.PropTypes.func
 
@@ -119,14 +105,18 @@ Header = React.createClass
     @props.onPerPageChange?(numPerPage)
 
   render: ->
+    props = @props
     <div className='row'>
       <div className='col-sm-6'>
+        {@props.children}
+        {@_renderFilter()}
+      </div>
+      <div className='col-sm-6 pull-right'>
+        {React.createElement(RangeInfo,  @props)}
+        {React.createElement(Pager, _.assign(_.clone(@props), onChange: @props.onPageChange))}
         <ItemsPerPageSelect
           perPage  = @props.perPage
           onChange = @handlePerPageChange />
-      </div>
-      <div className='col-sm-6 pull-right'>
-        {@_renderFilter()}
       </div>
     </div>
 
@@ -312,18 +302,21 @@ ObjectTable = React.createClass
   displayName: 'ObjectTable'
 
   propTypes:
-    columns:        ColumnsType.isRequired
-    rows:           RowsType.isRequired
+    columns:          ColumnsType.isRequired
+    rows:             RowsType.isRequired
 
-    sortKey:        React.PropTypes.string
-    sortAsc:        React.PropTypes.bool
+    sortKey:          React.PropTypes.string
+    sortAsc:          React.PropTypes.bool
 
-    filter:         React.PropTypes.func
-    className:      React.PropTypes.string
-    rowClass:       React.PropTypes.func
+    filter:           React.PropTypes.func
+    className:        React.PropTypes.string
+    rowClass:         React.PropTypes.func
 
     onFilterChange:   React.PropTypes.func
     onPerPageChange:  React.PropTypes.func
+
+    header:           React.PropTypes.node
+    footer:           React.PropTypes.node
 
   getDefaultProps: ->
     perPage:          10
@@ -331,6 +324,7 @@ ObjectTable = React.createClass
     className:        ''
     onFilterChange:   ->
     onPerPageChange:  ->
+    header:           <Header />
 
   getInitialState: ->
     perPage: @props.perPage
@@ -383,23 +377,19 @@ ObjectTable = React.createClass
       rows:     rows
       onSort:   @handleSortChange
 
+    header = cloneWithProps @props.header,
+      start:            @state.start
+      end:              @end()
+      total:            rows.meta.filter
+      perPage:          @state.perPage
+      onPageChange:     @handleRangeChange
+      onPerPageChange:  @handlePerPageChange
+      onTermChange:     @handleTermChange if @props.filter
+
     <span className=@_classes()>
-
-      <Header
-        perPage         = @state.perPage
-        onPerPageChange = @handlePerPageChange
-        onTermChange    = {@handleTermChange if @props.filter} />
-
+      {header}
       {React.createElement(Table, _.assign(_.clone(@props), tableProps))}
-
-      <Footer
-        start         = @state.start
-        end           = @end()
-        perPage       = @state.perPage
-        onPageChange  = @handleRangeChange
-        perPage       = @state.perPage
-        total         = rows.meta.filter />
-
+      {@props.footer}
     </span>
 
   _classes: ->
@@ -424,7 +414,6 @@ ObjectTable = React.createClass
 
 
 ObjectTable.Header = Header
-ObjectTable.Footer = Footer
 ObjectTable.Pager  = Pager
 
 module.exports = ObjectTable

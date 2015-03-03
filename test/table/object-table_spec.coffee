@@ -8,20 +8,19 @@ React    = require 'react'
 ObjectTable = require '../../src/table/object-table'
 ItemsPerPageSelect  = require '../../src/table/paging/items-per-page-select'
 Table  = require '../../src/table'
-Footer = ObjectTable.Footer
 Header = ObjectTable.Header
 Pager  = ObjectTable.Pager
 
 
-describe 'ObjectTable.Footer', ->
+describe 'ObjectTable.Header', ->
 
   it 'should display range start, end, and total', ->
-    footer = @render <Footer total         = 99
+    header = @render <Header total         = 99
                              start         = 10
                              perPage       = 10
                              end           = 19 />
 
-    element = @findByClass(footer, 'range').getDOMNode()
+    element = @findByClass(header, 'range').getDOMNode()
 
     expect(element).to.have.textContent 'Showing 11 to 20 of 99 entries'
     expect(element.querySelector('.range .start')).to.have.textContent ' 11 '
@@ -29,66 +28,66 @@ describe 'ObjectTable.Footer', ->
     expect(element.querySelector('.range .total')).to.have.textContent ' 99 '
 
   it 'should have a pager', ->
-    footer = @render <Footer total         = 99
+    header = @render <Header total         = 99
                              start         = 10
                              perPage       = 10
                              end           = 19 />
 
-    pager = @findByClass(footer, 'pager')
+    pager = @findByClass(header, 'pager')
 
     expect(pager).to.exist
 
   it 'should pass the onPageChange function to Pager onChange', ->
     f = ->
-    footer = @render <Footer total         = 99
+    header = @render <Header total         = 99
                              start         = 10
                              end           = 19
                              perPage       = 10
                              onPageChange = f
                              />
-    pager = @findByType(footer, Pager)
+    pager = @findByType(header, Pager)
     expect(pager.props.onChange).to.equal f
 
   it 'should pass start, perPage, and total to Pager', ->
-    footer = @render <Footer total         = 99
+    header = @render <Header total         = 99
                              start         = 10
                              perPage       = 7
                              end           = 19
                              />
 
-    pager = @findByType(footer, Pager)
+    pager = @findByType(header, Pager)
     expect(pager.props.start).to.equal 10
     expect(pager.props.perPage).to.equal 7
     expect(pager.props.total).to.equal 99
 
   it 'should use total as end if end > total', ->
-    footer = @render <Footer total         = 17
+    header = @render <Header total         = 17
                              start         = 10
                              perPage       = 7
                              end           = 19
                              />
 
-    element = @findByClass(footer, 'range').getDOMNode()
+    element = @findByClass(header, 'range').getDOMNode()
     expect(element.querySelector('.range .end')).to.have.textContent ' 17 '
 
   it 'should use total as end if end < perPage - 1', ->
-    footer = @render <Footer total         = 6
+    header = @render <Header total         = 6
                              start         = 0
                              perPage       = 7
                              end           = 5
                              />
 
-    element = @findByClass(footer, 'range').getDOMNode()
+    element = @findByClass(header, 'range').getDOMNode()
     expect(element.querySelector('.range .end')).to.have.textContent ' 6 '
 
   it 'should display 0 as start if total is 0', ->
-    footer = @render <Footer total         = 0
+    header = @render <Header total         = 0
                              start         = 0
                              perPage       = 10
                              end           = 5
                              />
 
-    element = @findByClass(footer, 'range').getDOMNode()
+    element = @findByClass(header, 'range').getDOMNode()
     expect(element.querySelector('.range .start')).to.have.textContent ' 0 '
 
 
@@ -176,6 +175,29 @@ describe 'Object Table', ->
                                  rowClass = CustomRow />
 
     expect(@allByClass(table, 'custom-row')).not.to.be.empty
+
+  it 'should render custom headers', ->
+    customHeader =
+      <Header>
+        <div className='custom-content' />
+        <div className='custom-content' />
+      </Header>
+
+    table = @render <ObjectTable columns           = @columns
+                                 rows              = @rows
+                                 header            = customHeader />
+
+    expect(@allByClass(table, 'custom-content')).not.to.be.empty
+
+  it 'should render custom footers', ->
+    customFooter =
+      <div className='custom-footer' />
+
+    table = @render <ObjectTable columns           = @columns
+                                 rows              = @rows
+                                 footer            = customFooter />
+
+    expect(@allByClass(table, 'custom-footer')).not.to.be.empty
 
   context 'without a filter', ->
 
