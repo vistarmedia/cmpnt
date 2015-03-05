@@ -7,13 +7,12 @@ module.exports =
   # given, it will start at the the first value. If an "end" value is not given,
   # it will end at the last value.
   range: (start, end, rows) ->
-    idx        = start or 0
-    rangeStart = rows.rest(idx)
+    # We don't want to modify if undefined: _.slice assumes 'end of array'
+    # if end is undefined, which is what we want
+    unless end is undefined
+      end = end + 1
 
-    if end?
-      rangeStart.first(end - idx + 1)
-    else
-      rangeStart
+    rows.slice(start, end)
 
   # Orders the rows by an option key and direction. If no key is given, it will
   # leave the rows unsorted. If `asc` is true, it will sort rows ascending with
@@ -34,16 +33,17 @@ module.exports =
     (r) ->
       [rows, meta] = r
       out = func(rows)
-      meta[name] = out.size()
+      meta[name] = out.size().value()
       [out, meta]
 
   compose: ->
     start = (rows) ->
-      [rows, {total: rows.size()}]
+      [rows, {total: rows.size().value()}]
 
     finalize = (r) ->
       [rows, meta] = r
-      rows.value().meta = meta
+      rows = rows.value()
+      rows.meta = meta
       rows
 
     _.compose(finalize, arguments..., start)

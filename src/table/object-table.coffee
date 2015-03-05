@@ -363,8 +363,8 @@ ObjectTable = React.createClass
 
     project = projection.compose range, order, filter
 
-    rows = _(initial)
-    project(rows).value()
+    rows = _.chain(initial)
+    project(rows)
 
   render: ->
     rows = @visibleRows(@props.rows)

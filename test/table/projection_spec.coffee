@@ -22,7 +22,7 @@ describe '#define', ->
 
     expect(func).to.have.length 1
     expect ->
-      func([_([]), {}])
+      func([_.chain([]), {}])
     .to.not.throw Error
 
   describe 'the returned function', ->
@@ -31,14 +31,14 @@ describe '#define', ->
       ident = (rows) -> rows
       func = projection.define 'moose', ident
 
-      [result, meta] = func([_(@rows), {}])
+      [result, meta] = func([_.chain(@rows), {}])
       expect(meta['moose']).to.equal 26
 
     it 'should return the filtered result', ->
       rangeOfFive = (rows) -> rows.range(5)
       func = projection.define 'range_of_five', rangeOfFive
 
-      [result, meta] = func([_(@rows), {}])
+      [result, meta] = func([_.chain(@rows), {}])
       expect(meta['range_of_five']).to.equal 5
 
 
@@ -61,7 +61,7 @@ describe '#compose', ->
     func = projection.compose(takeFive)
 
     expect =>
-      func(_(@rows))
+      func(_.chain(@rows))
     .not.to.throw Error
 
     expect =>
@@ -74,19 +74,19 @@ describe '#compose', ->
     takeThree = projection.define 'three', (rows) -> rows.range(3)
 
     func = projection.compose(takeFive, takeFour, takeThree)
-    proj = func(_(@rows))
+    proj = func(_.chain(@rows))
 
-    expect(proj.value().meta.five).to.equal 5
-    expect(proj.value().meta.four).to.equal 4
-    expect(proj.value().meta.three).to.equal 3
+    expect(proj.meta.five).to.equal 5
+    expect(proj.meta.four).to.equal 4
+    expect(proj.meta.three).to.equal 3
 
   it 'should include original total in metadata', ->
     ident  = projection.define 'ident', (rows) -> rows
 
     func = projection.compose(ident)
-    proj = func(_(@rows))
+    proj = func(_.chain(@rows))
 
-    expect(proj.value().meta.total).to.equal 26
+    expect(proj.meta.total).to.equal 26
 
 
 describe 'Range Projection', ->
@@ -97,7 +97,7 @@ describe 'Range Projection', ->
   context 'with no range', ->
 
     beforeEach ->
-      @proj = projection.range(undefined, undefined, rows).value()
+      @proj = projection.range(undefined, undefined, _.chain(@rows)).value()
 
     it 'should give all rows', ->
       expect(@proj).to.have.length 26
@@ -109,7 +109,7 @@ describe 'Range Projection', ->
   context 'with a start index', ->
 
     beforeEach ->
-      @proj = projection.range(10, undefined, rows).value()
+      @proj = projection.range(10, undefined, _.chain(@rows)).value()
 
     it 'should project the latter rows', ->
       expect(@proj).to.have.length 16
@@ -119,7 +119,7 @@ describe 'Range Projection', ->
   context 'with an end index', ->
 
     beforeEach ->
-      @proj = projection.range(undefined, 15, rows).value()
+      @proj = projection.range(undefined, 15, _.chain(@rows)).value()
 
     it 'should project the former rows', ->
       expect(@proj).to.have.length 16
@@ -131,7 +131,7 @@ describe 'Range Projection', ->
   context 'with a start and end index', ->
 
     beforeEach ->
-      @proj = projection.range(10, 15, rows).value()
+      @proj = projection.range(10, 15, _.chain(@rows)).value()
 
     it 'should project the intersecting rows', ->
       expect(@proj).to.have.length 6
@@ -148,7 +148,7 @@ describe 'Order Projection', ->
   context 'with ascending sort', ->
 
     beforeEach ->
-      @proj = projection.order('name', true, rows).value()
+      @proj = projection.order('name', true, _.chain(@rows)).value()
 
     it 'should have small values first and large values last', ->
       expect(@proj[0].name).to.equal 'A'
@@ -157,7 +157,7 @@ describe 'Order Projection', ->
   context 'with descending sort', ->
 
     beforeEach ->
-      @proj = projection.order('name', false, rows).value()
+      @proj = projection.order('name', false, _.chain(@rows)).value()
 
     it 'should have large values first and small ones last', ->
       expect(@proj[0].name).to.equal 'Z'
@@ -166,7 +166,7 @@ describe 'Order Projection', ->
   context 'with an undefined order', ->
 
     beforeEach ->
-      @proj = projection.order('name', undefined, rows).value()
+      @proj = projection.order('name', undefined, _.chain(@rows)).value()
 
     it 'should sort ascending', ->
       expect(@proj[0].name).to.equal 'A'
@@ -175,7 +175,7 @@ describe 'Order Projection', ->
   context 'without a key', ->
 
     beforeEach ->
-      @proj = projection.order(undefined, undefined, rows).value()
+      @proj = projection.order(undefined, undefined, _.chain(@rows)).value()
 
     it 'should not sort', ->
       expect(@proj[0]).to.equal @rows[0]
@@ -190,7 +190,7 @@ describe 'Filter Projection', ->
   context 'without a filter', ->
 
     beforeEach ->
-      @proj = projection.filter(undefined, rows).value()
+      @proj = projection.filter(undefined, _.chain(@rows)).value()
 
     it 'should give all rows', ->
       expect(@proj[0]).to.equal @rows[0]
@@ -200,7 +200,7 @@ describe 'Filter Projection', ->
 
     beforeEach ->
       onlyEvens = (row) -> row.id % 2 == 0
-      @proj = projection.filter(onlyEvens, rows).value()
+      @proj = projection.filter(onlyEvens, _.chain(@rows)).value()
 
     it 'should give filtered rows', ->
       expect(@proj).to.have.length 13
