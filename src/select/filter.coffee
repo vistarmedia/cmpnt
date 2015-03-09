@@ -84,6 +84,7 @@ SelectFilter = React.createClass
     inputClass:   React.PropTypes.string
     filter:       React.PropTypes.func
     onChange:     React.PropTypes.func
+    placeholder:  React.PropTypes.string
 
   getDefaultProps: ->
     filter: defaultFilter
@@ -142,6 +143,7 @@ SelectFilter = React.createClass
              value        = @state.filterTerm
              ref          = 'input'
              className    = @props.inputClass
+             placeholder  = @props.placeholder
              />
       <SelectList options     = @state.filtered
                   visible     = @state.opened
@@ -170,6 +172,7 @@ Input = React.createClass
     value:          React.PropTypes.string
     commitKeys:     React.PropTypes.array
     commitKeyCodes: React.PropTypes.array
+    placeholder:    React.PropTypes.string
 
   getDefaultProps: ->
     value:          undefined
@@ -227,6 +230,7 @@ Input = React.createClass
              onPaste      = @props.onPaste
              value        = @value()
              ref          = 'input'
+             placeholder  = @props.placeholder
              />
     </span>
 

@@ -669,6 +669,11 @@ describe 'SelectList.Input', ->
     inputElement = @findByTag input, 'input'
     expect(inputElement.getDOMNode()).to.have.value 'a real dark horse'
 
+  it 'should pass placeholder on down to the input', ->
+    input = @render(<Input placeholder='a real dark horse' />)
+    inputElement = @findByTag input, 'input'
+    expect(inputElement.getDOMNode().placeholder).to.equal 'a real dark horse'
+
   it 'should use value as the value if defined', ->
     input = @render <Input value        = 'a real, real dark horse'
                            defaultValue = 'a kind of non threatening horse'/>
