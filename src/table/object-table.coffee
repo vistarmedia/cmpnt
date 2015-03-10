@@ -97,6 +97,7 @@ Header = React.createClass
     onPageChange:    React.PropTypes.func
     onPerPageChange: React.PropTypes.func
     onTermChange:    React.PropTypes.func
+    className:       React.PropTypes.string
 
   handleTermChange: (e) ->
     @props.onTermChange?(e.currentTarget.value)
@@ -105,8 +106,11 @@ Header = React.createClass
     @props.onPerPageChange?(numPerPage)
 
   render: ->
+    classes = 'row': true
+    classes[@props.className] = @props.className
+    classes = classSet(classes)
     props = @props
-    <div className='row'>
+    <div className=classes>
       <div className='col-sm-6'>
         {@props.children}
         {@_renderFilter()}

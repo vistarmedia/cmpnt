@@ -27,6 +27,15 @@ describe 'ObjectTable.Header', ->
     expect(element.querySelector('.range .end')).to.have.textContent ' 20 '
     expect(element.querySelector('.range .total')).to.have.textContent ' 99 '
 
+  it 'should apply any custom passed in classes', ->
+    header = @render <Header total         = 99
+                             start         = 10
+                             perPage       = 10
+                             className     = 'custom-class'
+                             end           = 19 />
+
+    expect(header.getDOMNode()).to.haveClass 'custom-class'
+
   it 'should have a pager', ->
     header = @render <Header total         = 99
                              start         = 10
