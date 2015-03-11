@@ -61,7 +61,7 @@ Header = React.createClass
       sortAsc = if col.field is @props.sortKey then @props.sortAsc
       <HeaderItem key=i column=col onClick=@props.onClick sortAsc=sortAsc />
 
-    <thead>
+    <thead className='table-header'>
       <tr>{heads}</tr>
     </thead>
 
@@ -70,8 +70,9 @@ Row = React.createClass
   displayName: 'Row'
 
   propTypes:
-    columns:  ColumnsType.isRequired
-    row:      RowType.isRequired
+    columns:     ColumnsType.isRequired
+    row:         RowType.isRequired
+    isSelected:  React.PropTypes.bool
 
   render: ->
     row = @props.row
@@ -81,17 +82,23 @@ Row = React.createClass
       label = if col.format? then col.format(value, row) else value
       <td key=col.field>{label}</td>
 
-    <tr>{cells}</tr>
+    classes = classSet({
+      'table-row':  true
+      'selected':   @props.isSelected
+    })
+
+    <tr className=classes>{cells}</tr>
 
 
 Body = React.createClass
   displayName: 'Body'
 
   propTypes:
-    columns:  ColumnsType.isRequired
-    rows:     RowsType.isRequired
-    keyField: React.PropTypes.string.isRequired
-    rowClass: React.PropTypes.func
+    columns:       ColumnsType.isRequired
+    rows:          RowsType.isRequired
+    keyField:      React.PropTypes.string.isRequired
+    rowClass:      React.PropTypes.func
+    selectedRows:  React.PropTypes.array
 
   getDefaultProps: ->
     rowClass: Row
@@ -101,22 +108,25 @@ Body = React.createClass
     columns = @props.columns
 
     rows = for row in @props.rows
+      rowId = row[key]
       React.createElement @props.rowClass,
-        key:      row[key],
-        columns:  columns,
-        row:      row
+        key:         rowId
+        columns:     columns
+        row:         row
+        isSelected:  rowId in @props.selectedRows if @props.selectedRows
 
-    <tbody>{rows}</tbody>
+    <tbody className='table-body'>{rows}</tbody>
 
 
 Table = React.createClass
   displayName: 'Table'
 
   propTypes:
-    columns:  ColumnsType.isRequired
-    rows:     RowsType.isRequired
-    keyField: React.PropTypes.string
-    rowClass: React.PropTypes.func
+    columns:       ColumnsType.isRequired
+    rows:          RowsType.isRequired
+    keyField:      React.PropTypes.string
+    rowClass:      React.PropTypes.func
+    selectedRows:  React.PropTypes.array
 
     start:    React.PropTypes.number
     end:      React.PropTypes.number
@@ -144,10 +154,11 @@ Table = React.createClass
         sortKey = @props.sortKey
         sortAsc = @props.sortAsc />
       <Body
-        columns  = @props.columns
-        rows     = @props.rows
-        keyField = @props.keyField
-        rowClass = @props.rowClass />
+        columns      = @props.columns
+        rows         = @props.rows
+        keyField     = @props.keyField
+        rowClass     = @props.rowClass
+        selectedRows = @props.selectedRows />
     </table>
 
 

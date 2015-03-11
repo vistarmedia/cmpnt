@@ -23,10 +23,10 @@
 #           <Pager count=42 onRangeChange=@rangeChange />
 #         </p>
 #       </span>
-React = require 'react'
-
-Button = require '../../form/button'
-
+React      = require 'react'
+Icon       = require '../../ui/icon'
+Button     = require '../../form/button'
+{classSet} = require('react/addons').addons
 
 
 # Pager will accept a 'count' property and invoke an 'onRangeChange' callback
@@ -65,8 +65,9 @@ Pager = React.createClass
       <Pager.Item key       = 'prev'
                   onClick   = @_setPage
                   page      = {@state.page-1}
-                  disabled  = {not hasPrevious}>
-        Previous
+                  disabled  = {not hasPrevious}
+                  className = 'btn-page-prev'>
+        <Icon name='angle-left' />
       </Pager.Item>
 
       {@_items()}
@@ -74,8 +75,9 @@ Pager = React.createClass
       <Pager.Item key       = 'next'
                   onClick   = @_setPage
                   page      = {@state.page+1}
-                  disabled  = {not hasNext}>
-        Next
+                  disabled  = {not hasNext}
+                  className = 'btn-page-next'>
+        <Icon name='angle-right' />
       </Pager.Item>
     </div>
 
@@ -165,6 +167,7 @@ Pager.Item = React.createClass
     active:   React.PropTypes.bool
     onClick:  React.PropTypes.func
     page:     React.PropTypes.number
+    className:  React.PropTypes.string
 
   getDefaultProps: ->
     disabled: false
@@ -174,8 +177,11 @@ Pager.Item = React.createClass
     @props.onClick?(@props.page)
 
   render: ->
-    className = if @props.active then 'active'
-
+    className =
+      'active':   @props.active
+      'btn-page': true
+    className[@props.className] = @props.className
+    className = classSet(className)
     <Button onClick   = @onClick
             disabled  = @props.disabled
             className = className>

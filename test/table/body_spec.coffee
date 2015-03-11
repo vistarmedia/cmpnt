@@ -74,3 +74,38 @@ describe 'Table Body', ->
       ageCells = @el.querySelectorAll('td[data-reactid$=".$age"]')
       expect(ageCells).to.have.length 1
       expect(ageCells[0]).to.have.textContent '66'
+
+  context 'with selected rows', ->
+
+    beforeEach ->
+      excited  = (name) -> "#{name}!!"
+      columns  = [
+        {field: 'name', label: 'Name', format: excited},
+        {field: 'age'},
+      ]
+
+      rows  = [
+        {name: 'Billy', age: 66, id: 1}
+        {name: 'Tommy', age: 53, id: 2}
+        {name: 'Bobby', age: 32, id: 3}
+      ]
+
+      selectedRows = [1, 3]
+
+      body = <Body  keyField     = 'id'
+                    columns      = columns
+                    rows         = rows
+                    selectedRows = selectedRows />
+
+      @view = @render <table>{body}</table>
+      @el   = @view.getDOMNode()
+
+    it 'should add a "selected" class to all selected rows', ->
+      bodyEl = @el.children[0]
+      firstRowEl = bodyEl.children[0]
+      secondRowEl = bodyEl.children[1]
+      thirdRowEl = bodyEl.children[2]
+
+      expect(firstRowEl).to.haveClass 'selected'
+      expect(secondRowEl).not.to.haveClass 'selected'
+      expect(thirdRowEl).to.haveClass 'selected'

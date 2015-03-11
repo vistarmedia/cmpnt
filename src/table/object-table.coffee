@@ -48,7 +48,7 @@ _                  = require 'lodash'
 projection         = require './projection'
 Table              = require './index'
 ItemsPerPageSelect = require './paging/items-per-page-select'
-
+Icon               = require '../ui/icon'
 Button             = require '../form/button'
 
 ColumnType  = React.PropTypes.object
@@ -83,7 +83,6 @@ RangeInfo = React.createClass
 
   _rangeClasses: ->
     classSet
-      'col-sm-6': true
       'range':    true
 
 Header = React.createClass
@@ -111,11 +110,11 @@ Header = React.createClass
     classes = classSet(classes)
     props = @props
     <div className=classes>
-      <div className='col-sm-6'>
+      <div className='pull-left header-actions'>
         {@props.children}
         {@_renderFilter()}
       </div>
-      <div className='col-sm-6 pull-right'>
+      <div className='pull-right header-navigation'>
         {React.createElement(RangeInfo,  @props)}
         {React.createElement(Pager, _.assign(_.clone(@props), onChange: @props.onPageChange))}
         <ItemsPerPageSelect
@@ -126,11 +125,13 @@ Header = React.createClass
 
   _renderFilter: ->
     return <span /> unless @props.onTermChange?
-    <input
-      type        = 'text'
-      placeholder = 'Filter'
-      onChange    = @handleTermChange />
-
+    <span>
+      <Icon name='search' />
+      <input
+        type        = 'text'
+        placeholder = 'Filter'
+        onChange    = @handleTermChange />
+    </span>
 
 Pager = React.createClass
   displayName: 'ObjectTable.Pager'
@@ -195,8 +196,9 @@ Pager = React.createClass
       <Pager.Item key       = 'prev'
                   onClick   = @handlePageChange
                   page      = {currentPage - 1}
-                  disabled  = {not hasPrevious}>
-        Previous
+                  disabled  = {not hasPrevious}
+                  className = 'btn-page-prev'>
+        <Icon name='angle-left' />
       </Pager.Item>
 
       {@_items()}
@@ -204,8 +206,9 @@ Pager = React.createClass
       <Pager.Item key       = 'next'
                   onClick   = @handlePageChange
                   page      = {currentPage + 1}
-                  disabled  = {not hasNext}>
-        Next
+                  disabled  = {not hasNext}
+                  className = 'btn-page-next'>
+        <Icon name='angle-right' />
       </Pager.Item>
     </div>
 
@@ -262,16 +265,21 @@ Pager = React.createClass
     current = @currentPage()
     for i in @visiblePages()
       if i?
-        <Pager.Item key     = i
-                    onClick = @handlePageChange
-                    active  = {i is current}
-                    page    = i>
+        <Pager.Item key       = i
+                    onClick   = @handlePageChange
+                    active    = {i is current}
+                    page      = i
+                    className = 'btn-page-num'>
           {i+1}
         </Pager.Item>
       else
         elipNo += 1
         key    = "elip-#{elipNo}"
-        <Pager.Item key=key disabled=on>...</Pager.Item>
+        <Pager.Item key       = key
+                    disabled  = on
+                    className = 'btn-page-elip'>
+          ...
+        </Pager.Item>
 
 
 # Single item of a pager. May be 'previous', 'next', or some number indicating
@@ -280,10 +288,11 @@ Pager.Item = React.createClass
   displayName: 'Pager.Item'
 
   propTypes:
-    disabled: React.PropTypes.bool
-    active:   React.PropTypes.bool
-    onClick:  React.PropTypes.func
-    page:     React.PropTypes.number
+    disabled:   React.PropTypes.bool
+    active:     React.PropTypes.bool
+    onClick:    React.PropTypes.func
+    page:       React.PropTypes.number
+    className:  React.PropTypes.string
 
   getDefaultProps: ->
     disabled: false
@@ -293,8 +302,11 @@ Pager.Item = React.createClass
     @props.onClick?(@props.page)
 
   render: ->
-    className = if @props.active then 'active'
-
+    className =
+      'active':   @props.active
+      'btn-page': true
+    className[@props.className] = @props.className
+    className = classSet(className)
     <Button onClick   = @onClick
             disabled  = @props.disabled
             className = className>

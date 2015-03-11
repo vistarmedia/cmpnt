@@ -632,14 +632,14 @@ describe 'Object Table', ->
       children = pager.getDOMNode().childNodes
       previous = children[0]
 
-      expect(previous).to.have.innerHTML 'Previous'
+      expect(previous).to.haveClass 'btn-page-prev'
 
     it 'should end with a "next" button', ->
       pager    = @render <Pager total=123 />
       children = pager.getDOMNode().childNodes
       next     = children[children.length - 1]
 
-      expect(next).to.have.innerHTML 'Next'
+      expect(next).to.haveClass 'btn-page-next'
 
     it 'should call onChange with range when clicking "next"', ->
       spy = sinon.spy()
