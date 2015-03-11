@@ -78,13 +78,14 @@ SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
   propTypes:
-    options:      Types.idContentList.isRequired
-    value:        Types.idContentList
-    defaultValue: React.PropTypes.string
-    inputClass:   React.PropTypes.string
-    filter:       React.PropTypes.func
-    onChange:     React.PropTypes.func
-    placeholder:  React.PropTypes.string
+    className:     React.PropTypes.string
+    defaultValue:  React.PropTypes.string
+    filter:        React.PropTypes.func
+    inputClass:    React.PropTypes.string
+    onChange:      React.PropTypes.func
+    options:       Types.idContentList.isRequired
+    placeholder:   React.PropTypes.string
+    value:         Types.idContentList
 
   getDefaultProps: ->
     filter: defaultFilter
@@ -133,8 +134,15 @@ SelectFilter = React.createClass
       opened:        false
     @props.onChange?(list)
 
+  _classes: ->
+    classes =
+      'btn-group':      true
+      'select-filter':  true
+    classes[@props.className] = @props.className?
+    classSet classes
+
   render: ->
-    <div className='btn-group select-filter'>
+    <div className=@_classes()>
       <Input onFocus      = @onInputFocus
              onBlur       = @onInputBlur
              onChange     = @onUpdateFilter

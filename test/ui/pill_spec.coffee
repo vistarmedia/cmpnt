@@ -20,6 +20,12 @@ describe 'Pill', ->
     expect(pill.getDOMNode()).to.haveClass 'label'
     expect(pill.getDOMNode()).to.haveClass 'label-default'
 
+  it 'should include any classes on the className prop', ->
+    pill = @render(<Pill className='johnson jerry'>Hi!</Pill>)
+
+    expect(pill.getDOMNode()).to.haveClass 'johnson'
+    expect(pill.getDOMNode()).to.haveClass 'jerry'
+
   it 'should have a close icon if given a onClose function', ->
     f = ->
     pill = @render(<Pill onClose=f>Hi!</Pill>)

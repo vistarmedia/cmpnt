@@ -351,6 +351,18 @@ describe 'SelectFilter', ->
       {content: 'horses',        id: 'id-9'}
     ]
 
+  it 'should include class names from className prop', ->
+    select = @render(<SelectFilter className='DMX' options=@items />)
+    expect(select.getDOMNode()).to.haveClass 'DMX'
+
+  it 'should have btn-group class by default', ->
+    select = @render(<SelectFilter options=@items />)
+    expect(select.getDOMNode()).to.haveClass 'btn-group'
+
+  it 'should have select-filter class by default', ->
+    select = @render(<SelectFilter options=@items />)
+    expect(select.getDOMNode()).to.haveClass 'select-filter'
+
   it 'should open the list when input receives focus', ->
     select = @render(<SelectFilter options=@items />)
     input  = @inputElement(select)

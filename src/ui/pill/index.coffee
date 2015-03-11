@@ -27,6 +27,7 @@ Pill = React.createClass
   displayName: 'Pill'
 
   propTypes:
+    className: React.PropTypes.string
     onClose:   React.PropTypes.func
     value:     React.PropTypes.string
     visible:   React.PropTypes.bool
@@ -48,7 +49,7 @@ Pill = React.createClass
       label:            true
       "label-default":  true
 
-    classes[@props.className] = true
+    classes[@props.className] = @props.className?
     classSet(classes)
 
   render: ->
