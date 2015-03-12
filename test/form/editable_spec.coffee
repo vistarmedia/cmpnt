@@ -83,6 +83,11 @@ describe 'Editable', ->
 
     expect(@findByClass(element, 'viewing')).to.exist
 
+  it 'should have any passed in classes', ->
+    element = @render(<Editable className='custom-class' />)
+
+    expect(@findByClass(element, 'custom-class')).to.exist
+
   it 'should set editing=true when Editable.Element is clicked', ->
     element = @render(<Editable>
       <input defaultValue='Dennehy' />

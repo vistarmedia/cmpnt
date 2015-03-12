@@ -124,6 +124,7 @@ Editable = React.createClass
   propTypes:
     onChange:  React.PropTypes.func
     value:     React.PropTypes.node
+    className: React.PropTypes.string
 
   getInitialState: ->
     editing: false
@@ -174,10 +175,12 @@ Editable = React.createClass
     now() - (@state.lastOpenedAt or now()) < 10
 
   _className: ->
-    classSet
+    classes =
       editable:  true
       editing:   @state.editing
       viewing:   not @state.editing
+    classes[@props.className] = @props.className?
+    classSet classes
 
   _childInputElement: ->
     @getDOMNode().querySelector('input, textarea, select')
