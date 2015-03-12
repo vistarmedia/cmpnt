@@ -46,6 +46,17 @@ describe 'ObjectTable.Header', ->
 
     expect(pager).to.exist
 
+  it 'should have a filter if the onTermChange prop is supplied', ->
+    header = @render <Header total         = 99
+                             start         = 10
+                             perPage       = 10
+                             end           = 19
+                             onTermChange  = {->} />
+
+    filter = @findByClass(header, 'header-action-filter')
+
+    expect(filter).to.exist
+
   it 'should pass the onPageChange function to Pager onChange', ->
     f = ->
     header = @render <Header total         = 99

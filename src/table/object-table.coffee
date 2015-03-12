@@ -125,7 +125,7 @@ Header = React.createClass
 
   _renderFilter: ->
     return <span /> unless @props.onTermChange?
-    <span>
+    <span className='header-action-filter'>
       <Icon name='search' />
       <input
         type        = 'text'
