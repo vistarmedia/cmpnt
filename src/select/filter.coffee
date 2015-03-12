@@ -74,6 +74,7 @@ defaultFilter = (options, term) ->
     return options
   o for o in options when contentAsString(o.content)?.match(///#{term}///i)
 
+
 SelectFilter = React.createClass
   displayName: 'SelectFilter'
 
@@ -224,7 +225,7 @@ Input = React.createClass
 
   render: ->
     classes = 'dropdown-toggle': true
-    classes[@props.className] = true if @props.className?
+    classes[@props.className] = @props.className?
 
     <span className='input'>
       <input className    = classSet(classes)
@@ -238,8 +239,7 @@ Input = React.createClass
              onPaste      = @props.onPaste
              value        = @value()
              ref          = 'input'
-             placeholder  = @props.placeholder
-             />
+             placeholder  = @props.placeholder />
     </span>
 
   _inputElement: ->
