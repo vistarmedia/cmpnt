@@ -9,7 +9,7 @@ TabGroup = require '../../src/ui/tab-group'
 describe 'Tab', ->
   beforeEach ->
     @coolTabCls =
-      <TabGroup.Tab label="My cool Tab">
+      <TabGroup.Tab label="My cool Tab" className="custom-class">
         <h1>Cool tab, bro</h1>
       </TabGroup.Tab>
 
@@ -20,6 +20,12 @@ describe 'Tab', ->
 
     expect(children[0]).to.have.tagName 'H1'
     expect(children[0]).to.have.innerHTML 'Cool tab, bro'
+
+  it 'should apply the "tab-tab" class by default', ->
+    expect(@render(@coolTabCls).getDOMNode()).to.haveClass 'tab-tab'
+
+  it 'should apply the passed in className', ->
+    expect(@render(@coolTabCls).getDOMNode()).to.haveClass 'custom-class'
 
 describe 'Tab Group Header', ->
 
@@ -34,6 +40,12 @@ describe 'Tab Group Header', ->
     one = children[0]
     expect(one).to.have.tagName 'LI'
     expect(one.childNodes[0]).to.have.innerHTML 'one'
+
+  it 'should apply the "nav" and "nav-tabs" classes by default', ->
+    header = @render(<TabGroup.Header active='one' labels={['one', 'two']} />)
+    el     = header.getDOMNode()
+    expect(el).to.haveClass 'nav'
+    expect(el).to.haveClass 'nav-tabs'
 
   it 'should have the active tab marked', ->
     header = @render(<TabGroup.Header active='two' labels={['one', 'two']} />)
@@ -142,3 +154,14 @@ describe 'Tab Group', ->
     expect(el.querySelector('span.1')).to.exist
     expect(el.querySelector('span.2')).to.exist
 
+  it 'should apply the "tab-body" class by default and passed in classes', ->
+    tabGroup = @render(
+      <TabGroup className='custom-class' active='One'>
+        <TabGroup.Tab label='One'><span className='1'>First</span></TabGroup.Tab>
+        <TabGroup.Tab label='Two'><span className='2'>Second</span></TabGroup.Tab>
+      </TabGroup>)
+
+    el = tabGroup.getDOMNode()
+
+    expect(el).to.haveClass 'tab-body'
+    expect(el).to.haveClass 'custom-class'

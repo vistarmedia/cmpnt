@@ -25,15 +25,16 @@
 #           <input type='text' />
 #         </TabGroup.Tab>
 #       </TabGroup>
-React = require 'react'
-
+React      = require 'react'
+{classSet} = require('react/addons').addons
 
 TabGroup = React.createClass
   displayName: 'TabGroup'
 
   propTypes:
-    active: React.PropTypes.string
-    onlyRenderActive: React.PropTypes.bool
+    active:            React.PropTypes.string
+    onlyRenderActive:  React.PropTypes.bool
+    className:         React.PropTypes.string
 
   getDefaultProps: ->
     onlyRenderActive: false
@@ -50,18 +51,21 @@ TabGroup = React.createClass
     active   = @state.active or labels[0]
 
     tabs = for tab, i in children
-      cls = ['tab-pane']
-      if tab.props.label is active
-        cls.push 'active'
-        <div key=i className={cls.join(' ')}>{tab}</div>
-      else if !@props.onlyRenderActive
-        <div key=i className={cls.join(' ')}>{tab}</div>
+      cls = classSet
+        'tab-pane': true
+        'active':   tab.props.label is active
+      if tab.props.label is active or !@props.onlyRenderActive
+        <div key=i className=cls>{tab}</div>
 
-    <span>
+    classes                   = {'tab-body': true}
+    classes[@props.className] = @props.className?
+    classes                   = classSet classes
+
+    <span className=classes>
       <TabGroup.Header
-        active   = active
-        labels   = labels
-        onChange = @onChange />
+        active    = active
+        labels    = labels
+        onChange  = @onChange />
       <div className='tab-content'>
         {tabs}
       </div>
@@ -74,9 +78,9 @@ TabGroup.Header = React.createClass
   displayName: 'TabGroup.Header'
 
   propTypes:
-    onChange: React.PropTypes.func
-    labels:   React.PropTypes.arrayOf(React.PropTypes.string).isRequired
-    active:   React.PropTypes.string.isRequired
+    onChange:   React.PropTypes.func
+    labels:     React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+    active:     React.PropTypes.string.isRequired
 
   componentDidMount: ->
     @props.onChange?(@props.active)
@@ -102,9 +106,14 @@ TabGroup.Tab = React.createClass
   displayName: 'TabGroup.Tab'
 
   propTypes:
-    label: React.PropTypes.string.isRequired
+    label:      React.PropTypes.string.isRequired
+    className:  React.PropTypes.string
 
-  render: -> <span>{@props.children}</span>
+  render: ->
+    classes                   = {'tab-tab': true}
+    classes[@props.className] = @props.className?
+    classes                   = classSet classes
+    <span className=classes>{@props.children}</span>
 
 
 module.exports = TabGroup
